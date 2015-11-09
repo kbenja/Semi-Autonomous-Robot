@@ -8,7 +8,7 @@ float lastDistance; //Last Reading of the range Sensor
 float delta = 0;
 
 //This can be change depending on the size of the Breaker
-float deltaDesired = 0.20; //Currently set at 0.20 meters
+float deltaDesired = 0.15; //Currently set at 0.20 meters - Less = More Sensitive
 
 void setup() 
 {
@@ -46,7 +46,7 @@ void loop()
     }
   }
 
-  delay(50); //Maybe 100 is good
+  delay(100); //Delay dictates time limit before lastDistance gets overwrite
 
   lastDistance = currentDistance;
 
