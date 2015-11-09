@@ -3,9 +3,12 @@
 //Created Nov 9th, 2015
 
 int analogInput = A0;//Input from the range sensor
-float currentDistance = 0; //Current Reading of the range Sensor
-float lastDistance = 0; //Last Reading of the range Sensor
+float currentDistance; //Current Reading of the range Sensor
+float lastDistance; //Last Reading of the range Sensor
 float delta = 0;
+
+//This can be change depending on the size of the Breaker
+float deltaDesired = 0.20; //Currently set at 0.20 meters
 
 void setup() 
 {
@@ -21,6 +24,8 @@ void loop()
   //Convert Analog Reading to Distance in meters
   currentDistance = analogReading * ((5.0)/(1023));
 
+  //Serial.println(currentDistance);
+
   //Calculate the difference in Distance (delta)
   if (currentDistance < lastDistance)
   {
@@ -32,14 +37,17 @@ void loop()
     delta = currentDistance -lastDistance;
   }
   
-  //If delta is greater than 0.20 meters, EDGE is detected
-  if(delta >= 0.20)
+  //If delta is greater than X meters, EDGE is detected
+  if (delta != currentDistance)
   {
-    Serial.println("!!!!!EDGE DETECTED!!!!!");
+    if(delta >= deltaDesired)
+    {
+      Serial.println("!!!!!EDGE DETECTED!!!!!");
+    }
   }
 
-  delay(50);
+  delay(100);
+
+  lastDistance = currentDistance;
 
 }
-
-//Serial.println(Distance);
