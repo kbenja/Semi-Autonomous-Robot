@@ -46,7 +46,7 @@ void loop()
     }
   }
 
-  delay(100);
+  delay(50); //Maybe 100 is good
 
   lastDistance = currentDistance;
 
