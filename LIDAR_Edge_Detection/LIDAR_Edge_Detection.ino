@@ -8,7 +8,7 @@ float lastDistance; //Last Reading of the range Sensor
 float delta = 0;
 
 //This can be change depending on the size of the Breaker
-float deltaDesired = 0.15; //Currently set at 0.20 meters - Less = More Sensitive
+float deltaDesired = 0.10; //Currently set at 0.15 meters - Less = More Sensitive
 
 void setup() 
 {
