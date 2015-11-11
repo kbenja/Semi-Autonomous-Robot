@@ -59,6 +59,10 @@ bool detectDistance(float desired)
   }
 }
 
+void space(){
+  Serial.print("\n\n");
+}
+
 void loop() 
 {
   //Read the analog INPUT coming in from the range sensor
@@ -66,7 +70,7 @@ void loop()
 
   //Convert Analog Reading to Distance in meters
   currentDistance = analogReading * ((5.0)/(1023));
-
+  
   /*  State machine
    *  1: move forward within certain range (0.15)
    *  2: pass first edge
@@ -75,20 +79,22 @@ void loop()
    *  5: line up between the edges 
    *  6: move forward to certain range
    */
-  count++;
+  count = 1;
 //  Serial.print(count);
 //  Serial.println("Hello\r");
   switch(state){
     case 0:
       if (!printed){
-        Serial.print("WELCOME! Please align yourself with the black X \nand then move to 0.1 meters. \nCurrent distance = ");
+        space();
+        Serial.print("//////////////////WELCOME//////////////////\n\nFollow the instructions and wait for\nfeedback from the program.\n\n//////////////////STEP ONE//////////////////\n\nALIGN SENSOR with the black \"X\" then MOVE SENSOR to 0.1 meters. \n[CURRENT DISTANCE = ");
         Serial.print(currentDistance);
-        Serial.println(" ");
+        Serial.print(" METERS]");
         printed = true;
       }
       detectDistance(0.1);
-      if (correctDistance){
-        Serial.println("CORRECT DISTANCE");
+      if (correctDistance || count%6 == 0){
+        space();
+        Serial.print("\n\n[CORRECT DISTANCE]\n");
         state = 1;
         printed = false;
         correctDistance = false;
@@ -96,12 +102,14 @@ void loop()
       break;
     case 1:
       if (!printed){
-        Serial.println("Find first edge");
+        space();
+        Serial.print("//////////////////STEP TWO//////////////////\n\nMOVE RIGHT and detect right side edge\n\n");
+        space();
         printed = true;
       }
       detectEdge();
-      if (edgeDetected){
-        Serial.println("EDGE DETECTED");
+      if (edgeDetected || count%6 == 0){
+        Serial.print("[CHECK] EDGE DETECTED\n");
         state = 2;
         printed = false;
         edgeDetected = false;
@@ -109,12 +117,14 @@ void loop()
         break;
     case 2:
       if (!printed){
-        Serial.println("Find second edge");
+        space();
+        Serial.print("//////////////////STEP THREE//////////////////\n\nMOVE LEFT and detect left side edge");
         printed = true;
       }
       detectEdge();
-      if (edgeDetected){
-        Serial.println("EDGE DETECTED");
+      if (edgeDetected || count%6 == 0){
+        space();
+        Serial.print("\n\n[CHECK] EDGE DETECTED\n");
         state = 3;
         printed = false;
         edgeDetected = false;
@@ -122,12 +132,14 @@ void loop()
         break;
     case 3:
       if (!printed){
-        Serial.println("Move to the left past edge");
+        space();
+        Serial.print("//////////////////STEP FOUR//////////////////\n\nMOVE LEFT to pass left side edge");
         printed = true;
       }
       detectEdge();
-      if (edgeDetected){
-        Serial.println("EDGE DETECTED STOP MOVING!!!");
+      if (edgeDetected || count%6 == 0){
+        space();
+        Serial.print("[CHECK] EDGE DETECTED");
         state = 4;
         printed = false;
         edgeDetected = false;
@@ -135,16 +147,19 @@ void loop()
         break;
     case 4:
       if(!printed){
-        Serial.println("Move to 0.30 meters");
-        Serial.print("Current distance = ");
+        space();
+        Serial.print("//////////////////STEP FIVE//////////////////\n\nMove to 0.30 meters \n[CURRENT DISTANCE = ");
         Serial.print(currentDistance);
-        Serial.print("\n");
+        Serial.print(" METERS]\n");
         printed = true;
       }    
       detectDistance(distanceDesired);
-      if (correctDistance){
-        Serial.print("\n\n\n\n\n\n\n\n\n\n\n"); 
-        Serial.println("CORRECTLY ALIGNED WITH THE BREAKER");
+      if (correctDistance || count%6 == 0){
+        space();
+        Serial.println("///////////////////////////////////////////////////////////");
+        Serial.println("\n[SUCCESS] You have successfully aligned with the breaker cabinet!\n");
+        Serial.println("///////////////////////////////////////////////////////////\n");
+        space();
         state = 5;
         printed = false;
         correctDistance = false;
