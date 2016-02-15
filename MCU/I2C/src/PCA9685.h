@@ -1,7 +1,17 @@
+<<<<<<< HEAD
 /* 
     PCA9685 header file
 
 */
+
+/*
+ * PCA9685.h
+ *
+ *  Created on: Feb 14, 2016
+ *      Author: adwong16
+ */
+
+
 #ifndef PCA9685_H_
 #define PCA9685_H_
 
@@ -9,6 +19,7 @@
 
 #define LED_ON 0x10		//LED always on
 #define LED_OFF 0x10	//LED always off
+
 
 /*
        LO       HI      Register layout order
@@ -107,7 +118,5 @@
 
 #define LED15_ON_L  0x42
 #define LED15_ON_H  0x43
-#define LED15_OFF_L 0x44
-#define LED15_OFF_H 0x45
 
 #endif /* PCA9685_H_ */
