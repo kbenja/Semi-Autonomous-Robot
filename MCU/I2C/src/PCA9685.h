@@ -11,6 +11,8 @@
  *      Author: adwong16
  */
 
+#include "mcu_api.h"
+#include "mcu_errno.h"
 
 #ifndef PCA9685_H_
 #define PCA9685_H_
@@ -28,6 +30,42 @@
        
 */
 
+
+/*
+    Input:
+        reg:    The LO register number (numbering is LO, HI)
+        value:  A two-character string containing hex values to be written (in HI, LO order)
+    Output:
+        values written to register on PCA9685
+*/
+void pwm_write(int reg, char* value) {
+    int send;
+    send = i2c_write(PCA9685_ADDR, reg, value[1], 1);       //LO
+    send = i2c_write(PCA9685_ADDR, (reg + 1), value[0], 1); //HI
+}
+
+/*
+    Input:
+        reg:    The LO ON register number (numbering is LO, HI, and they are in ON, OFF order)
+        value:  A two-character string containing hex values to be written (in ON_HI, ON_LO, OFF_HI, OFF_LO order)
+*/
+void pwm_write_all(int reg, char* value) {
+    int send;
+    send = i2c_write(PCA9685_ADDR, reg, value[1], 1);       //ON_LO
+    send = i2c_write(PCA9685_ADDR, (reg + 1), value[0], 1); //ON_HI
+    send = i2c_write(PCA9685_ADDR, (reg + 2), value[3], 1); //OFF_LO
+    send = i2c_write(PCA9685_ADDR, (reg + 3), value[2], 1); //OFF_HI
+}
+
+/*
+    Input: 
+        none
+    Output:
+        zero values written to all PWM registers (i.e. all stop)
+*/
+void stop_all() {
+    ;
+}
 
 //register numbers
 #define LED0_ON     0x06
