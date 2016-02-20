@@ -74,6 +74,12 @@ void stop_all() {
 */
 
 //register numbers
+
+#define LED_ON_L	0xFA
+#define LED_ON_H	0xFB
+#define LED_OFF_L	0xFC
+#define LED_OFF_H	0xFD
+
 #define LED0_ON     0x06
 #define LED0_OFF    0x08
 #define LED0_ON_L   0x06

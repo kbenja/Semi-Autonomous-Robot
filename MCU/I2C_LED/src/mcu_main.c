@@ -1,7 +1,9 @@
 #include "mcu_api.h"
 #include "mcu_errno.h"
-#include "PCA9685.h"
 
+
+#define PCA9685_ADDR	0x40
+#define LED_ON_H		0xFB
 
 
 //00100000
@@ -25,8 +27,8 @@ void mcu_main()
      while(1)
     {
     	toggle_LEDs(1);
-    	sleep(2);
+    	mcu_sleep(100);
     	toggle_LEDs(0);
-    	sleep(2);
+    	mcu_sleep(100);
     }
 }
