@@ -5,6 +5,16 @@
 */
 
 
+void mcu_main() {
+	uart_setup(2,115200);
+	while(1) {
+		uart_write(2, (unsigned char*)"hello mcu\r\n", 11);
+		mcu_sleep(300);
+	}
+}
+
+
+/*
 void mcu_main()
 {
 	int confirm = 0;
@@ -19,7 +29,7 @@ void mcu_main()
     	mcu_sleep(100);
     }
 }
-
+*/
 
 /*
 

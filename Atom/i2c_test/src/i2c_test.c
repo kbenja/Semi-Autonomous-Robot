@@ -51,7 +51,7 @@
 int main()
 {
 	mraa_init();	//initialize mraa
-	mraa_i2c_context i2c = mraa_i2c_init(1);	//initialize I2C-1
+	mraa_i2c_context i2c = mraa_i2c_init(6);	//initialize I2C-6
 
 	mraa_i2c_address(i2c, BOARD_ADDR);	//destination is board 0x40
 

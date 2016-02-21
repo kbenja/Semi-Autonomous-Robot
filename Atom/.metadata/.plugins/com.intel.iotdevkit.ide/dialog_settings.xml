@@ -2,5 +2,5 @@
 <section name="Workbench">
 	<item value="1" key="com.intel.iotdevkit.ide.CreateDebugLaunchConfigKey"/>
 	<item value="Edison" key="com.intel.iotdevkit.ide.SSHConnectionNameKey"/>
-	<item value="155.41.122.172" key="com.intel.iotdevkit.ide.SSHIPAddressKey"/>
+	<item value="155.41.81.245" key="com.intel.iotdevkit.ide.SSHIPAddressKey"/>
 </section>
