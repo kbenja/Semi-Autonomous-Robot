@@ -1,27 +1,31 @@
-14:10:33 **** Build of configuration Release for project LEDTest ****
+23:54:26 **** Build of configuration Release for project deliverable_test ****
 make pre-build main-build 
 Clean project before build
 make clean
-make[1]: Entering directory '/cygdrive/v/Edison/Github/Semi-Autonomous-Robot/MCU/LEDTest/Release'
-rm -rf  ./src/mcu_main.o  ./src/mcu_main.d  libLEDTest.a
+make[1]: Entering directory '/cygdrive/v/Edison/Github/Semi-Autonomous-Robot/MCU/deliverable_test/Release'
+rm -rf  ./src/mcu_main.o  ./src/mcu_main.d  libdeliverable_test.a
  
-make[1]: Leaving directory '/cygdrive/v/Edison/Github/Semi-Autonomous-Robot/MCU/LEDTest/Release'
+make[1]: Leaving directory '/cygdrive/v/Edison/Github/Semi-Autonomous-Robot/MCU/deliverable_test/Release'
  
 Building file: ../src/mcu_main.c
 Invoking: Cross GCC Compiler
 i686-elf-gcc -I"../include" -I"V:\Edison\MCU/toolchain/cygwin64/i686-elf-gcc/i686-elf/include" -I"V:\Edison\MCU/toolchain/cygwin64/i686-elf-gcc/i686-elf/usr/include" -I"V:\Edison\MCU/toolchain/cygwin64/i686-elf-gcc/lib/gcc/i686-elf/4.6.1/include" -I"V:\Edison\MCU/toolchain/cygwin64/i686-elf-gcc/lib/gcc/i686-elf/4.6.1/include-fixed" -O0 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/mcu_main.d" -MT"src/mcu_main.d" -o "src/mcu_main.o" "../src/mcu_main.c"
 Finished building: ../src/mcu_main.c
  
-Building target: libLEDTest.a
+Building target: libdeliverable_test.a
 Invoking: Cross GCC Archiver
-i686-elf-ar -r  "libLEDTest.a"  ./src/mcu_main.o   
-i686-elf-ar: creating libLEDTest.a
-Finished building target: libLEDTest.a
+i686-elf-ar -r  "libdeliverable_test.a"  ./src/mcu_main.o   
+i686-elf-ar: creating libdeliverable_test.a
+Finished building target: libdeliverable_test.a
  
 /usr/bin/make --no-print-directory post-build
 Generate binary
-../internal_tools/generate_mcu_bin.sh  libLEDTest.a
-../internal_tools/generate_mcu_bin.sh: line 15: syntax error near unexpected token `$'{\r''
-make[1]: [post-build] Error 2 (ignored)
-makefile:51: recipe for target 'post-build' failed
+../internal_tools/generate_mcu_bin.sh  libdeliverable_test.a
+728+0 records in
+728+0 records out
+728 bytes (728 B) copied, 0.00347886 s, 209 kB/s
+4+0 records in
+4+0 records out
+4 bytes (4 B) copied, 0.000395302 s, 10.1 kB/s
+Create intel_mcu.bin
  

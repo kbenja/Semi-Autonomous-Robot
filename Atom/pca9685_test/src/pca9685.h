@@ -28,7 +28,7 @@
 #include <mraa/gpio.h>
 
 #define PCA9685_I2C_BUS 0
-#define PCA9685_DEFAULT_I2C_ADDR 0x60
+#define PCA9685_DEFAULT_I2C_ADDR 0x40
 // internal oscillator frequency
 #define PCA9685_INTERNAL_OSC  25000000.0
 

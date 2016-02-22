@@ -83,3 +83,38 @@ i586-poky-linux-g++ "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-pok
 i586-poky-linux-g++ "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/upm" "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\pca9685.o" "..\\src\\pca9685.cxx" 
 i586-poky-linux-g++ "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o pca9685_test "src\\pca9685_test.o" "src\\pca9685.o" 
 Info: Nothing to build for pca9685_test
+21:32:19 **** Incremental Build of configuration Debug for project pca9685_test ****
+Info: Internal Builder is used for build
+i586-poky-linux-g++ "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/upm" "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\pca9685.o" "..\\src\\pca9685.cxx" 
+i586-poky-linux-g++ "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/upm" "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\pca9685_test.o" "..\\src\\pca9685_test.cpp" 
+i586-poky-linux-g++ "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o pca9685_test "src\\pca9685_test.o" "src\\pca9685.o" 
+Info: Nothing to build for pca9685_test
+Info: Nothing to build for pca9685_test
+21:41:27 **** Incremental Build of configuration Debug for project pca9685_test ****
+Info: Internal Builder is used for build
+i586-poky-linux-g++ "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/upm" "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\pca9685_test.o" "..\\src\\pca9685_test.cpp" 
+i586-poky-linux-g++ "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o pca9685_test "src\\pca9685_test.o" "src\\pca9685.o" 
+21:48:04 **** Incremental Build of configuration Debug for project pca9685_test ****
+Info: Internal Builder is used for build
+i586-poky-linux-g++ "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/upm" "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\pca9685_test.o" "..\\src\\pca9685_test.cpp" 
+i586-poky-linux-g++ "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o pca9685_test "src\\pca9685_test.o" "src\\pca9685.o" 
+21:50:21 **** Incremental Build of configuration Debug for project pca9685_test ****
+Info: Internal Builder is used for build
+i586-poky-linux-g++ "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/upm" "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\pca9685_test.o" "..\\src\\pca9685_test.cpp" 
+i586-poky-linux-g++ "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o pca9685_test "src\\pca9685_test.o" "src\\pca9685.o" 
+21:50:38 **** Incremental Build of configuration Debug for project pca9685_test ****
+Info: Internal Builder is used for build
+i586-poky-linux-g++ "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/upm" "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\pca9685_test.o" "..\\src\\pca9685_test.cpp" 
+i586-poky-linux-g++ "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o pca9685_test "src\\pca9685_test.o" "src\\pca9685.o" 
+22:13:44 **** Incremental Build of configuration Debug for project pca9685_test ****
+Info: Internal Builder is used for build
+i586-poky-linux-g++ "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/upm" "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\pca9685_test.o" "..\\src\\pca9685_test.cpp" 
+i586-poky-linux-g++ "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o pca9685_test "src\\pca9685_test.o" "src\\pca9685.o" 
+Info: Nothing to build for pca9685_test
+22:15:50 **** Incremental Build of configuration Debug for project pca9685_test ****
+Info: Internal Builder is used for build
+i586-poky-linux-g++ "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/upm" "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\pca9685.o" "..\\src\\pca9685.cxx" 
+i586-poky-linux-g++ "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/upm" "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\pca9685_test.o" "..\\src\\pca9685_test.cpp" 
+i586-poky-linux-g++ "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o pca9685_test "src\\pca9685_test.o" "src\\pca9685.o" 
+Info: Nothing to build for pca9685_test
+Info: Nothing to build for pca9685_test
