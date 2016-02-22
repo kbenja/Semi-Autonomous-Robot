@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* 
     PCA9685 header file
 
@@ -11,15 +10,18 @@
  *      Author: adwong16
  */
 
+#include "mcu_api.h"
+#include "mcu_errno.h"
 
 #ifndef PCA9685_H_
 #define PCA9685_H_
 
 #define PCA9685_ADDR 0x40	//I2C address
 
-#define LED_ON 0x10		//LED always on
-#define LED_OFF 0x10	//LED always off
+//
 
+
+unsigned char led_on = '\x10';
 
 /*
        LO       HI      Register layout order
@@ -29,7 +31,55 @@
 */
 
 
+/*
+    Input:
+        reg:    The LO register number (numbering is LO, HI)
+        value:  A two-character string containing hex values to be written (in HI, LO order)
+    Output:
+        values written to register on PCA9685
+*/
+/*
+void pwm_write(int reg, char* value) {
+    int send;
+    send = i2c_write(PCA9685_ADDR, reg, value[1], 1);       //LO
+    send = i2c_write(PCA9685_ADDR, (reg + 1), value[0], 1); //HI
+}
+*/
+/*
+    Input:
+        reg:    The LO ON register number (numbering is LO, HI, and they are in ON, OFF order)
+        value:  A two-character string containing hex values to be written (in ON_HI, ON_LO, OFF_HI, OFF_LO order)
+*/
+
+/*
+void pwm_write_all(int reg, char* value) {
+    int send;
+    send = i2c_write(PCA9685_ADDR, reg, value[1], 1);       //ON_LO
+    send = i2c_write(PCA9685_ADDR, (reg + 1), value[0], 1); //ON_HI
+    send = i2c_write(PCA9685_ADDR, (reg + 2), value[3], 1); //OFF_LO
+    send = i2c_write(PCA9685_ADDR, (reg + 3), value[2], 1); //OFF_HI
+}
+*/
+
+/*
+    Input: 
+        none
+    Output:
+        zero values written to all PWM registers (i.e. all stop)
+*/
+/*
+void stop_all() {
+    ;
+}
+*/
+
 //register numbers
+
+#define LED_ON_L	0xFA
+#define LED_ON_H	0xFB
+#define LED_OFF_L	0xFC
+#define LED_OFF_H	0xFD
+
 #define LED0_ON     0x06
 #define LED0_OFF    0x08
 #define LED0_ON_L   0x06
@@ -57,7 +107,6 @@
 #define LED3_ON_H   0x13
 #define LED3_OFF_L  0x14
 #define LED3_OFF_H  0x15
-
 
 #define LED4_ON_L   0x16
 #define LED4_ON_H   0x17
@@ -118,5 +167,6 @@
 
 #define LED15_ON_L  0x42
 #define LED15_ON_H  0x43
-
+#define LED15_OFF_L 0x44
+#define LED15_OFF_H 0x45
 #endif /* PCA9685_H_ */

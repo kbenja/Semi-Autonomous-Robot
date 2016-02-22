@@ -1,0 +1,7 @@
+13:31:28 **** Incremental Build of configuration Debug for project i2c_test ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c_test.o" "..\\src\\i2c_test.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c_test "src\\i2c_test.o" 
+
+13:31:29 Build Finished (took 206ms)
+

@@ -1,0 +1,30 @@
+14:10:33 **** Build of configuration Release for project LEDTest ****
+make pre-build main-build 
+Clean project before build
+make clean
+make[1]: Entering directory '/cygdrive/v/Edison/Github/Semi-Autonomous-Robot/MCU/LEDTest/Release'
+rm -rf  ./src/mcu_main.o  ./src/mcu_main.d  libLEDTest.a
+ 
+make[1]: Leaving directory '/cygdrive/v/Edison/Github/Semi-Autonomous-Robot/MCU/LEDTest/Release'
+ 
+Building file: ../src/mcu_main.c
+Invoking: Cross GCC Compiler
+i686-elf-gcc -I"../include" -I"V:\Edison\MCU/toolchain/cygwin64/i686-elf-gcc/i686-elf/include" -I"V:\Edison\MCU/toolchain/cygwin64/i686-elf-gcc/i686-elf/usr/include" -I"V:\Edison\MCU/toolchain/cygwin64/i686-elf-gcc/lib/gcc/i686-elf/4.6.1/include" -I"V:\Edison\MCU/toolchain/cygwin64/i686-elf-gcc/lib/gcc/i686-elf/4.6.1/include-fixed" -O0 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/mcu_main.d" -MT"src/mcu_main.d" -o "src/mcu_main.o" "../src/mcu_main.c"
+Finished building: ../src/mcu_main.c
+ 
+Building target: libLEDTest.a
+Invoking: Cross GCC Archiver
+i686-elf-ar -r  "libLEDTest.a"  ./src/mcu_main.o   
+i686-elf-ar: creating libLEDTest.a
+Finished building target: libLEDTest.a
+ 
+/usr/bin/make --no-print-directory post-build
+Generate binary
+../internal_tools/generate_mcu_bin.sh  libLEDTest.a
+../internal_tools/generate_mcu_bin.sh: line 15: syntax error near unexpected token `$'{\r''
+make[1]: [post-build] Error 2 (ignored)
+makefile:51: recipe for target 'post-build' failed
+ 
+
+14:10:34 Build Finished (took 1s.76ms)
+
