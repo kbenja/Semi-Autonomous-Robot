@@ -52,6 +52,29 @@ void mcu_main()
             if(left == 0) {
                 gpio_write(48, 0);
             }
+
+
+            //Alternate method, may be faster
+            /*
+            int direction;
+            switch (direction) {
+            case(1) :
+                gpio_write(49, 1);
+                break;
+            case(2) :
+                gpio_write(13, 1);
+                break;
+            case(3) :
+                gpio_write(182, 1);
+                break;
+            case(4) :
+                gpio_write(48, 1);
+                break;
+            }
+            */
+             
+            
+
         }
     }
 }
