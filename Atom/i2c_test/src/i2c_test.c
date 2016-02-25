@@ -11,7 +11,7 @@
 #define ALL_LED_ON_H    ((const uint8_t)0xFB)   //all on high
 #define ALL_ON_BYTE     ((const uint8_t)0x10)   //== 0001_0000
 #define ZERO            ((const uint8_t)0x00)   //zero
-#define ALL_ON_WORD     ((const uint16_6)0x0010)
+#define ALL_ON_WORD     ((const uint16_t)0x0010)
 
 int main()
 {    
@@ -35,7 +35,7 @@ int main()
     mraa_i2c_write_word_data(i2c, ALL_ON_WORD, ALL_LED_ON_L);   //i2c object, 16b data, register
 
     //address + variable-length data (2 bytes = register + data)
-    unit8_t buf[2];
+    uint8_t buf[2];
     buf[0] = ALL_LED_ON_H;  //register  0xFB
     buf[1] = ALL_ON_BYTE;   //value     0x10
     mraa_i2c_write(i2c, buf, 2);    //i2c object, data buffer, buffer length
