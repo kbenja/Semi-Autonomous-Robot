@@ -447,3 +447,30 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64
 
 !ENTRY org.eclipse.core.resources 2 10035 2016-02-22 23:26:26.656
 !MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+!SESSION 2016-02-29 01:28:43.584 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.8.0_73
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY org.eclipse.core.resources 2 10035 2016-02-29 01:28:47.469
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY org.eclipse.cdt.core 1 0 2016-02-29 02:40:37.483
+!MESSAGE Indexed 'i2c6_pca9685' (1 sources, 68 headers) in 0.622 sec: 2,676 declarations; 3,456 references; 0 unresolved inclusions; 0 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2016-02-29 02:40:38.704
+!MESSAGE Indexed 'i2c6_pca9685' (1 sources, 68 headers) in 0.242 sec: 2,676 declarations; 3,456 references; 0 unresolved inclusions; 0 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2016-02-29 02:41:35.855
+!MESSAGE Indexed 'pca9685_test' (2 sources, 163 headers) in 2.37 sec: 12,261 declarations; 20,342 references; 0 unresolved inclusions; 0 syntax errors; 2 unresolved names (0.0061%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2016-02-29 02:41:36.146
+!MESSAGE Indexed 'Second_Testing' (1 sources, 89 headers) in 0.28 sec: 4,136 declarations; 7,344 references; 0 unresolved inclusions; 0 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2016-02-29 02:44:24.621
+!MESSAGE Indexed 'i2c_test' (1 sources, 68 headers) in 0.15 sec: 2,676 declarations; 3,445 references; 0 unresolved inclusions; 0 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.rse.core 1 0 2016-02-29 03:03:11.531
+!MESSAGE Saved passwords are not available for migration to secure storage. Deprecated authorization classes (org.eclipse.core.runtime.compatibility.auth) are not installed.

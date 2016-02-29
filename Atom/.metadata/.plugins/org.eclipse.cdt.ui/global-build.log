@@ -118,3 +118,73 @@ i586-poky-linux-g++ "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-pok
 i586-poky-linux-g++ "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o pca9685_test "src\\pca9685_test.o" "src\\pca9685.o" 
 Info: Nothing to build for pca9685_test
 Info: Nothing to build for pca9685_test
+02:40:36 **** Rebuild of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+03:04:30 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+..\src\i2c6_pca9685.c: In function 'main':
+..\src\i2c6_pca9685.c:47:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+Info: Nothing to build for i2c6_pca9685
+03:05:11 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+..\src\i2c6_pca9685.c: In function 'main':
+..\src\i2c6_pca9685.c:47:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+Info: Nothing to build for i2c6_pca9685
+03:27:05 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+..\src\i2c6_pca9685.c: In function 'main':
+..\src\i2c6_pca9685.c:47:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+03:28:14 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+..\src\i2c6_pca9685.c: In function 'main':
+..\src\i2c6_pca9685.c:49:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+03:35:47 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+..\src\i2c6_pca9685.c: In function 'main':
+..\src\i2c6_pca9685.c:50:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+03:38:47 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+..\src\i2c6_pca9685.c: In function 'main':
+..\src\i2c6_pca9685.c:55:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+03:39:25 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+..\src\i2c6_pca9685.c: In function 'main':
+..\src\i2c6_pca9685.c:67:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+03:40:38 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+..\src\i2c6_pca9685.c: In function 'main':
+..\src\i2c6_pca9685.c:71:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
