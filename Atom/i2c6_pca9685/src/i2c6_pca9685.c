@@ -19,53 +19,52 @@
 	6	EXTCLK		1 = enable external clock
 	5	AI			1 = enable auto-increment
 	4	SLEEP		1 = sleep chip (oscillator off)
+	|	 |
 	3	SUB1
 	2	SUB2
 	1	SUB3		Sub addresses (IGNORE)
 	0	ALLCALL		Response to all-call I2C address (IGNORE)
  */
 
+/*
+	STARTUP BEHAVIOR:
+	MODE1: SLEEP + ALLCALL (0001_0001)
+	MODE2: OPEN DRAIN
+
+
+	Step 1: MODE1<-0x10 (0001_0000)		//disable all call, but keep asleep
+	Step 2: MODE1<-0xA0	(1010_0000)		//enable restart, and enable auto-increment
+
+ */
 int main()
 {
-	//system("sh ~/init_i2c6.sh");	//init i2c-6 bus
-	//mraa_init();					//init mraa
+	mraa_i2c_context i2c;
+	i2c = mraa_i2c_init(6);
+	mraa_i2c_address(i2c, BOARD_ADDR);
+	mraa_result_t result = MRAA_SUCCESS;
 
-	system("echo hello\n");
-
-	mraa_result_t success;
-
-	//initialize I2C in program
-	mraa_i2c_context i2c = mraa_i2c_init(6);	//initialize I2C-6
-	success = mraa_i2c_address(i2c, BOARD_ADDR);			//destination is address 0x40
-	if (success != 0) {
-		system("echo error\n");
-		return(1);
+	/*
+	printf("I2C write test\n");
+	result = mraa_i2c_write_byte_data(i2c, 0x10, 0x07);
+	if (result != MRAA_SUCCESS) {
+		printf("    ERROR! Error code %d \n",result);
+		return result;
 	}
-	//restart device (sleep, set mode and restart, wake)
+	*/
 
-	success = mraa_i2c_write_byte_data(i2c,((uint8_t)0x10), MODE1);	//0001_0000
-	if (success != 0) {
-		system("echo error\n");
-		return(1);
-	}
-	success = mraa_i2c_write_byte_data(i2c,((uint8_t)0x30), MODE1);	//0011_0000
-	if (success != 0) {
-		system("echo error\n");
-		return(1);
-	}
-	success = mraa_i2c_write_byte_data(i2c,((uint8_t)0x80), MODE1);	//1000_0000
-	if (success != 0) {
-		system("echo error\n");
-		return(1);
+	printf("I2C read test\n");
+	uint8_t data = mraa_i2c_read_byte_data(i2c, 4);
+	printf("Register = %d \n", data);
+
+	//LED blink
+	while(1) {
+		mraa_i2c_write_byte_data(i2c, ALL_ON_BYTE, ALL_LED_ON_H);
+		sleep(1);
+		mraa_i2c_write_byte_data(i2c, ZERO, ALL_LED_ON_H);
+		sleep(1);
 	}
 
-	//set frequency --> PRE_SCALE register
-	//Ignore for now; worry when motors are used
 
-	success = mraa_i2c_write_byte_data(i2c, ALL_ON_BYTE, ALL_LED_ON_H);
-	if (success != 0) {
-		system("echo error\n");
-		return(1);
-	}
+	return MRAA_SUCCESS;
 
 }
