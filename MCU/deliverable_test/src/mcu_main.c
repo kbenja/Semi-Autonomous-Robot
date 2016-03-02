@@ -2,7 +2,6 @@
 #include "mcu_errno.h"
 #include <string.h>
 /*
-* This program will blink GPIO 48, which connects to Edison Arduino board DIG 7
 */
 
 //convert Arduino ports to Intel MCU ports
