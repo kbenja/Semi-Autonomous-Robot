@@ -61,7 +61,7 @@ print_command_error()
 void
 print_bus(mraa_board_t* board)
 {
-    uint8_t i
+    uint8_t i;
     int bus;
     for (i = 0; i < board->i2c_bus_count; ++i) {
         const char* busType;
@@ -156,7 +156,7 @@ i2c_set_exit:
 void
 i2c_detect_devices(int bus)
 {
-    mraa_result_t status = MRAA_SUCCESS;
+    // mraa_result_t status = MRAA_SUCCESS;
     mraa_i2c_context i2c = mraa_i2c_init(bus);
     if (i2c == NULL) {
         return;
@@ -255,7 +255,7 @@ run_interactive_mode()
         int i, argc = 1;
         char* argv[32];
         char* arg;
-        argv[0] = "mraa-i2c";
+        // argv[0] = "mraa-i2c";
         fprintf(stdout, "Command: ");
         fgets(command, 80, stdin);
         command[strlen(command) - 1] = 0;
@@ -263,7 +263,7 @@ run_interactive_mode()
             return;
         char* str = strtok(command, " ");
         while (str != NULL) {
-            arg = malloc(strlen(str) + 1);
+            arg = (char*)malloc(strlen(str) + 1);
             argv[argc++] = strcpy(arg, str);
             str = strtok(NULL, " ");
         }

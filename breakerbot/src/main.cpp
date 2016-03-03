@@ -1,6 +1,5 @@
 #include <iostream>
 #include "../include/communication.h"
-#include "../include/i2c.h"
 
 int main(){
     std::cout << "Hello this is breakerbot" << std::endl;
