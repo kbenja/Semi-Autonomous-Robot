@@ -1,0 +1,74 @@
+body {
+  font-size: 16px; }
+
+* {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
+.wrapper {
+  text-align: center;
+  margin: 5px auto; }
+  .wrapper .video-container {
+    margin: 0 auto;
+    width: 49%;
+    min-width: 640px;
+    position: relative; }
+    .wrapper .video-container .watermark {
+      position: absolute;
+      top: 20px;
+      right: 20px; }
+      .wrapper .video-container .watermark img {
+        width: 100px;
+        height: auto;
+        opacity: 0.5; }
+    .wrapper .video-container #canvas-video {
+      border: 2px #aaaaaa solid;
+      background-color: #dddddd;
+      width: 100%;
+      height: auto; }
+  .wrapper .control-container {
+    position: relative;
+    width: 49; }
+    .wrapper .control-container .connect {
+      position: absolute;
+      margin: 0 auto;
+      width: 100%;
+      margin-top: 54px; }
+    .wrapper .control-container .controls {
+      width: 100%;
+      margin: 5px auto;
+      opacity: 0.2;
+      -webkit-transition: opacity 500ms ease-out;
+      -moz-transition: opacity 500ms ease-out;
+      -o-transition: opacity 500ms ease-out;
+      transition: opacity 500ms ease-out; }
+      .wrapper .control-container .controls .joystick {
+        position: relative;
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        margin: 10px;
+        margin-left: 30px;
+        background: #aaaaaa;
+        border-radius: 100%; }
+        .wrapper .control-container .controls .joystick .pos {
+          position: absolute;
+          margin-left: 25px;
+          margin-top: 25px;
+          width: 50px;
+          height: 50px;
+          background: #333333;
+          border-radius: 100%; }
+      .wrapper .control-container .controls .cartesian {
+        vertical-align: top;
+        display: inline-block;
+        padding: 0 20px; }
+        .wrapper .control-container .controls .cartesian .command {
+          height: 30px;
+          width: 60px;
+          line-height: 30px;
+          margin: 3px auto;
+          background-color: #aaaaaa; }
+          .wrapper .control-container .controls .cartesian .command.left, .wrapper .control-container .controls .cartesian .command.right, .wrapper .control-container .controls .cartesian .command.x_button, .wrapper .control-container .controls .cartesian .command.b_button {
+            display: inline-block; }

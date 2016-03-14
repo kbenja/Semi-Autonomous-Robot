@@ -1,2 +1,3 @@
 /breakerbot/**/*.o
 /breakerbot/bin/*
+webserver/node_modules/
