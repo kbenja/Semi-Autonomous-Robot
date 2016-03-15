@@ -1,0 +1,11 @@
+01:18:15 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+..\src\i2c6_pca9685.c: In function 'main':
+..\src\i2c6_pca9685.c:44:16: warning: unused variable 'result' [-Wunused-variable]
+  mraa_result_t result = MRAA_SUCCESS;
+                ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+
+01:18:15 Build Finished (took 211ms)
+

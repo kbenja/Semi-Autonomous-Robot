@@ -1,0 +1,53 @@
+#include "mraa.h"
+#include <stdio.h>
+#include <unistd.h>
+
+#define BOARD_ADDR 0x40	//board default address = 0x40 = 0100_0000
+
+#define ALL_LED_ON_L    ((uint8_t)0xFA)   	//all on low
+#define ALL_LED_ON_H    ((uint8_t)0xFB)   	//all on high
+#define ALL_ON_BYTE     ((uint8_t)0x10)   	//== 0001_0000
+#define ZERO            ((uint8_t)0x00)   	//zero
+#define ALL_ON_WORD     ((uint16_t)0x0010)
+
+#define MODE1	((uint8_t)0x00)		//SLP, RST, AUTO_INC, EXT_CLK, ADDR
+#define MODE2	((uint8_t)0x01)		//INV, OUT_CND, DRV_T
+#define PRE_SCALE ((uint8_t)0xFE)	//PWM frequency scale
+/*
+	Mode 1:
+	7	RESTART		1 = restart chip, 0 = nothing
+	6	EXTCLK		1 = enable external clock
+	5	AI			1 = enable auto-increment
+	4	SLEEP		1 = sleep chip (oscillator off)
+	|	 |
+	3	SUB1
+	2	SUB2
+	1	SUB3		Sub addresses (IGNORE)
+	0	ALLCALL		Response to all-call I2C address (IGNORE)
+ */
+
+int main()
+{
+	mraa_i2c_context i2c;
+	i2c = mraa_i2c_init(6);
+	mraa_i2c_address(i2c, 0x08);
+	//mraa_result_t result = MRAA_SUCCESS;
+
+	/*
+	printf("I2C write test\n");
+	result = mraa_i2c_write_byte_data(i2c, 255, 8);
+	if (result != MRAA_SUCCESS) {
+		printf("    ERROR! Error code %d \n",result);
+		return result;
+	}
+*/
+	printf("I2C read test\n");
+	uint8_t data = mraa_i2c_read_byte_data(i2c, 0xFE);
+	printf("Register = %d \n", data);
+
+
+
+
+	return MRAA_SUCCESS;
+
+}

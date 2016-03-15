@@ -1,0 +1,106 @@
+20:48:05 **** Rebuild of configuration Debug for project mraa_i2c ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\mraa_i2c.o" "..\\src\\mraa_i2c.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o mraa_i2c "src\\mraa_i2c.o" 
+20:59:07 **** Incremental Build of configuration Debug for project mraa_i2c ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c.o" "..\\src\\i2c.c" 
+..\src\i2c.c: In function 'i2c_detect_devices':
+..\src\i2c.c:150:19: warning: unused variable 'status' [-Wunused-variable]
+     mraa_result_t status = MRAA_SUCCESS;
+                   ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o mraa_i2c "src\\i2c.o" "src\\mraa_i2c.o" 
+src\mraa_i2c.o: In function `main':
+V:\Edison\Github\Semi-Autonomous-Robot\Atom\mraa_i2c\Debug/..\src/mraa_i2c.c:43: multiple definition of `main'
+src\i2c.o:V:\Edison\Github\Semi-Autonomous-Robot\Atom\mraa_i2c\Debug/..\src/i2c.c:266: first defined here
+collect2.exe: error: ld returned 1 exit status
+20:59:18 **** Rebuild of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+Info: Nothing to build for i2c6_pca9685
+22:26:44 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+22:27:42 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+22:29:15 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+22:30:12 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+..\src\i2c6_pca9685.c: In function 'main':
+..\src\i2c6_pca9685.c:34:16: warning: unused variable 'result' [-Wunused-variable]
+  mraa_result_t result = MRAA_SUCCESS;
+                ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+22:31:10 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+..\src\i2c6_pca9685.c: In function 'main':
+..\src\i2c6_pca9685.c:34:16: warning: unused variable 'result' [-Wunused-variable]
+  mraa_result_t result = MRAA_SUCCESS;
+                ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+22:31:26 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+Info: Nothing to build for i2c6_pca9685
+22:34:18 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+22:34:43 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+22:38:59 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+Info: Nothing to build for i2c6_pca9685
+Info: Nothing to build for i2c6_pca9685
+Info: Nothing to build for i2c6_pca9685
+00:31:00 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+00:55:35 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+00:56:12 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+00:56:25 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+00:57:18 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+01:14:20 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+Info: Nothing to build for i2c6_pca9685
+01:14:58 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 
+01:18:15 **** Incremental Build of configuration Debug for project i2c6_pca9685 ****
+Info: Internal Builder is used for build
+i586-poky-linux-gcc "-IV:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux/usr/include/mraa" -O0 -g3 -Wall -c -fmessage-length=0 "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -m32 -march=i586 -c -ffunction-sections -fdata-sections -o "src\\i2c6_pca9685.o" "..\\src\\i2c6_pca9685.c" 
+..\src\i2c6_pca9685.c: In function 'main':
+..\src\i2c6_pca9685.c:44:16: warning: unused variable 'result' [-Wunused-variable]
+  mraa_result_t result = MRAA_SUCCESS;
+                ^
+i586-poky-linux-gcc "--sysroot=V:\\Edison\\iotdk-ide-win\\devkit-x86\\sysroots\\i586-poky-linux" -lmraa -o i2c6_pca9685 "src\\i2c6_pca9685.o" 

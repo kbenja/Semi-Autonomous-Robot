@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="1" key="com.intel.iotdevkit.ide.CreateDebugLaunchConfigKey"/>
+	<item value="Edison" key="com.intel.iotdevkit.ide.SSHConnectionNameKey"/>
+	<item value="155.41.70.46" key="com.intel.iotdevkit.ide.SSHIPAddressKey"/>
+</section>
