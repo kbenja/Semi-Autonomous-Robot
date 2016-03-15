@@ -3,7 +3,7 @@
 *   SET THIS FLAG TO TRUE IF RUNNING THIS ON EDISON
 *
 */
-var development = true;
+var development = false;
 
 var express = require("express");
 var app = express();
@@ -62,26 +62,25 @@ var wsServer = new(ws.Server)({
 
 console.log('WebSocket server listening on port ' + configServer.wsPort);
 
-// var commands = [];
-// var process_executing = false;
-// function execute_next_item_in_queue () {
-//     if (!process_executing && commands.length){
-//         process_executing = true;
-//         childProcess.exec('echo ' + commands[0] + ' > /dev/ttymcu0', function() {
-//             commands.splice(0,1);
-//             process_executing = false;
-//             execute_next_item_in_queue();
-//         });
-//     }
-// };
+var commands = [];
+var process_executing = false;
+function execute_next_item_in_queue () {
+    if (!process_executing && commands.length){
+        process_executing = true;
+        childProcess.exec('echo ' + commands[0] + ' > /dev/ttymcu0', function() {
+            commands.splice(0,1);
+            process_executing = false;
+            execute_next_item_in_queue();
+        });
+    }
+};
 
 wsServer.on('connection', function(socket) {
     socket.on("message", function(code) {
         if(!development){
             console.log(code);
-            // commands.push(code);
-            // execute_next_item_in_queue(code);
-            // childProcess.exec('echo ' + commands[0] + ' > /dev/ttymcu0');
+            commands.push(code);
+            execute_next_item_in_queue(code);
         }
     })
     var streamHeader = new Buffer(8);

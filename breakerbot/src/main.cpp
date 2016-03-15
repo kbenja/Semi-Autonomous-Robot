@@ -5,9 +5,10 @@ int main(){
     std::cout << "Hello this is breakerbot" << std::endl;
 
     Communication input;
-    std::string instruction = input.getInstruction();
-
-    std::cout << "instruction: " << instruction << std::endl;
+    while(1){
+        std::string instruction = input.getInstruction();
+        std::cout << "instruction: " << instruction << std::endl;
+    }
 
     return 0;
 }
