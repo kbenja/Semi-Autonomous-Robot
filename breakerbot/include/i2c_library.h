@@ -1,4 +1,5 @@
 #include "mraa.h"
+#include "stdint.h"
 #ifndef I2C_LIBRARY
 #define I2C_LIBRARY
 
@@ -73,6 +74,7 @@
 #define ALL_ON      0x10
 #define ALL_OFF     0x10
 
+#define ENABLE      0x10
 
 /* Double Register variable for PCA9685. Assignable as:
     Two uint8_t values in HI-LO order
@@ -103,13 +105,14 @@ mraa_result_t init_board(mraa_i2c_context i2c_context) {
 mraa_result_t send_multiple(mraa_i2c_context i2c_context, double_reg start, double_reg end, uint8_t motors) {
     uint8_t buf[5];
     buf[1] = start.u_eight[1];
-    buf[2] = (start.u_eight[0] & (~(uint8_t 0xE0)));    //force 3 MSB to 0
+    buf[2] = (start.u_eight[0] & (~((uint8_t) 0xE0)));    //force 3 MSB to 0
     buf[3] = end.u_eight[1];
-    buf[4] = (send.u_eight[0] & (~(uint8_t 0xE0)));
+    buf[4] = (end.u_eight[0] & (~((uint8_t) 0xE0))); //start or end?
     uint8_t i;
+    mraa_result_t result;
     for (i = 0; i < motors; i++) {   //write to first four, then next four
         buf[0] = 6 + (4*((uint8_t)motors + i));   //identify motor register address
-        mraa_result_t result = mraa_i2c_write(i2c_context, buf, 5);
+        result = mraa_i2c_write(i2c_context, buf, 5);
     }
     return result;
 }
@@ -120,11 +123,11 @@ mraa_result_t send_multiple(mraa_i2c_context i2c_context, double_reg start, doub
     double_reg end:                 duty cycle end time (0-4095)*/
 mraa_result_t send_all(mraa_i2c_context i2c_context, double_reg start, double_reg end) {
     uint8_t buf[5];
-    buf[0] = (uint8_t 0xFA);    //fixed start for ALL_PWM registers
+    buf[0] = ((uint8_t) 0xFA);    //fixed start for ALL_PWM registers
     buf[1] = start.u_eight[1];
-    buf[2] = (start.u_eight[0] & (~(uint8_t 0xE0)));    //force 3 MSB to 0
+    buf[2] = (start.u_eight[0] & (~((uint8_t) 0xE0)));    //force 3 MSB to 0
     buf[3] = end.u_eight[1];
-    buf[4] = (send.u_eight[0] & (~(uint8_t 0xE0)));
+    buf[4] = (end.u_eight[0] & (~((uint8_t) 0xE0)));
     mraa_result_t result = mraa_i2c_write(i2c_context, buf, 5);
     return result;
 }
