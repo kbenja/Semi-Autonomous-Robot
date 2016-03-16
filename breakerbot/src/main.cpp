@@ -1,6 +1,7 @@
 #include <iostream>
 #include "../include/communication.h"
 #include "../include/lidar_module.h"
+#include "../include/i2c_library.h"
 
 bool communication = false;
 bool lidar_module = true;
