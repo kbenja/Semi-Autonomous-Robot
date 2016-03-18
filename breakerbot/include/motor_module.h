@@ -33,10 +33,10 @@ public:
         @param float rate:                      decides the speed and direction of the wheel
         @return mraa_result_t                   should equal MRAA_SUCCESS if no errors
     */
-    mraa_result_t send_signal(mraa_i2c_context i2c_context, float rate) {
+    mraa_result_t send_signal(const mraa_i2c_context & i2c_context, union signal) {
 
         mraa_result_t result = MRAA_SUCCESS;
-        result = i2c_send_signal(i2c_context, end_reg, rate);
+        result = i2c_send_signal(i2c_context, end_reg, signal);
         if(result != MRAA_SUCCESS)
         {
             printf("Could not write to register 0x%02x\n", end_reg);
