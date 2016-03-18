@@ -1,5 +1,5 @@
 #include "mraa.h"
-#include "stdint.h"
+
 #ifndef I2C_LIBRARY
 #define I2C_LIBRARY
 
@@ -86,7 +86,42 @@ union double_reg {
     unsigned int u_int;
 };
 
+/**
+    Sends signal to single motor
 
+    @param mraa_i2c_context i2c_context:    initialized i2c context
+    @param uint8_t reg:                     which motor to send signal to
+    @param float rate:                      decides the speed and direction of the wheel
+    @return mraa_result_t                   should equal MRAA_SUCCESS if no errors
+*/
+mraa_result_t i2c_send_signal(mraa_i2c_context i2c_context, uint8_t reg, float rate) {
+    union double_reg signal;
+    if(rate > 0) // FORWARD (CCW) = 0x0777
+    {
+        signal.u_eight[0]= 0x0F; // high bits
+        signal.u_eight[1] = 0x00; // low bits
+    }
+    else if (rate < 0) // REVERSE (CW) = 0x0F00
+    {
+        signal.u_eight[0]= 0x0F;
+        signal.u_eight[1] = 0x00;
+    }
+    else // STOP = 0x0B00
+    {
+        signal.u_eight[0]= 0x0B;
+        signal.u_eight[1] = 0x00;
+    }
+
+    printf("Bits sent = 0x%04x\n", signal.u_sixteen);
+    printf("Register = 0x%02x\n", reg);
+    printf("Sending = 0x%02x to register 0x%02x\n", signal.u_eight[0], reg + 0x01);
+    printf("Sending = 0x%02x to register 0x%02x\n", signal.u_eight[1], reg);
+
+    mraa_result_t status = MRAA_SUCCESS;
+    status = mraa_i2c_write_byte_data(i2c_context, signal.u_eight[0], reg + 0x01);  // set high bit
+    status = mraa_i2c_write_byte_data(i2c_context, signal.u_eight[1], reg);         // set low bit
+    return status;
+}
 
 /* Initialize board. Call only once upon i2c_context creation. */
 mraa_result_t i2c_init_board(mraa_i2c_context i2c_context) {
@@ -132,27 +167,6 @@ mraa_result_t i2c_send_all(mraa_i2c_context i2c_context, double_reg start, doubl
     return result;
 }
 
-/* Send a PWM signal to one motor
-    mraa_i2c_context i2c_context:   initialized i2c context
-    uint8_t reg:                    which motor to send signal to
-    double_reg end:                 duty cycle end time (0-4095)*/
-mraa_result_t i2c_send_signal(mraa_i2c_context i2c_context, uint8_t reg, double_reg end) {
-
-    mraa_result_t status = MRAA_SUCCESS;
-
-    printf("Bits reversed = 0x%04x\n", end.u_sixteen);
-    printf("Register = 0x%02x\n", reg);
-    printf("Sending = 0x%02x to register 0x%02x\n", end.u_eight[0], reg + 0x01);
-    printf("Sending = 0x%02x to register 0x%02x\n", end.u_eight[1], reg);
-
-    // set high bit
-    status = mraa_i2c_write_byte_data(i2c_context, end.u_eight[0], reg + 0x01);
-    // set low bit
-    status = mraa_i2c_write_byte_data(i2c_context, end.u_eight[1], reg);
-    return status;
-
-}
-
 /* Disable PWM output on all motors by forcing all outputs to off
     mraa_i2c_context i2c_context:   initialized i2c context */
 mraa_result_t i2c_all_off(mraa_i2c_context i2c_context) {
@@ -182,6 +196,5 @@ mraa_result_t i2c_resume(mraa_i2c_context i2c_context) {
     mraa_result_t result = mraa_i2c_write(i2c_context, buf, 2);
     return result;
 }
-
 
 #endif
