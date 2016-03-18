@@ -1,4 +1,5 @@
-#include "i2c_library.h"
+#include <stdlib.h>
+#include "../include/i2c_library.h"
 #include "../include/communication.h"
 #include "../include/lidar_module.h"
 #include "../include/motor_module.h"
@@ -7,7 +8,7 @@ bool communication = false;
 bool lidar_module = false;
 bool motor_module = true;
 
-int main(){
+int main(int argc, char** argv) {
     if(communication) {
         printf("COMMUNICATION MODULE TESTING\n\n");
 
@@ -30,6 +31,15 @@ int main(){
     if(motor_module) {
         printf("MOTOR MODULE TESTING\n\n");
 
+        double_reg signal;
+        if (argc > 1 && (int)atof(argv[1]) != 0 && (int)atof(argv[1]) < 0x10000) {
+            printf("***Using given value by user\n");
+            signal.u_sixteen = (int)atof(argv[1]);
+        } else {
+            printf("***Using default value of 0x0B00\n");
+            signal.u_sixteen =  0x0B00;
+        }
+
         mraa_i2c_context i2c = mraa_i2c_init(6);    // initialize the board
         mraa_i2c_address(i2c, 0x40);                // set board address
 
@@ -47,8 +57,6 @@ int main(){
         Motor_Module m1(1);
         Motor_Module m2(2);
         Motor_Module m3(3);
-
-        union double_reg signal = 0x0F00;
         m1.send_signal(i2c, signal);   // FORWARD (CCW) = 1.0
         m2.send_signal(i2c, signal);  // REVERSE (CW) = -1.0
         m3.send_signal(i2c, signal);   // STOP = 0.0

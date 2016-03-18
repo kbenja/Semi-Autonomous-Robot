@@ -97,12 +97,12 @@ union double_reg {
     @param float rate:                      decides the speed and direction of the wheel
     @return mraa_result_t                   should equal MRAA_SUCCESS if no errors
 */
-mraa_result_t i2c_send_signal(const mraa_i2c_context & i2c_context, uint8_t reg, union signal) {
+mraa_result_t i2c_send_signal(const mraa_i2c_context & i2c_context, uint8_t reg, double_reg signal) {
 
     printf("Bits sent = 0x%04x\n", signal.u_sixteen);
     printf("Register = 0x%02x\n", reg);
-    printf("Sending = 0x%02x to register 0x%02x\n", signal.u_eight[0], reg + 0x01);
-    printf("Sending = 0x%02x to register 0x%02x\n", signal.u_eight[1], reg);
+    printf("Sending HI = 0x%02x to register 0x%02x\n", signal.u_eight[0], reg + 0x01);
+    printf("Sending LO = 0x%02x to register 0x%02x\n", signal.u_eight[1], reg);
 
     mraa_result_t status = MRAA_SUCCESS;
     status = mraa_i2c_write_byte_data(i2c_context, signal.u_eight[0], reg + 0x01);  // set high bit
