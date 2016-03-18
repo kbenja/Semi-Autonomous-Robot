@@ -89,7 +89,7 @@ union double_reg {
 
 
 /* Initialize board. Call only once upon i2c_context creation. */
-mraa_result_t init_board(mraa_i2c_context i2c_context) {
+mraa_result_t i2c_init_board(mraa_i2c_context i2c_context) {
     mraa_result_t result;
     result = mraa_i2c_write_byte_data(i2c_context, SLEEP, MODE1);                   //disable all call while asleep
     result = mraa_i2c_write_byte_data(i2c_context, ALL_OFF, ALL_OFF_H);             //turn off all PWM outputs
@@ -102,7 +102,7 @@ mraa_result_t init_board(mraa_i2c_context i2c_context) {
     int motor:                      number of motors (0 --> motors)
     double_reg start:               duty cycle start time (0-4095)
     double_reg end:                 duty cycle end time (0-4095)*/
-mraa_result_t send_multiple(mraa_i2c_context i2c_context, double_reg start, double_reg end, uint8_t motors) {
+mraa_result_t i2c_send_multiple(mraa_i2c_context i2c_context, double_reg start, double_reg end, uint8_t motors) {
     uint8_t buf[5];
     buf[1] = start.u_eight[1];
     buf[2] = (start.u_eight[0] & (~((uint8_t) 0xE0)));    //force 3 MSB to 0
@@ -121,7 +121,7 @@ mraa_result_t send_multiple(mraa_i2c_context i2c_context, double_reg start, doub
     mraa_i2c_context i2c_context:   initialized i2c context
     double_reg start:               duty cycle start time (0-4095)
     double_reg end:                 duty cycle end time (0-4095)*/
-mraa_result_t send_all(mraa_i2c_context i2c_context, double_reg start, double_reg end) {
+mraa_result_t i2c_send_all(mraa_i2c_context i2c_context, double_reg start, double_reg end) {
     uint8_t buf[5];
     buf[0] = ((uint8_t) 0xFA);    //fixed start for ALL_PWM registers
     buf[1] = start.u_eight[1];
@@ -132,9 +132,35 @@ mraa_result_t send_all(mraa_i2c_context i2c_context, double_reg start, double_re
     return result;
 }
 
+/* Send a PWM signal to one motor
+    mraa_i2c_context i2c_context:   initialized i2c context
+    uint8_t reg:                    which motor to send signal to
+    double_reg end:                 duty cycle end time (0-4095)*/
+mraa_result_t i2c_send_signal(mraa_i2c_context i2c_context, uint8_t reg, double_reg end) {
+
+    mraa_result_t status = MRAA_SUCCESS;
+
+    // set board address
+    // status = mraa_i2c_address(i2c_context, BOARD_ADDR);
+    // if(status != MRAA_SUCCESS) {
+    //     fprintf(stderr, "Could not set i2c device address\n");
+    //     return status;
+    // }
+
+    union double_reg flipped;
+    flipped.u_eight[0] = end.u_eight[1];
+    flipped.u_eight[1] = end.u_eight[0];
+    status = mraa_i2c_write_word_data(i2c_context, flipped.u_sixteen, reg);
+    if(status != MRAA_SUCCESS) {
+        fprintf(stderr, "Could not write to i2c register.\n");
+        return status;
+    }
+    return status;
+}
+
 /* Disable PWM output on all motors by forcing all outputs to off
     mraa_i2c_context i2c_context:   initialized i2c context */
-mraa_result_t all_off(mraa_i2c_context i2c_context) {
+mraa_result_t i2c_all_off(mraa_i2c_context i2c_context) {
     uint8_t buf[2];
     buf[0] = (uint8_t)ALL_OFF_H;    //fixed start for ALL_PWM_OFF_H register
     buf[1] = (uint8_t)ENABLE;       //0001_0000 = All outputs off
@@ -144,7 +170,7 @@ mraa_result_t all_off(mraa_i2c_context i2c_context) {
 
 /* Disable PWM output on all motors by pausing oscillator. Unlike all_off, does not affect PWM values
     mraa_i2c_context i2c_context:   initialized i2c context */
-mraa_result_t pause(mraa_i2c_context i2c_context) {
+mraa_result_t i2c_pause(mraa_i2c_context i2c_context) {
     uint8_t buf[2];
     buf[0] = (uint8_t)MODE1;                //MODE1 register
     buf[1] = (uint8_t)(AUTO_INC | SLEEP);   //0001_0000 = All outputs off
@@ -154,7 +180,7 @@ mraa_result_t pause(mraa_i2c_context i2c_context) {
 
 /* Enable PWM output on all motors by resuming oscillator.
     mraa_i2c_context i2c_context:   initialized i2c context */
-mraa_result_t resume(mraa_i2c_context i2c_context) {
+mraa_result_t i2c_resume(mraa_i2c_context i2c_context) {
     uint8_t buf[2];
     buf[0] = (uint8_t)MODE1;        //MODE1 register
     buf[1] = (uint8_t)AUTO_INC;     //0001_0000 = All outputs off
