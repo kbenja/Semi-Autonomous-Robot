@@ -1,5 +1,5 @@
 #include "mraa.h"
-#include "stdint.h"
+
 #ifndef I2C_LIBRARY
 #define I2C_LIBRARY
 
@@ -86,10 +86,45 @@ union double_reg {
     unsigned int u_int;
 };
 
+/**
+    Sends signal to single motor
 
+    @param mraa_i2c_context i2c_context:    initialized i2c context
+    @param uint8_t reg:                     which motor to send signal to
+    @param float rate:                      decides the speed and direction of the wheel
+    @return mraa_result_t                   should equal MRAA_SUCCESS if no errors
+*/
+mraa_result_t i2c_send_signal(mraa_i2c_context i2c_context, uint8_t reg, float rate) {
+    union double_reg signal;
+    if(rate > 0) // FORWARD (CCW) = 0x0777
+    {
+        signal.u_eight[0]= 0x0F; // high bits
+        signal.u_eight[1] = 0x00; // low bits
+    }
+    else if (rate < 0) // REVERSE (CW) = 0x0F00
+    {
+        signal.u_eight[0]= 0x0F;
+        signal.u_eight[1] = 0x00;
+    }
+    else // STOP = 0x0B00
+    {
+        signal.u_eight[0]= 0x0B;
+        signal.u_eight[1] = 0x00;
+    }
+
+    printf("Bits sent = 0x%04x\n", signal.u_sixteen);
+    printf("Register = 0x%02x\n", reg);
+    printf("Sending = 0x%02x to register 0x%02x\n", signal.u_eight[0], reg + 0x01);
+    printf("Sending = 0x%02x to register 0x%02x\n", signal.u_eight[1], reg);
+
+    mraa_result_t status = MRAA_SUCCESS;
+    status = mraa_i2c_write_byte_data(i2c_context, signal.u_eight[0], reg + 0x01);  // set high bit
+    status = mraa_i2c_write_byte_data(i2c_context, signal.u_eight[1], reg);         // set low bit
+    return status;
+}
 
 /* Initialize board. Call only once upon i2c_context creation. */
-mraa_result_t init_board(mraa_i2c_context i2c_context) {
+mraa_result_t i2c_init_board(mraa_i2c_context i2c_context) {
     mraa_result_t result;
     result = mraa_i2c_write_byte_data(i2c_context, SLEEP, MODE1);                   //disable all call while asleep
     result = mraa_i2c_write_byte_data(i2c_context, ALL_OFF, ALL_OFF_H);             //turn off all PWM outputs
@@ -102,7 +137,7 @@ mraa_result_t init_board(mraa_i2c_context i2c_context) {
     int motor:                      number of motors (0 --> motors)
     double_reg start:               duty cycle start time (0-4095)
     double_reg end:                 duty cycle end time (0-4095)*/
-mraa_result_t send_multiple(mraa_i2c_context i2c_context, double_reg start, double_reg end, uint8_t motors) {
+mraa_result_t i2c_send_multiple(mraa_i2c_context i2c_context, double_reg start, double_reg end, uint8_t motors) {
     uint8_t buf[5];
     buf[1] = start.u_eight[1];
     buf[2] = (start.u_eight[0] & (~((uint8_t) 0xE0)));    //force 3 MSB to 0
@@ -121,7 +156,7 @@ mraa_result_t send_multiple(mraa_i2c_context i2c_context, double_reg start, doub
     mraa_i2c_context i2c_context:   initialized i2c context
     double_reg start:               duty cycle start time (0-4095)
     double_reg end:                 duty cycle end time (0-4095)*/
-mraa_result_t send_all(mraa_i2c_context i2c_context, double_reg start, double_reg end) {
+mraa_result_t i2c_send_all(mraa_i2c_context i2c_context, double_reg start, double_reg end) {
     uint8_t buf[5];
     buf[0] = ((uint8_t) 0xFA);    //fixed start for ALL_PWM registers
     buf[1] = start.u_eight[1];
@@ -134,7 +169,7 @@ mraa_result_t send_all(mraa_i2c_context i2c_context, double_reg start, double_re
 
 /* Disable PWM output on all motors by forcing all outputs to off
     mraa_i2c_context i2c_context:   initialized i2c context */
-mraa_result_t all_off(mraa_i2c_context i2c_context) {
+mraa_result_t i2c_all_off(mraa_i2c_context i2c_context) {
     uint8_t buf[2];
     buf[0] = (uint8_t)ALL_OFF_H;    //fixed start for ALL_PWM_OFF_H register
     buf[1] = (uint8_t)ENABLE;       //0001_0000 = All outputs off
@@ -144,7 +179,7 @@ mraa_result_t all_off(mraa_i2c_context i2c_context) {
 
 /* Disable PWM output on all motors by pausing oscillator. Unlike all_off, does not affect PWM values
     mraa_i2c_context i2c_context:   initialized i2c context */
-mraa_result_t pause(mraa_i2c_context i2c_context) {
+mraa_result_t i2c_pause(mraa_i2c_context i2c_context) {
     uint8_t buf[2];
     buf[0] = (uint8_t)MODE1;                //MODE1 register
     buf[1] = (uint8_t)(AUTO_INC | SLEEP);   //0001_0000 = All outputs off
@@ -154,13 +189,12 @@ mraa_result_t pause(mraa_i2c_context i2c_context) {
 
 /* Enable PWM output on all motors by resuming oscillator.
     mraa_i2c_context i2c_context:   initialized i2c context */
-mraa_result_t resume(mraa_i2c_context i2c_context) {
+mraa_result_t i2c_resume(mraa_i2c_context i2c_context) {
     uint8_t buf[2];
     buf[0] = (uint8_t)MODE1;        //MODE1 register
     buf[1] = (uint8_t)AUTO_INC;     //0001_0000 = All outputs off
     mraa_result_t result = mraa_i2c_write(i2c_context, buf, 2);
     return result;
 }
-
 
 #endif
