@@ -76,10 +76,13 @@
 
 #define ENABLE      0x10
 
-/* Double Register variable for PCA9685. Assignable as:
+/**
+    Double Register variable for PCA9685. Assignable as:
+
     Two uint8_t values in HI-LO order
     One uint16_t value
-    One unsigned int value */
+    One unsigned int value
+*/
 union double_reg {
     uint8_t     u_eight[2];     //HI-LO order; switch to LO-HI done in functions
     uint16_t    u_sixteen;
@@ -123,9 +126,16 @@ mraa_result_t i2c_send_signal(mraa_i2c_context i2c_context, uint8_t reg, float r
     return status;
 }
 
-/* Initialize board. Call only once upon i2c_context creation. */
-mraa_result_t i2c_init_board(mraa_i2c_context i2c_context) {
-    mraa_result_t result;
+/**
+    Initialize the board to certain address
+
+    @param mraa_i2c_context i2c_context:    initialized i2c context
+    @param uint8_t address                  address to initialize
+    @return mraa_result_t                   should equal MRAA_SUCCESS if no errors
+*/
+mraa_result_t i2c_init_board(mraa_i2c_context i2c_context, uint8_t address) {
+    mraa_result_t result = MRAA_SUCCESS;
+    result = mraa_i2c_address(i2c_context, address);
     result = mraa_i2c_write_byte_data(i2c_context, SLEEP, MODE1);                   //disable all call while asleep
     result = mraa_i2c_write_byte_data(i2c_context, ALL_OFF, ALL_OFF_H);             //turn off all PWM outputs
     result = mraa_i2c_write_byte_data(i2c_context, (RESTART | AUTO_INC), MODE1);    //restart with auto-increment

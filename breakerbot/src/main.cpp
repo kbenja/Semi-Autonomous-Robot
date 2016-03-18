@@ -1,3 +1,4 @@
+#include "i2c_library.h"
 #include "../include/communication.h"
 #include "../include/lidar_module.h"
 #include "../include/motor_module.h"
