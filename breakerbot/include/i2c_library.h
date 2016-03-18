@@ -140,22 +140,17 @@ mraa_result_t i2c_send_signal(mraa_i2c_context i2c_context, uint8_t reg, double_
 
     mraa_result_t status = MRAA_SUCCESS;
 
-    // set board address
-    // status = mraa_i2c_address(i2c_context, BOARD_ADDR);
-    // if(status != MRAA_SUCCESS) {
-    //     fprintf(stderr, "Could not set i2c device address\n");
-    //     return status;
-    // }
+    printf("Bits reversed = 0x%04x\n", end.u_sixteen);
+    printf("Register = 0x%02x\n", reg);
+    printf("Sending = 0x%02x to register 0x%02x\n", end.u_eight[0], reg + 0x01);
+    printf("Sending = 0x%02x to register 0x%02x\n", end.u_eight[1], reg);
 
-    union double_reg flipped;
-    flipped.u_eight[0] = end.u_eight[1];
-    flipped.u_eight[1] = end.u_eight[0];
-    status = mraa_i2c_write_word_data(i2c_context, flipped.u_sixteen, reg);
-    if(status != MRAA_SUCCESS) {
-        fprintf(stderr, "Could not write to i2c register.\n");
-        return status;
-    }
+    // set high bit
+    status = mraa_i2c_write_byte_data(i2c_context, end.u_eight[0], reg + 0x01);
+    // set low bit
+    status = mraa_i2c_write_byte_data(i2c_context, end.u_eight[1], reg);
     return status;
+
 }
 
 /* Disable PWM output on all motors by forcing all outputs to off

@@ -46,47 +46,41 @@ int main(){
         mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x00), ((uint8_t) 0xfd));
 
         std::cout << "setting value to all PWM outputs" << std::endl;
-        // testing different values
-
-        // CCW medium speed
-        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xff), ((uint8_t) 0xfc));
-        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x07), ((uint8_t) 0xfd));
-
-        // CCW alittle bit faster
-        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xff), ((uint8_t) 0xfc));
-        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x05), ((uint8_t) 0xfd));
-
-        // CCW slower than before
-        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x99), ((uint8_t) 0xfc));
-        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x09), ((uint8_t) 0xfd));
-
-        // CW medium speed
-        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xcc), ((uint8_t) 0xfc));
-        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x0c), ((uint8_t) 0xfd));
-
-        // CCW slower speed 0x0800
-        // CCW medium speed 0x0A00
-        // CCW faster speed 0x0F00
 
         // STOP = 0x0B00
         // STOP = 0x0400
         //
         // FORWARD (CCW) = 0x0777
         // REVERSE (CW) = 0x0F00
+        //
+        // working code here
+        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x07), ((uint8_t) 0xfd));
+        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x77), ((uint8_t) 0xfc));
 
-        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x0B), ((uint8_t) 0xfd));
-        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x00), ((uint8_t) 0xfc));
+        // create motor module class and run via the class method:
 
+        Motor_Module m1(2);
+        Motor_Module m2(3);
+        union double_reg signal;
 
-        // Motor_Module m1(0x06);
+        // high bits
+        signal.u_eight[0]= 0x0F;
+        // low bits
+        signal.u_eight[1] = 0x00;
+        m1.send_signal(i2c, signal);
+        m2.send_signal(i2c, signal);
 
-        // union double_reg signal;
-        // signal.u_sixteen = 0xcc0c;
-        // m1.send_signal(i2c, signal);
+        // // writing to port 2
+        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x07), ((uint8_t) 0x11));
+        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x77), ((uint8_t) 0x10));
+
+        // // writing to port 3
+        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x0F), ((uint8_t) 0x15));
+        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x00), ((uint8_t) 0x14));
+
 
         std::cout << "waking up the board" << std::endl;
         mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
-
     }
 
     return 0;
