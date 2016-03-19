@@ -30,8 +30,15 @@ int main(int argc, char** argv) {
 
     if(motor_module) {
         printf("MOTOR MODULE TESTING\n\n");
+        uint8_t address = 0x40;
+        mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
+        i2c_init_board(i2c, address);               // initialize the board
 
-        double_reg signal;
+        Motor_Module m1(1);                         // create motors to ports 1, 2, and 3
+        Motor_Module m2(2);
+        Motor_Module m3(3);
+
+        double_reg signal;                          // receive signal from argv or use default (stop)
         if (argc > 1 && (int)atof(argv[1]) != 0 && (int)atof(argv[1]) < 0x10000) {
             printf("***Using given value by user\n");
             signal.u_sixteen = (int)atof(argv[1]);
@@ -40,46 +47,13 @@ int main(int argc, char** argv) {
             signal.u_sixteen =  0x0B00;
         }
 
-        mraa_i2c_context i2c = mraa_i2c_init(6);    // initialize the board
-        mraa_i2c_address(i2c, 0x40);                // set board address
-
-        printf("sleeping the board enable auto increment\n");
-        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x30), ((uint8_t) 0x00));
-
-        printf("setting prescale value to 400Hz\n");
-        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x0e), ((uint8_t) 0xfe));
-
-        printf("setting off value to 0\n");
-        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0x00), ((uint8_t) 0xfd));
-
-        printf("setting motors to specific values\n");
-
-        Motor_Module m1(1);
-        Motor_Module m2(2);
-        Motor_Module m3(3);
-        m1.send_signal(i2c, signal);   // FORWARD (CCW) = 1.0
-        m2.send_signal(i2c, signal);  // REVERSE (CW) = -1.0
-        m3.send_signal(i2c, signal);   // STOP = 0.0
+        m1.send_signal(i2c, signal);                // send signal to boards
+        m2.send_signal(i2c, signal);
+        m3.send_signal(i2c, signal);
 
         printf("waking up the board\n");
         mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
     }
 
     return 0;
-
-        // if(rate > 0) // FORWARD (CCW) = 0x0777
-        // {
-        //     signal.u_eight[0]= 0x0F; // high bits
-        //     signal.u_eight[1] = 0x00; // low bits
-        // }
-        // else if (rate < 0) // REVERSE (CW) = 0x0F00
-        // {
-        //     signal.u_eight[0]= 0x0F;
-        //     signal.u_eight[1] = 0x00;
-        // }
-        // else // STOP = 0x0B00
-        // {
-        //     signal.u_eight[0]= 0x0B;
-        //     signal.u_eight[1] = 0x00;
-        // }
 }

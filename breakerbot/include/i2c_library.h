@@ -99,14 +99,14 @@ union double_reg {
 */
 mraa_result_t i2c_send_signal(const mraa_i2c_context & i2c_context, uint8_t reg, double_reg signal) {
 
+    printf("\nRegister = 0x%02x\n", reg);
     printf("Bits sent = 0x%04x\n", signal.u_sixteen);
-    printf("Register = 0x%02x\n", reg);
-    printf("Sending HI = 0x%02x to register 0x%02x\n", signal.u_eight[0], reg + 0x01);
-    printf("Sending LO = 0x%02x to register 0x%02x\n", signal.u_eight[1], reg);
+    printf("Sending HI = 0x%02x to register 0x%02x\n", signal.u_eight[1], reg + 0x01);
+    printf("Sending LO = 0x%02x to register 0x%02x\n", signal.u_eight[0], reg);
 
     mraa_result_t status = MRAA_SUCCESS;
-    status = mraa_i2c_write_byte_data(i2c_context, signal.u_eight[0], reg + 0x01);  // set high bit
-    status = mraa_i2c_write_byte_data(i2c_context, signal.u_eight[1], reg);         // set low bit
+    status = mraa_i2c_write_byte_data(i2c_context, signal.u_eight[1], reg + 0x01);  // set high bit
+    status = mraa_i2c_write_byte_data(i2c_context, signal.u_eight[0], reg);         // set low bit
     return status;
 }
 
@@ -117,13 +117,26 @@ mraa_result_t i2c_send_signal(const mraa_i2c_context & i2c_context, uint8_t reg,
     @param uint8_t address                  address to initialize
     @return mraa_result_t                   should equal MRAA_SUCCESS if no errors
 */
-mraa_result_t i2c_init_board(mraa_i2c_context i2c_context, uint8_t address) {
+mraa_result_t i2c_init_board(const mraa_i2c_context & i2c_context, uint8_t address) {
     mraa_result_t result = MRAA_SUCCESS;
+
+    printf("\n[ init ] Initializing i2c board to address = 0x%02x\n", address);
     result = mraa_i2c_address(i2c_context, address);
-    result = mraa_i2c_write_byte_data(i2c_context, SLEEP, MODE1);                   //disable all call while asleep
-    result = mraa_i2c_write_byte_data(i2c_context, ALL_OFF, ALL_OFF_H);             //turn off all PWM outputs
-    result = mraa_i2c_write_byte_data(i2c_context, (RESTART | AUTO_INC), MODE1);    //restart with auto-increment
+    printf("sleeping the board enable auto increment\n");
+    result = mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0x30), ((uint8_t) 0x00));
+    printf("setting prescale value to 400Hz\n");
+    result = mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0x0e), ((uint8_t) 0xfe));
+    printf("setting off value to 0\n");
+    result = mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0x00), ((uint8_t) 0xfd));
+
+    if(result != MRAA_SUCCESS) {
+        printf("[ !!! ] cannot initialize board to address 0x%02x\n", address);
+    }
     return result;
+
+    // result = mraa_i2c_write_byte_data(i2c_context, SLEEP, MODE1);                   //disable all call while asleep
+    // result = mraa_i2c_write_byte_data(i2c_context, ALL_OFF, ALL_OFF_H);             //turn off all PWM outputs
+    // result = mraa_i2c_write_byte_data(i2c_context, (RESTART | AUTO_INC), MODE1);    //restart with auto-increment
 }
 
 /* Send a PWM signal to one or multiple motors.

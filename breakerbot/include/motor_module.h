@@ -14,7 +14,7 @@ public:
     */
     Motor_Module() {
         end_reg = 0x0C;
-        printf("Motor module initialized to port 1 (register 0x%02x)\n", end_reg);
+        printf("[ init ] Motor module initialized to port 1 (register 0x%02x)\n", end_reg);
     }
 
     /**
@@ -23,7 +23,7 @@ public:
     */
     Motor_Module(int port) {
         end_reg = 0x0C + (port - 1)*4;
-        printf("Motor module initialized to port %d (register 0x%02x)\n", port, end_reg);
+        printf("[ init ] Motor module initialized to port %d (register 0x%02x)\n", port, end_reg);
     }
 
     /**
@@ -39,7 +39,7 @@ public:
         result = i2c_send_signal(i2c_context, end_reg, signal);
         if(result != MRAA_SUCCESS)
         {
-            printf("Could not write to register 0x%02x\n", end_reg);
+            printf("!!! Could NOT write to register 0x%02x\n", end_reg);
             return result;
         }
 
