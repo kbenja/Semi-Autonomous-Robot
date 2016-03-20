@@ -130,7 +130,7 @@ mraa_result_t i2c_init_board(const mraa_i2c_context & i2c_context, uint8_t addre
     result = mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0x00), ((uint8_t) 0xfd));
 
     if(result != MRAA_SUCCESS) {
-        printf("[ !!! ] cannot initialize board to address 0x%02x\n", address);
+        printf("[ !!!! ] cannot initialize board to address 0x%02x\n", address);
     }
     return result;
 

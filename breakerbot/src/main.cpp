@@ -7,8 +7,8 @@
 
 bool communication = false;
 bool lidar_module = false;
-bool motor_module = false;
-bool encoder_module = true;
+bool motor_module = true;
+bool encoder_module = false;
 
 int main(int argc, char** argv) {
     if(communication) {
@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
 
     if(motor_module) {
         printf("MOTOR MODULE TESTING\n\n");
+
         uint8_t address = 0x40;
         mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
         i2c_init_board(i2c, address);               // initialize the board
@@ -41,19 +42,18 @@ int main(int argc, char** argv) {
         Motor_Module m3(3);
         Motor_Module m4(4);
 
-        double_reg signal;                          // receive signal from argv or use default (stop)
-        if (argc > 1 && (int)atof(argv[1]) != 0 && (int)atof(argv[1]) < 0x10000) {
+        float user_input = 0.0;                          // receive signal from argv or use default (stop)
+        if (argc > 1) {
             printf("***Using given value by user\n");
-            signal.u_sixteen = (int)atof(argv[1]);
+            user_input = (int)atof(argv[1]);
         } else {
             printf("***Using default value of 0x0B00\n");
-            signal.u_sixteen =  0x0B00;
         }
 
-        m1.send_signal(i2c, signal);                // send signal to boards
-        m2.send_signal(i2c, signal);
-        m3.send_signal(i2c, signal);
-        m4.send_signal(i2c, signal);
+        m1.send_signal(i2c, user_input);                // send signal to boards
+        m2.send_signal(i2c, user_input);
+        m3.send_signal(i2c, user_input);
+        m4.send_signal(i2c, user_input);
 
         printf("waking up the board\n");
         mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
