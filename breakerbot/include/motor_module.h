@@ -46,6 +46,15 @@ public:
         return result;
     }
 
+    // change this name
+    double_reg convert_to_PWM(float start) {
+        uint16_t final_int = (int) 2816-(start*768.0);
+        double_reg final_union;
+        final_union.u_sixteen = final_int;
+        printf("START %f becomes 0x%04x \n", start, final_union.u_sixteen);
+        return final_union;
+    }
+
 };
 
 #endif
