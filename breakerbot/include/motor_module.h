@@ -4,7 +4,6 @@
 #ifndef MOTOR_MODULE_H
 #define MOTOR_MODULE_H
 
-<<<<<<< HEAD
 /**
     Converts float to value to send to i2c->PWM chip
     @param float start     -1.0 = full CCW, 1.0 = full CW, 0.0 = stop
@@ -23,8 +22,6 @@ double_reg float_to_PWM(float start) {
 }
 
 
-=======
->>>>>>> d36a216... clean dir
 class Motor_Module {
 uint8_t end_reg;
 public:
