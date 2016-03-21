@@ -4,13 +4,29 @@
 #include "../include/lidar_module.h"
 #include "../include/motor_module.h"
 #include "../include/encoder_module.h"
+#include "../include/pot_module.h"
 
 bool communication = false;
 bool lidar_module = false;
-bool motor_module = true;
+bool motor_module = false;
 bool encoder_module = false;
+bool pot_module = true;
 
 int main(int argc, char** argv) {
+    if(pot_module) {
+        printf("Pot module testing");
+        Pot_Module P0(0,12);
+        Pot_Module P1(1,12);
+
+        while(pot_module) {
+            printf("Pot 1: %d     Pot 2: %d\n",P0.get_val(),P1.get_val());
+            usleep(500000);
+        }
+
+    }
+
+
+
     if(communication) {
         printf("COMMUNICATION MODULE TESTING\n\n");
 
