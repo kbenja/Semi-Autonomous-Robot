@@ -4,16 +4,31 @@
 #include "../include/lidar_module.h"
 #include "../include/motor_module.h"
 #include "../include/encoder_module.h"
-// #include "../include/navx_module.h"
-
+#include "../include/pot_module.h"
+#include "../include/navx_module.h"
 
 bool communication = false;
 bool lidar_module = false;
 bool motor_module = false;
 bool encoder_module = false;
+bool pot_module = false;
 bool navx_module = true;
 
 int main(int argc, char** argv) {
+    if(pot_module) {
+        printf("Pot module testing");
+        Pot_Module P0(0,12);
+        Pot_Module P1(1,12);
+
+        while(pot_module) {
+            printf("Pot 1: %d     Pot 2: %d\n",P0.get_val(),P1.get_val());
+            usleep(500000);
+        }
+
+    }
+
+
+
     if(communication) {
         printf("COMMUNICATION MODULE TESTING\n\n");
 
@@ -40,7 +55,7 @@ int main(int argc, char** argv) {
         mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
         i2c_init_board(i2c, address);               // initialize the board
 
-        Motor_Module m1(2);                         // create motors to ports 1, 2, and 3
+        Motor_Module m1(1);                         // create motors to ports 1, 2, and 3
         Motor_Module m2(2);
         Motor_Module m3(3);
         Motor_Module m4(4);
@@ -83,37 +98,18 @@ int main(int argc, char** argv) {
     }
 
     if (navx_module) {
-        mraa_i2c_context i2c = mraa_i2c_init(6);
-        mraa_result_t result = MRAA_SUCCESS;
-        result = mraa_i2c_address(i2c, 0x32);
-        if(result != MRAA_SUCCESS){
-            printf("was not able to connect to address\n");
-        } else {
-            printf("Was able to write to the device\n");
-        }
-        uint8_t high_bits;
-        uint8_t low_bits;
-        double_reg combined;
-        int status = 1;
+        int count = 0;
+        printf("Creating NavX module\n");
+        NavX_Module x1;
         while(1) {
             usleep(500000); //sleep for 1/2
-            status = mraa_i2c_write_byte(i2c, 0x16);
-            status = mraa_i2c_read(i2c, &high_bits, 1);
-
-            status = mraa_i2c_write_byte(i2c, 0x17);
-            status = mraa_i2c_read(i2c, &low_bits, 1);
-            if(status != 1) {
-                printf("Could not read / write from the navx board\n");
+            printf("Getting NavX fused heading value\n");
+            printf("Value read = %d\n", x1.get_yaw()/100);
+            count++;
+            if (count%10 == 0) {
+                x1.set_zero();
+                printf("\n[ !!!! ] Setting zero on NavX\n");
             }
-
-            combined.upper = high_bits;
-            combined.lower = low_bits;
-
-            float final = (float)combined.u_sixteen/100.0;
-            printf("Yaw: High: 0x%04x, Low: 0x%04x\n", high_bits, low_bits);
-            printf("Combined value = 0x%04x, decimal = %f\n", combined.u_sixteen, final);
-            final = (final / 655.35) * 360;
-            printf("\nFINAL value = %f\n\n", final);
         }
     }
 
