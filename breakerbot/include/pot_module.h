@@ -1,4 +1,3 @@
-#include "pot_module.h"
 #include "mraa.h"
 
 #ifndef POT_MODULE_H
@@ -12,7 +11,7 @@ public:
     Pot_Module() {
         adc_port = mraa_aio_init(0);
         mraa_aio_set_bit(adc_port, 10);
-        printf("Potentiometer module initialized to ADC 0\n", adc_port);
+        printf("Potentiometer module initialized to ADC 0\n");
     }
 
     //constructor w/ specific ADC port and ADC precision

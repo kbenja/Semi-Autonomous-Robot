@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 
         while(pot_module) {
             printf("Pot 1: %d     Pot 2: %d\n",P0.get_val(),P1.get_val());
-            sleep(1);
+            usleep(500000);
         }
 
     }
