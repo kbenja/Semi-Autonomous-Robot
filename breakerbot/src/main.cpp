@@ -9,6 +9,7 @@
 bool communication = false;
 bool lidar_module = false;
 bool motor_module = false;
+bool encoder_module = false;
 bool pot_module = true;
 
 int main(int argc, char** argv) {
