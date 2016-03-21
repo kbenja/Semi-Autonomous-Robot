@@ -86,7 +86,18 @@
 union double_reg {
     uint8_t     u_eight[2];     //HI-LO order; switch to LO-HI done in functions
     uint16_t    u_sixteen;
+    struct      {uint8_t upper, lower;};
+    // upper = u_eight[0]
+    // lower = u_eight[1]
     unsigned int u_int;
+};
+
+union signed_double_reg {
+    uint8_t     eight[2];     //HI-LO order; switch to LO-HI done in functions
+    int16_t     sixteen;
+    struct      {uint8_t upper, lower;};
+    // upper = u_eight[0]
+    // lower = u_eight[1]
 };
 
 /**
@@ -98,7 +109,6 @@ union double_reg {
     @return mraa_result_t                   should equal MRAA_SUCCESS if no errors
 */
 mraa_result_t i2c_send_signal(const mraa_i2c_context & i2c_context, uint8_t reg, double_reg signal) {
-
     printf("\nRegister = 0x%02x\n", reg);
     printf("Bits sent = 0x%04x\n", signal.u_sixteen);
     printf("Sending HI = 0x%02x to register 0x%02x\n", signal.u_eight[1], reg + 0x01);

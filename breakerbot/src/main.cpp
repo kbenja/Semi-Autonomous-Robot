@@ -5,12 +5,14 @@
 #include "../include/motor_module.h"
 #include "../include/encoder_module.h"
 #include "../include/pot_module.h"
+#include "../include/navx_module.h"
 
 bool communication = false;
 bool lidar_module = false;
 bool motor_module = false;
 bool encoder_module = false;
-bool pot_module = true;
+bool pot_module = false;
+bool navx_module = true;
 
 int main(int argc, char** argv) {
     if(pot_module) {
@@ -53,7 +55,7 @@ int main(int argc, char** argv) {
         mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
         i2c_init_board(i2c, address);               // initialize the board
 
-        Motor_Module m1(2);                         // create motors to ports 1, 2, and 3
+        Motor_Module m1(1);                         // create motors to ports 1, 2, and 3
         Motor_Module m2(2);
         Motor_Module m3(3);
         Motor_Module m4(4);
@@ -92,6 +94,22 @@ int main(int argc, char** argv) {
             printf("Cannot read from byte\n");
         } else {
             printf("Reading 0x44 = 0x%02x  0x45 = 0x%02x\n", higher_bits, lower_bits);
+        }
+    }
+
+    if (navx_module) {
+        int count = 0;
+        printf("Creating NavX module\n");
+        NavX_Module x1;
+        while(1) {
+            usleep(500000); //sleep for 1/2
+            printf("Getting NavX fused heading value\n");
+            printf("Value read = %d\n", x1.get_yaw()/100);
+            count++;
+            if (count%10 == 0) {
+                x1.set_zero();
+                printf("\n[ !!!! ] Setting zero on NavX\n");
+            }
         }
     }
 
