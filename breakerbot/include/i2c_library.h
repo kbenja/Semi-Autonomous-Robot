@@ -86,6 +86,9 @@
 union double_reg {
     uint8_t     u_eight[2];     //HI-LO order; switch to LO-HI done in functions
     uint16_t    u_sixteen;
+    struct      {uint8_t upper, lower;};
+    // upper = u_eight[0]
+    // lower = u_eight[1]
     unsigned int u_int;
 };
 
