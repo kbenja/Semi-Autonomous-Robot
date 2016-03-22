@@ -15,6 +15,9 @@ bool pot_module = false;
 bool navx_module = true;
 
 int main(int argc, char** argv) {
+
+    printf("Hello this is Breakerbot\n");
+    
     if(pot_module) {
         printf("Pot module testing");
         Pot_Module P0(0,12);
