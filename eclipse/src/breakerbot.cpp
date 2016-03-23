@@ -24,7 +24,10 @@ int main(int argc, char** argv) {
             printf("Pot 1: %d     Pot 2: %d\n",P0.get_val(),P1.get_val());
             usleep(500000);
         }
+
     }
+
+
 
     if(communication) {
         printf("COMMUNICATION MODULE TESTING\n\n");
