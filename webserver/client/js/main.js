@@ -5,6 +5,11 @@ $(document).ready(function(){
     ctx.fillStyle = '#333';
     ctx.fillText('Loading...', canvas.width/2-30, canvas.height/3);
 
+    var command = {
+        mode: "1",
+        code: "0"
+    }
+
     var breaking = false;
     var gamepad_connected = false;
     var keysDown = {};
@@ -18,6 +23,14 @@ $(document).ready(function(){
 
     function replaceBit(string, index, value) {
         return string.substr(0,index-1) + value + string.substr(index,string.length);
+    }
+
+    function convert_command(object) {
+        console.log("command = ", object);
+        var final_string = "";
+        final_string += object.mode + "\n";
+        final_string += object.code + "\n";
+        return final_string;
     }
 
     getIP(function(response){
@@ -45,74 +58,73 @@ $(document).ready(function(){
             gamepad_connected = false;
             gamepad = {};
             console.log("Gamepad disconnected");
-            code = "0000";
-            client.send(code);
+            command.code = 0;
+            client.send(convert_command(command));
             $(".controls").css("opacity","0.2");
             $(".connect").css("display","block");
         }, false);
 
-        var code = "0000";
 
         function keyPressed(key) {
             console.log(key);
             if (key === "b_button" || key === 32 && !breaking) {
                 breaking = true;
-                code = "0000";
-                client.send(code);
+                command.code = 0;
+                client.send(convert_command(command));
             }
             if(true) {
                 if (key === "up" || key === 38) {
                     if(!keysDown[key]) {
-                        code = replaceBit(code, 1, "1");
+                        command.code = 1;
                     }
                     keysDown[key] = true;
                 }
                 if (key === "left" || key === 37) {
                     if(!keysDown[key]) {
-                        code = replaceBit(code, 2, "1");
+                        command.code = 2;
                     }
                     keysDown[key] = true;
                 }
                 if (key === "down" || key === 40) {
                     if(!keysDown[key]) {
-                        code = replaceBit(code, 3, "1");
+                        command.code = 3;
                     }
                     keysDown[key] = true;
                 }
                 if (key === "right" || key === 39) {
 
                     if(!keysDown[key]) {
-                        code = replaceBit(code, 4, "1");
+                        command.code = 4;
                     }
                     keysDown[key] = true;
                 }
-                client.send(code);
+                client.send(convert_command(command));
             }
         }
 
         function keyReleased(key) {
-            if (key === "b_button" || key === 32) { // Player holding up
+            if (key === "b_button" || key === 32) { // Player releases break
                 keysDown[key] = false;
                 breaking = false;
             }
             if (!breaking) {
                 if (key === "up" || key === 38) {
                     keysDown[key] = false;
-                    code = replaceBit(code, 1, "0");
+                    command.code = 0;
                 }
                 if (key === "left" || key === 37) {
                     keysDown[key] = false;
-                    code = replaceBit(code, 2, "0");
+                    command.code = 0;
                 }
                 if (key === "down" || key === 40) {
                     keysDown[key] = false;
-                    code = replaceBit(code, 3, "0");
+                    command.code = 0;
                 }
                 if (key === "right" || key === 39) {
                     keysDown[key] = false;
-                    code = replaceBit(code, 4, "0");
+                    command.code = 0;
                 }
-                client.send(code);
+                client.send(convert_command(command));
             }
         }
 

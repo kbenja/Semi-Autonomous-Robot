@@ -1,21 +1,44 @@
 #include <stdlib.h>
 #include "include/i2c_library.h"
 #include "include/communication.h"
+#include "include/manual_control.h"
 #include "include/lidar_module.h"
 #include "include/motor_module.h"
 #include "include/encoder_module.h"
 #include "include/pot_module.h"
 #include "include/navx_module.h"
 
-bool communication = false;
 bool lidar_module = false;
 bool motor_module = false;
+bool communication = true;
 bool encoder_module = false;
 bool pot_module = false;
 bool navx_module = true;
+bool manual_control = false;
+
+int mode = 0; //idle by default
 
 int main(int argc, char** argv) {
-    if(pot_module) {
+    if (communication) {
+        printf("COMMUNICATION MODULE TESTING\n\n");
+        Communication c1;
+        int * received = get_instructions();
+        mode = *(received);
+        if(*received != -1) {
+            if (mode == 1) {
+                std::cout << "MODE = 1 – Reading values\n";
+                std::cout << "Value = " << *(received + 1) << std::endl;
+            } else {
+                std::cout << "MODE = 0 – Idle mode\n";
+            }
+        } else if (*received == -2) {
+            std::cout << "Error in file read/write" << std::endl;
+        } else {
+            std::cout << "Cannot reach host, Disconnected" << std::endl;
+        }
+    }
+
+    if (pot_module) {
         printf("Pot module testing");
         Pot_Module P0(0,12);
         Pot_Module P1(1,12);
@@ -24,22 +47,19 @@ int main(int argc, char** argv) {
             printf("Pot 1: %d     Pot 2: %d\n",P0.get_val(),P1.get_val());
             usleep(500000);
         }
-
     }
 
+    if (manual_control) {
+        printf("MANUAL CONTROL MODULE TESTING\n\n");
 
-
-    if(communication) {
-        printf("COMMUNICATION MODULE TESTING\n\n");
-
-        Communication input;
+        Manual_Control input;
         while(1){
             std::string instruction = input.getInstruction();
             printf("instruction: %s\n", instruction.c_str());
         }
     }
 
-    if(lidar_module) {
+    if (lidar_module) {
         printf("LIDAR MODULE TESTING\n\n");
 
         Lidar_Module l1(2);
@@ -48,7 +68,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    if(motor_module) {
+    if (motor_module) {
         printf("MOTOR MODULE TESTING\n\n");
 
         uint8_t address = 0x40;
