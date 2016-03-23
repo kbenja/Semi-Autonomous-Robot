@@ -37,14 +37,15 @@ public:
         file.open("../communication/to_breakerbot.txt");
         while(index < length && reading) {
             getline(file, instruction);
-            if(index == 0 && std::stoi(instruction) == -1) {
-                reading = false;
-            }
             try {
                 temp = std::stoi(instruction);
             } catch(const std::exception& e) {
                 std::cout << "Exception catch" << std::endl;
                 temp = -2;
+            }
+            if(index == 0 && temp == -2) {
+                std::cout << "COULD NOT READ THE FILE" << std::endl;
+                reading = false;
             }
             *(instructions + index) = temp;
             index++;

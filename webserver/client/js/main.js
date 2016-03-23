@@ -26,7 +26,7 @@ $(document).ready(function(){
     }
 
     function convert_command(object) {
-        console.log("command = ", object);
+        console.log("command = ", object.code);
         var final_string = "";
         final_string += object.mode + "\n";
         final_string += object.code + "\n";

@@ -6,5 +6,6 @@ eclipse/breakerbot.launch
 eclipse/.cproject
 eclipse/.project
 eclipse/.settings
-communication/
+eclipse/main
+webserver/client/ip.txt
 

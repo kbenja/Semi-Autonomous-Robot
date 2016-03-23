@@ -13,28 +13,27 @@ bool motor_module = false;
 bool communication = true;
 bool encoder_module = false;
 bool pot_module = false;
-bool navx_module = true;
+bool navx_module = false;
 bool manual_control = false;
 
-int mode = 0; //idle by default
+int mode = 1; //idle by default
 
 int main(int argc, char** argv) {
     if (communication) {
         printf("COMMUNICATION MODULE TESTING\n\n");
         Communication c1;
-        int * received = get_instructions();
-        mode = *(received);
-        if(*received != -1) {
-            if (mode == 1) {
+        int * received;
+        while(1) {
+            received = c1.get_instructions();
+            if(*received != -1) {
                 std::cout << "MODE = 1 – Reading values\n";
                 std::cout << "Value = " << *(received + 1) << std::endl;
+            } else if (*received == -2) {
+                std::cout << "Error in file read/write" << std::endl;
             } else {
-                std::cout << "MODE = 0 – Idle mode\n";
+                std::cout << "Cannot reach host, Disconnected" << std::endl;
             }
-        } else if (*received == -2) {
-            std::cout << "Error in file read/write" << std::endl;
-        } else {
-            std::cout << "Cannot reach host, Disconnected" << std::endl;
+            usleep(10000);
         }
     }
 
