@@ -117,29 +117,30 @@ function convert_command(object) {
 
 Controller.prototype.readGamePad = function() {
     if(this.gamepad_connected) {
+        var that = this;
         this.gamepad = navigator.getGamepads()[0];
         this.gamepad.buttons.forEach(function(number, it){
-            var button = this.getButton(it);
+            var button = getButton(it);
             if(number.pressed) {
-                if(this.last_state[it] === false && this.registeredButton(button)) {
-                    this.keyPressed(button);
+                if(that.last_state[it] === false && registeredButton(button)) {
+                    that.keyPressed(button);
                 }
-                this.last_state[it] = bool;
+                that.last_state[it] = true;
                 $("." + button).css("background-color","#CCCCCC");
             } else {
-                if(lthis.ast_state[it] === true) {
+                if(that.last_state[it]) {
                     console.log(number,it);
-                    this.keyReleased(button);
+                    that.keyReleased(button);
                 }
-                this.last_state[it] = bool;
+                that.last_state[it] = false;
                 $("." + button).css("background-color","#AAAAAA");
             }
         })
         // control joystick GUI
-        $(".left_joystick").css("left",gamepad.axes[0]*15);
-        $(".left_joystick").css("top",gamepad.axes[1]*15);
-        $(".right_joystick").css("left",gamepad.axes[2]*15);
-        $(".right_joystick").css("top",gamepad.axes[3]*15);
+        $(".left_joystick").css("left",this.gamepad.axes[0]*15);
+        $(".left_joystick").css("top",this.gamepad.axes[1]*15);
+        $(".right_joystick").css("left",this.gamepad.axes[2]*15);
+        $(".right_joystick").css("top",this.gamepad.axes[3]*15);
     }
 }
 

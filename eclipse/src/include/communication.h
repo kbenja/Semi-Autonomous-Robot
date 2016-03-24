@@ -1,58 +1,50 @@
-#include <iostream>
-#include <fstream>
-#include <string>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <cstring>
+#include <netdb.h>
 
 #ifndef COMMUNICATION_H
 #define COMMUNICATION_H
 
-/*
-*
-* Instructions by index:
-* 0 = choose mode
-* 1 = value for motor
-*
-* Different modes:
-* -1 = disconnected
-* 1 = idle
-* 2 = reading values
-*
-*
-*/
 
 class Communication
 {
+const char *socket_path;
+struct sockaddr_un addr;
+char buffer[255];
+int fd;
+
 public:
-    Communication() {};
-
-    int * get_instructions() {
-        int length = 2;
-        int temp;
-        int index = 0;
-        int * instructions;
-        bool reading = true;
-        instructions = new int[length];
-
-        std::ifstream file;
-        std::string instruction;
-        file.open("../communication/to_breakerbot.txt");
-        while(index < length && reading) {
-            getline(file, instruction);
-            try {
-                temp = std::stoi(instruction);
-            } catch(const std::exception& e) {
-                std::cout << "Exception catch" << std::endl;
-                temp = -2;
-            }
-            if(index == 0 && temp == -2) {
-                std::cout << "COULD NOT READ THE FILE" << std::endl;
-                reading = false;
-            }
-            *(instructions + index) = temp;
-            index++;
+    Communication() {
+        socket_path = "/tmp/breakerbot.socket";
+    };
+    // functions will return -1 if error occurs
+    int unix_socket_connect() {
+        // create socket
+        if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
+            return -1;
         }
-        file.close();
-        delete[] instructions;
-        return instructions;
+        // initialize all socket memory to 0
+        memset(&addr, 0, sizeof(addr));
+        addr.sun_family = AF_UNIX;
+        strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
+        // connect to socket
+        return (connect(fd, (struct sockaddr*)&addr, sizeof(addr)));
+    }
+    int unix_socket_write() {
+        return write(fd,"Hello",5);
+    }
+    int unix_socket_read() {
+        int status = read(fd,buffer,100);
+        if (status > 0) {
+            printf("Reading from buffer: ");
+            printf("%02x",buffer[0]);
+            printf("%02x",buffer[1]);
+            printf("\n");
+        }
     }
 };
 
