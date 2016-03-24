@@ -76,40 +76,39 @@ Controller.prototype.keyReleased = function(key) {
 }
 
 Controller.prototype.initialize = function() {
-    var ctx = this;
+    var that = this;
     if(this.keyboard_controls) {
         addEventListener("keydown", function(e) {
-            ctx.keyPressed(e.keyCode, e);
+            that.keyPressed(e.keyCode, e);
         }, false);
 
         addEventListener("keyup", function(e) {
-            ctx.keyReleased(e.keyCode, e);
+            that.keyReleased(e.keyCode, e);
         }, false);
     }
 
     addEventListener("gamepadconnected", function(e) {
-        this.gamepad_connected = true;
-        this.gamepad = navigator.getGamepads()[0];
-        this.command.mode = -1;
-        this.client.send(convert_command(this.command));
-        console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.", this.gamepad.index, this.gamepad.id, this.gamepad.buttons.length, this.gamepad.axes.length);
+        that.gamepad_connected = true;
+        that.gamepad = navigator.getGamepads()[0];
+        that.command.mode = -1;
+        that.client.send(convert_command(that.command));
+        console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.", that.gamepad.index, that.gamepad.id, that.gamepad.buttons.length, that.gamepad.axes.length);
         $(".controls").css("opacity","1");
         $(".connect").css("display","none");
     }, false);
 
     addEventListener("gamepaddisconnected", function(e) {
-        this.gamepad_connected = false;
-        this.gamepad = {};
+        that.gamepad_connected = false;
+        that.gamepad = {};
         console.log("Gamepad disconnected");
-        this.command.mode = -1;
-        this.client.send(convert_command(this.command));
+        that.command.mode = -1;
+        that.client.send(convert_command(that.command));
         $(".controls").css("opacity","0.2");
         $(".connect").css("display","block");
     }, false);
 }
 
 function convert_command(object) {
-    console.log("command = ", object.code);
     var final = "";
     final += object.mode + "\n";
     final += object.code + "\n";
