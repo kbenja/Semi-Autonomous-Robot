@@ -1,3 +1,149 @@
+var Controller = function(client) {
+    this.keyboard_controls = true;
+    this.breaking = false;
+    this.gamepad_connected = false;
+    this.keysDown = {};
+    this.gamepad = {};
+    this.last_state = {};
+    this.command = {
+        mode: "0",
+        code: "0"
+    };
+    this.client = client;
+}
+
+Controller.prototype.keyPressed = function(key) {
+    console.log(key);
+    if (key === "b_button" || key === 32 && !this.breaking) {
+        this.breaking = true;
+        this.command.code = 0;
+        this.client.send(convert_command(this.command));
+    }
+    if(true) {
+        if (key === "up" || key === 38) {
+            if(!this.keysDown[key]) {
+                this.command.code = 1;
+            }
+            this.keysDown[key] = true;
+        }
+        if (key === "left" || key === 37) {
+            if(!this.keysDown[key]) {
+                this.command.code = 2;
+            }
+            this.keysDown[key] = true;
+        }
+        if (key === "down" || key === 40) {
+            if(!this.keysDown[key]) {
+                this.command.code = 3;
+            }
+            this.keysDown[key] = true;
+        }
+        if (key === "right" || key === 39) {
+
+            if(!this.keysDown[key]) {
+                this.command.code = 4;
+            }
+            this.keysDown[key] = true;
+        }
+        this.client.send(convert_command(this.command));
+    }
+}
+
+Controller.prototype.keyReleased = function(key) {
+    if (key === "b_button" || key === 32) { // Player releases break
+        this.keysDown[key] = false;
+        this.breaking = false;
+    }
+    if (!this.breaking) {
+        if (key === "up" || key === 38) {
+            this.keysDown[key] = false;
+            this.command.code = 0;
+        }
+        if (key === "left" || key === 37) {
+            this.keysDown[key] = false;
+            this.command.code = 0;
+        }
+        if (key === "down" || key === 40) {
+            this.keysDown[key] = false;
+            this.command.code = 0;
+        }
+        if (key === "right" || key === 39) {
+            this.keysDown[key] = false;
+            this.command.code = 0;
+        }
+        this.client.send(convert_command(this.command));
+    }
+}
+
+Controller.prototype.initialize = function() {
+    var ctx = this;
+    if(this.keyboard_controls) {
+        addEventListener("keydown", function(e) {
+            ctx.keyPressed(e.keyCode, e);
+        }, false);
+
+        addEventListener("keyup", function(e) {
+            ctx.keyReleased(e.keyCode, e);
+        }, false);
+    }
+
+    addEventListener("gamepadconnected", function(e) {
+        this.gamepad_connected = true;
+        this.gamepad = navigator.getGamepads()[0];
+        this.command.mode = -1;
+        this.client.send(convert_command(this.command));
+        console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.", this.gamepad.index, this.gamepad.id, this.gamepad.buttons.length, this.gamepad.axes.length);
+        $(".controls").css("opacity","1");
+        $(".connect").css("display","none");
+    }, false);
+
+    addEventListener("gamepaddisconnected", function(e) {
+        this.gamepad_connected = false;
+        this.gamepad = {};
+        console.log("Gamepad disconnected");
+        this.command.mode = -1;
+        this.client.send(convert_command(this.command));
+        $(".controls").css("opacity","0.2");
+        $(".connect").css("display","block");
+    }, false);
+}
+
+function convert_command(object) {
+    console.log("command = ", object.code);
+    var final = "";
+    final += object.mode + "\n";
+    final += object.code + "\n";
+    return final;
+}
+
+Controller.prototype.readGamePad = function() {
+    if(this.gamepad_connected) {
+        this.gamepad = navigator.getGamepads()[0];
+        this.gamepad.buttons.forEach(function(number, it){
+            var button = this.getButton(it);
+            if(number.pressed) {
+                if(this.last_state[it] === false && this.registeredButton(button)) {
+                    this.keyPressed(button);
+                }
+                this.last_state[it] = bool;
+                $("." + button).css("background-color","#CCCCCC");
+            } else {
+                if(lthis.ast_state[it] === true) {
+                    console.log(number,it);
+                    this.keyReleased(button);
+                }
+                this.last_state[it] = bool;
+                $("." + button).css("background-color","#AAAAAA");
+            }
+        })
+        // control joystick GUI
+        $(".left_joystick").css("left",gamepad.axes[0]*15);
+        $(".left_joystick").css("top",gamepad.axes[1]*15);
+        $(".right_joystick").css("left",gamepad.axes[2]*15);
+        $(".right_joystick").css("top",gamepad.axes[3]*15);
+    }
+}
+
 function registeredButton(btn) {
     return (btn === "up" || btn === "left" || btn === "right" || btn === "down" || btn==="b_button") ? true : false;
 }
