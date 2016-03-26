@@ -1,6 +1,7 @@
 /breakerbot/**/*.o
 /breakerbot/bin/*
 webserver/node_modules/
+webserver/css/
 eclipse/Debug
 eclipse/breakerbot.launch
 eclipse/.cproject

@@ -5,6 +5,10 @@ body {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box; }
 
+.dev-container {
+  position: absolute;
+  z-index: 999; }
+
 .wrapper {
   text-align: center;
   margin: 5px auto; }
@@ -26,6 +30,13 @@ body {
       background-color: #dddddd;
       width: 100%;
       height: auto; }
+  .wrapper .mode-container .mode {
+    height: 150px;
+    width: 100%; }
+  .wrapper .mode-container .manual {
+    display: block; }
+  .wrapper .mode-container .auto {
+    display: none; }
   .wrapper .control-container {
     position: relative;
     width: 49; }

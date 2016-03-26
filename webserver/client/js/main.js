@@ -1,5 +1,19 @@
+var display_manual = true;
+
+function change_mode() {
+    if(display_manual) {
+        $(".manual").css("display","none");
+        $(".auto").css("display","block");
+    } else {
+        $(".manual").css("display","block");
+        $(".auto").css("display","none");
+    }
+    display_manual = !display_manual;
+}
+
+
 $(document).ready(function(){
-    // initialize canvas
+    // init canvas and display loading text
     var canvas = document.getElementById('canvas-video');
     var ctx = canvas.getContext('2d');
     ctx.fillStyle = '#333';

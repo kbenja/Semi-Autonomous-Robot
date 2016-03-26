@@ -9,6 +9,11 @@ body {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
 }
+.dev-container {
+  position: absolute;
+  z-index:999;
+}
+
 
 .wrapper {
   text-align: center;
@@ -33,6 +38,18 @@ body {
       background-color: #dddddd;
       width: 100%;
       height: auto;
+    }
+  }
+  .mode-container {
+    .mode {
+      height: 150px;
+      width: 100%;
+    }
+    .manual {
+      display: block;
+    }
+    .auto {
+      display: none;
     }
   }
   .control-container {
