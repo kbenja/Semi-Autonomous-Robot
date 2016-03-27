@@ -25,13 +25,16 @@ public:
     }
     float get_distance_reading()
     {
-        float adc_value_float = 0.0;
+        //float adc_value_float = 0.0;
+    	uint16_t adc_value = 0;
         // calibrate and adjust this constant
-        float calibrate_constant = 55.0;
-        adc_value_float = mraa_aio_read_float(adc_input)*calibrate_constant;
+        //float calibrate_constant = 55;
+        //adc_value = mraa_aio_read(adc_input)*calibrate_constant;
+        adc_value = mraa_aio_read(adc_input);
 
-        return adc_value_float;
+        return adc_value;
     }
+
 };
 
 #endif
