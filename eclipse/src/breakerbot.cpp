@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "include/i2c_library.h"
-#include "include/communication.h"
+#include "include/ipc_module.h"
 #include "include/manual_control.h"
 #include "include/lidar_module.h"
 #include "include/motor_module.h"
@@ -10,7 +10,7 @@
 
 bool lidar_module = false;
 bool motor_module = false;
-bool communication = true;
+bool ipc_module = true;
 bool encoder_module = false;
 bool pot_module = false;
 bool navx_module = false;
@@ -19,22 +19,19 @@ bool manual_control = false;
 int mode = 1; //idle by default
 
 int main(int argc, char** argv) {
-    if (communication) {
-        printf("COMMUNICATION MODULE TESTING\n\n");
-        Communication c1;
-        int * received;
-        while(1) {
-            received = c1.get_instructions();
-            if(*received != -1) {
-                std::cout << "MODE = 1 – Reading values\n";
-                std::cout << "Value = " << *(received + 1) << std::endl;
-            } else if (*received == -2) {
-                std::cout << "Error in file read/write" << std::endl;
-            } else {
-                std::cout << "Cannot reach host, Disconnected" << std::endl;
-            }
-            usleep(10000);
+
+    if (ipc_module) {
+        IPC_Module ipc("/tmp/breakerbot.socket");
+        int status = ipc.unix_socket_initialize();
+        if (status < 0) {
+            printf("Cannot connect to socket\n");
         }
+        sleep(1);
+        status = ipc.unix_socket_write();
+        if (status < 0) {
+            printf("Cannot write to socket\n");
+        }
+        ipc.unix_socket_read();
     }
 
     if (pot_module) {
