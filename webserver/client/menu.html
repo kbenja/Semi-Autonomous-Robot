@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta content = "text/html" charset = "UTF-8">
+		<title>MENU!</title>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" type = "text/css" href = "css/normalize.css" >
+		<link rel="stylesheet" type = "text/css" href = "css/style.css" >
+		<script src="js/controller.js"></script>
+		<script src="js/loopManager.js"></script>
+		<script src="js/vendor/jquery-2.2.0.min.js"></script>
+		<script src="js/vendor/jsmpg.js"></script>
+	</head>
+ 	<body>
+ 	
+ 	<!-- CSS STYLE BC THE FILE DOES NOT WORK-->
+ 			<div>
+ 			<button class=button>Emergency Stop!</button>
+ 			<button class=button>Main Menu</button>
+	 		</div>
+	 		<div class="wrapper">
+	 		
+		 			<h2>Streaming Live From Intel Edison</h2>
+		 			<div class="video-container">
+			 			<div class="watermark">
+			 				<img src="logo_white.png">
+			 			</div>
+		 			  <canvas id="canvas-video" width="640" height="480"></canvas>
+		 			</div>
+		 			<div class="control-container">
+						<div class="connect">
+			 				Please connect or reconnect gamepad.
+						</div>
+			 			<div class="controls">
+				 			<div class="cartesian">
+				 				<div class="command up">&#9650;</div>
+				 				<div class="command left">&#9664;</div>
+				 				<div class="command right">&#9654;</div>
+				 				<div class="command down">&#9660;</div>
+				 			</div>
+			 				<div class="cartesian">
+				 				<div class="command y_button">Y</div>
+				 				<div class="command x_button">X</div>
+				 				<div class="command b_button">B</div>
+				 				<div class="command a_button">A</div>
+				 			</div>
+				 			<div class="joystick">
+				 				<div class="pos left_joystick"></div>
+				 			</div>
+				 			<div class="joystick">
+				 				<div class="pos right_joystick"></div>
+				 			</div>
+			 			</div>
+			 		</div>
+	 		</div>
+		<script type="text/javascript" src="js/main.js"></script>
+  	</body>
+</html>
