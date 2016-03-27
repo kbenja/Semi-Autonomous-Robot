@@ -8,11 +8,11 @@
 #include "include/navx_module.h"
 
 bool communication = false;
-bool lidar_module = false;
+bool lidar_module = true;
 bool motor_module = false;
 bool encoder_module = false;
 bool pot_module = false;
-bool navx_module = true;
+bool navx_module = false;
 
 int main(int argc, char** argv) {
     if(pot_module) {
@@ -24,10 +24,7 @@ int main(int argc, char** argv) {
             printf("Pot 1: %d     Pot 2: %d\n",P0.get_val(),P1.get_val());
             usleep(500000);
         }
-
     }
-
-
 
     if(communication) {
         printf("COMMUNICATION MODULE TESTING\n\n");
@@ -42,9 +39,12 @@ int main(int argc, char** argv) {
     if(lidar_module) {
         printf("LIDAR MODULE TESTING\n\n");
 
-        Lidar_Module l1(2);
+        Lidar_Module l1(1);
+        Lidar_Module l2(2);
         while(1) {
-            printf("%f\n",l1.get_distance_reading());
+        	usleep(500000); //sleep every .5 sec
+            printf("LIDAR#1: %X - %d\n",l1.get_distance_reading(),l1.get_distance_reading());
+            printf("LIDAR#2: %X - %d\n\n",l2.get_distance_reading(),l2.get_distance_reading());
         }
     }
 
