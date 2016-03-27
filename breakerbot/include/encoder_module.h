@@ -4,7 +4,7 @@
 #ifndef ENCODER_MODULE_H
 #define ENCODER_MODULE_H
 
-// SCL = Yello
+// SCL = Yellow
 // SDA = White
 
 class Encoder_Module {
