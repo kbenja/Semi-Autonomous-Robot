@@ -43,8 +43,10 @@ int main(int argc, char** argv) {
         Lidar_Module l2(2);
         while(1) {
         	usleep(500000); //sleep every .5 sec
-            printf("LIDAR#1: %X - %d\n",l1.get_distance_reading(),l1.get_distance_reading());
-            printf("LIDAR#2: %X - %d\n\n",l2.get_distance_reading(),l2.get_distance_reading());
+        	printf("LIDAR#1:%f\n",l1.get_distance_reading());
+        	printf("LIDAR#2:%f\n\n",l2.get_distance_reading());
+            //printf("LIDAR#1:%X - %d\n",l1.get_distance_reading());
+            //printf("LIDAR#2:%X - %d\n\n",l2.get_distance_reading());
         }
     }
 
