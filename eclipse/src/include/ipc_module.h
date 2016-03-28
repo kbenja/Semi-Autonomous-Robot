@@ -31,7 +31,7 @@ public:
         return (connect(fd, (struct sockaddr*)&addr, sizeof(addr))); // connect to socket
     }
     int unix_socket_write() {
-        return write(fd,"Hello",5);
+        return write(fd,"status",5);
     }
     void unix_socket_read(int16_t * instructions) {
         // write(fd,"Hello", 5);

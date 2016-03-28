@@ -1,5 +1,5 @@
 var Controller = function(client) {
-    this.keyboard_controls = true;
+    this.keyboard_controls = false;
     this.breaking = false;
     this.gamepad_connected = false;
     this.keysDown = {};
@@ -21,7 +21,6 @@ Controller.prototype.keyPressed = function(key) {
     }
     if(!this.breaking) {
         // put this only on game pad connection
-        this.command.mode = 1;
         if (key === "up" || key === 38) {
             if(!this.keysDown[key]) {
                 this.command.code = 1;
@@ -92,7 +91,7 @@ Controller.prototype.initialize = function() {
     addEventListener("gamepadconnected", function(e) {
         that.gamepad_connected = true;
         that.gamepad = navigator.getGamepads()[0];
-        that.command.mode = -1;
+        that.command.mode = 1;
         that.client.send(JSON.stringify(that.command));
         console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.", that.gamepad.index, that.gamepad.id, that.gamepad.buttons.length, that.gamepad.axes.length);
         $(".controls").css("opacity","1");
@@ -103,7 +102,7 @@ Controller.prototype.initialize = function() {
         that.gamepad_connected = false;
         that.gamepad = {};
         console.log("Gamepad disconnected");
-        that.command.mode = -1;
+        that.command.mode = 0;
         that.client.send(JSON.stringify(that.command));
         $(".controls").css("opacity","0.2");
         $(".connect").css("display","block");

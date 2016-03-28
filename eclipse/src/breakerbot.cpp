@@ -24,24 +24,34 @@ bool manual_control = false;
 * 1 = manual input
 */
 int16_t instructions[2] = {-1,0};
+int mode = -1;
 int16_t *p_instructions = instructions;
 
 int main(int argc, char** argv) {
-
     if (ipc_module) {
         IPC_Module ipc("/tmp/breakerbot.socket");
         int status = ipc.unix_socket_initialize();
         if (status < 0) {
             printf("Cannot connect to socket\n");
         }
+        // int heartbeat = 0; //make sure to communicate every 0.25 sec;
         while(1) {
-            usleep(25000);
+            usleep(25000); // cycle time
+            ipc.unix_socket_write(); // check for status .. eventually send status of devices
             ipc.unix_socket_read(p_instructions);
-            if(instructions[0] == -1) {
-                printf("CLIENT IS NOT CONNECTED\n");
-            } else if (instructions[0] == 1) {
-                printf("Mode = %d ", instructions[0]);
-                printf("Input = %d\n", instructions[1]);
+            mode = instructions[0];
+            switch(mode) {
+                case -1: // No user connected to web server
+                    printf("CLIENT IS NOT CONNECTED\r");
+                    break;
+                case 0: // Idle mode, no recent commands
+                    break;
+                case 1:
+                    printf("MODE = MANUAL CONTROL, INPUT = %d\n", instructions[1]);
+                    break;
+                default:
+                    printf("CAUGHT IN DEFAULT\n");
+                    break;
             }
         }
     }

@@ -29,7 +29,33 @@ console.log('WebSocket server listening on port ' + socket_port);
 *    UNIX SOCKET – SERVER & C++ PROGRAM
 */
 var commands = [];
-var unix_socket; //global variable
+var client_socket = false;
+var unix_socket = false; // set global unix socket
+var mode = -1;
+var heartbeat = 0;
+var last_heartbeat = 0;
+var check_status = setInterval(function(){
+    if(last_heartbeat === heartbeat) {
+        unix_socket = false;
+        console.log("UNIX SOCKET NOT CONNECTED");
+    }
+    last_heartbeat = heartbeat;
+}, 250);
+
+function unix_socket_emit() {
+    if(unix_socket) {
+        if(!client_socket) {
+            ipc.server.emit(unix_socket,[-1,0]);
+        } else if(commands.length) {
+            console.log("sending: ",commands[0]);
+            ipc.server.emit(unix_socket,commands[0]);
+            commands.splice(0,1);
+        } else {
+            // idle mode or same as last command
+            ipc.server.emit(unix_socket,[0,0]);
+        }
+    }
+}
 ipc.config.appspace = "breakerbot.";
 ipc.config.id = 'socket';
 ipc.config.retry = 1500;
@@ -38,19 +64,12 @@ ipc.config.encoding = 'hex';
 ipc.config.silent = true;
 ipc.serve(function() {
     ipc.server.on('connect', function(socket){
-        ipc.server.emit(socket, [-1,-2]);
         unix_socket = socket;
+        console.log("UNIX SOCKET CONNECTED");
     });
     ipc.server.on('data', function(data,socket){
-        // console.log("Data",data);
-        // ipc.log('got a message', data.toString('utf-8'));
-        if(commands.length) {
-            console.log("sending: ",[commands[0].mode,commands[0].code]);
-            ipc.server.emit(socket, [commands[0].mode,commands[0].code]);
-            commands.splice(0,1);
-        } else {
-            ipc.server.emit(socket, [0,0]);
-        }
+        heartbeat++;
+        unix_socket_emit()
     });
 });
 ipc.server.start();
@@ -60,18 +79,14 @@ ipc.server.start();
 */
 wsServer.on('connection', function(socket) {
     console.log('New WebSocket Connection (' + wsServer.clients.length + ' total)');
-    commands.push({mode: 0, code: 0});
-
+    client_socket = true;
     socket.on("message", function(command) {
         command = JSON.parse(command);
-        console.log("RECEIVED: ", command.mode, command.code, "Writing to socket here");
-        // commands.push(command);
-        ipc.server.emit(unix_socket, [command.mode, command.code]);
+        commands.push([command.mode, command.code]);
     })
-
     socket.on('close', function(code, message) {
         console.log('Disconnected WebSocket (' + wsServer.clients.length + ' total)');
-        commands.push({mode: -1, code: 0});
+        client_socket = false;
     });
 
     var streamHeader = new Buffer(8);
@@ -81,7 +96,14 @@ wsServer.on('connection', function(socket) {
     socket.send(streamHeader, { binary: true });
 });
 
-// we can maybe remove this completely
+// HTTP STATIC SERVER
+app.set('port', static_port);
+app.use(express.static("./client"));
+http.createServer(app).listen(app.get('port'), function() {
+    console.log('HTTP server listening on port ' + app.get('port'));
+});
+
+// HTTP SERVER FOR MPEG1 STREAM
 wsServer.broadcast = function(data, opts) {
     for (var i in this.clients) {
         if (this.clients[i].readyState == 1) {
@@ -92,14 +114,6 @@ wsServer.broadcast = function(data, opts) {
     }
 };
 
-// HTTP STATIC SERVER
-app.set('port', static_port);
-app.use(express.static("./client"));
-http.createServer(app).listen(app.get('port'), function() {
-    console.log('HTTP server listening on port ' + app.get('port'));
-});
-
-// HTTP SERVER FOR MPEG1 STREAM
 http.createServer(function(req, res) {
     console.log('Stream Connected: ' + req.socket.remoteAddress + ':' + req.socket.remotePort + ' size: ' + width + 'x' + height);
     req.on('data', function(data) {
