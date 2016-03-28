@@ -24,6 +24,9 @@ body {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box; }
+  .basic-info-container img {
+    height: 25px;
+    width: auto; }
 
 .position-container {
   position: absolute;
@@ -52,10 +55,32 @@ body {
   box-sizing: border-box; }
 
 #stop {
-  background-color: #FF0000;
-  width: 300px;
+  width: 100px;
   height: 100px;
-  shape-outside: polygon(8); }
+  background: red;
+  position: relative; }
+
+#stop:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-bottom: 29px solid red;
+  border-left: 29px solid #eee;
+  border-right: 29px solid #eee;
+  width: 42px;
+  height: 0; }
+
+#stop:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-top: 29px solid red;
+  border-left: 29px solid #eee;
+  border-right: 29px solid #eee;
+  width: 42px;
+  height: 0; }
 
 .wrapper {
   position: absolute;
