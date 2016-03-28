@@ -28,7 +28,28 @@ int mode = -1;
 int16_t *p_instructions = instructions;
 
 int main(int argc, char** argv) {
+    float user_input = 0.0;                          // receive signal from argv or use default (stop)
+    if (argc > 1) {
+        printf("***Using given value by user\n");
+        user_input = atof(argv[1]);
+    }
+
     if (ipc_module) {
+        /*
+         *  MOTOR MODULE INITIALIZATION
+         */
+        uint8_t address = 0x40;
+        mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
+        i2c_init_board(i2c, address);               // initialize the board
+
+        Motor_Module m1(1);                         // create motors to ports 1, 2, and 3
+        Motor_Module m2(2);
+        Motor_Module m3(3);
+        Motor_Module m4(4);
+
+        /*
+         * UNIX SOCKET INITIALIZATION
+         */
         IPC_Module ipc("/tmp/breakerbot.socket");
         int status = ipc.unix_socket_initialize();
         if (status < 0) {
@@ -48,6 +69,19 @@ int main(int argc, char** argv) {
                     break;
                 case 1:
                     printf("MODE = MANUAL CONTROL, INPUT = %d\n", instructions[1]);
+                    if(instructions[1] == 1) {
+                        m1.send_signal(i2c, user_input);
+                        m2.send_signal(i2c, user_input);
+                        m3.send_signal(i2c, user_input);
+                        m4.send_signal(i2c, user_input);
+                    } else if (instructions[1] == 3) {
+                        m1.send_signal(i2c, -user_input);
+                        m2.send_signal(i2c, -user_input);
+                        m3.send_signal(i2c, -user_input);
+                        m4.send_signal(i2c, -user_input);
+                    }
+                    printf("waking up the board\n");
+                    mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                     break;
                 default:
                     printf("CAUGHT IN DEFAULT\n");
@@ -97,14 +131,6 @@ int main(int argc, char** argv) {
         Motor_Module m2(2);
         Motor_Module m3(3);
         Motor_Module m4(4);
-
-        float user_input = 0.0;                          // receive signal from argv or use default (stop)
-        if (argc > 1) {
-            printf("***Using given value by user\n");
-            user_input = (int)atof(argv[1]);
-        } else {
-            printf("***Using default value of 0x0B00\n");
-        }
 
         m1.send_signal(i2c, user_input);                // send signal to boards
         m2.send_signal(i2c, user_input);

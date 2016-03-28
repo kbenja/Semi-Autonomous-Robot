@@ -11,7 +11,7 @@ var static_port = 8080;
 var stream_port = 8082;
 var socket_port = 8084;
 
-var development = false;
+var development = true;
 if(!development) {
     createIP();
 }
@@ -35,11 +35,13 @@ var mode = -1;
 var heartbeat = 0;
 var last_heartbeat = 0;
 var check_status = setInterval(function(){
-    if(last_heartbeat === heartbeat) {
-        unix_socket = false;
-        console.log("UNIX SOCKET NOT CONNECTED");
+    if(!development) {
+        if(last_heartbeat === heartbeat) {
+            unix_socket = false;
+            console.log("UNIX SOCKET NOT CONNECTED");
+        }
+        last_heartbeat = heartbeat;
     }
-    last_heartbeat = heartbeat;
 }, 250);
 
 function unix_socket_emit() {
