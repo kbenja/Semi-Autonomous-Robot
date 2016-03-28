@@ -34,15 +34,10 @@ public:
         return write(fd,"Hello",5);
     }
     void unix_socket_read(int16_t * instructions) {
-        write(fd,"Hello", 5);
+        // write(fd,"Hello", 5);
         read(fd,buffer,4);
         *(instructions) = buffer[0];
         *(instructions+1) = buffer[1];
-        // if(buffer[0]) {
-        //     printf("Reading from buffer: ");
-        //     printf("MODE: %d INPUT1: %d",buffer[0],buffer[1]);
-        //     printf("\n");
-        // }
     }
 };
 

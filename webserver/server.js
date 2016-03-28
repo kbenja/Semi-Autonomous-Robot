@@ -29,7 +29,7 @@ console.log('WebSocket server listening on port ' + socket_port);
 *    UNIX SOCKET – SERVER & C++ PROGRAM
 */
 var commands = [];
-
+var unix_socket; //global variable
 ipc.config.appspace = "breakerbot.";
 ipc.config.id = 'socket';
 ipc.config.retry = 1500;
@@ -55,18 +55,6 @@ ipc.serve(function() {
 });
 ipc.server.start();
 
-// processing queues synchonously
-
-var process_executing = false;
-function execute_next_item () {
-    if (!process_executing && commands.length){
-        process_executing = true;
-        commands.splice(0,1);
-        process_executing = false;
-        execute_next_item();
-    }
-};
-
 /*
 *    TCP/IP SOCKET – CLIENT & SERVER
 */
@@ -76,8 +64,9 @@ wsServer.on('connection', function(socket) {
 
     socket.on("message", function(command) {
         command = JSON.parse(command);
-        console.log("RECEIVED: ", command.mode, command.code);
-        commands.push(command);
+        console.log("RECEIVED: ", command.mode, command.code, "Writing to socket here");
+        // commands.push(command);
+        ipc.server.emit(unix_socket, [command.mode, command.code]);
     })
 
     socket.on('close', function(code, message) {
