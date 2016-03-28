@@ -1,21 +1,62 @@
 #include <stdlib.h>
 #include "include/i2c_library.h"
-#include "include/communication.h"
+#include "include/ipc_module.h"
+#include "include/manual_control.h"
 #include "include/lidar_module.h"
 #include "include/motor_module.h"
 #include "include/encoder_module.h"
 #include "include/pot_module.h"
 #include "include/navx_module.h"
 
-bool communication = false;
 bool lidar_module = false;
 bool motor_module = false;
+bool ipc_module = true;
 bool encoder_module = false;
 bool pot_module = false;
-bool navx_module = true;
+bool navx_module = false;
+bool manual_control = false;
+
+/*
+* Instructions = { MODE, INPUT1 }
+* MODE:
+* -1 = disconnected
+* 0 = idle mode
+* 1 = manual input
+*/
+int16_t instructions[2] = {-1,0};
+int mode = -1;
+int16_t *p_instructions = instructions;
 
 int main(int argc, char** argv) {
-    if(pot_module) {
+    if (ipc_module) {
+        IPC_Module ipc("/tmp/breakerbot.socket");
+        int status = ipc.unix_socket_initialize();
+        if (status < 0) {
+            printf("Cannot connect to socket\n");
+        }
+        // int heartbeat = 0; //make sure to communicate every 0.25 sec;
+        while(1) {
+            usleep(25000); // cycle time
+            ipc.unix_socket_write(); // check for status .. eventually send status of devices
+            ipc.unix_socket_read(p_instructions);
+            mode = instructions[0];
+            switch(mode) {
+                case -1: // No user connected to web server
+                    printf("CLIENT IS NOT CONNECTED\r");
+                    break;
+                case 0: // Idle mode, no recent commands
+                    break;
+                case 1:
+                    printf("MODE = MANUAL CONTROL, INPUT = %d\n", instructions[1]);
+                    break;
+                default:
+                    printf("CAUGHT IN DEFAULT\n");
+                    break;
+            }
+        }
+    }
+
+    if (pot_module) {
         printf("Pot module testing");
         Pot_Module P0(0,12);
         Pot_Module P1(1,12);
@@ -24,22 +65,19 @@ int main(int argc, char** argv) {
             printf("Pot 1: %d     Pot 2: %d\n",P0.get_val(),P1.get_val());
             usleep(500000);
         }
-
     }
 
+    if (manual_control) {
+        printf("MANUAL CONTROL MODULE TESTING\n\n");
 
-
-    if(communication) {
-        printf("COMMUNICATION MODULE TESTING\n\n");
-
-        Communication input;
+        Manual_Control input;
         while(1){
             std::string instruction = input.getInstruction();
             printf("instruction: %s\n", instruction.c_str());
         }
     }
 
-    if(lidar_module) {
+    if (lidar_module) {
         printf("LIDAR MODULE TESTING\n\n");
 
         Lidar_Module l1(2);
@@ -48,7 +86,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    if(motor_module) {
+    if (motor_module) {
         printf("MOTOR MODULE TESTING\n\n");
 
         uint8_t address = 0x40;

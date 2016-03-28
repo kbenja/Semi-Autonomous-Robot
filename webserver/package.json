@@ -4,7 +4,7 @@
   "description": "Internet of things for Intel Edison chip",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "gulp"
   },
   "repository": {
     "type": "git",
@@ -22,10 +22,8 @@
     "gulp-nodemon": "^2.0.6",
     "gulp-sass": "^2.2.0",
     "morgan": "^1.6.1",
+    "node-ipc": "^7.0.0",
     "socket.io": "^1.4.5",
     "ws": "^1.0.1"
-  },
-  "scripts": {
-    "start": "gulp"
   }
 }

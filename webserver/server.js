@@ -1,107 +1,109 @@
-/*
-*
-*   SET THIS FLAG TO TRUE IF RUNNING THIS ON EDISON
-*
-*/
-var development = false;
-
 var express = require("express");
 var app = express();
-var path = require("path");
-var fs = require('fs');
 var http = require('http');
 var childProcess = require('child_process');
-var morgan = require('morgan');
 var ws = require('ws');
-// configuration files
-var configServer = require('./lib/config/server');
 
-var ip_command = 'ipconfig getifaddr en1';
+var createIP = require('./createIP');
+var ipc = require('node-ipc');
+
+var static_port = 8080;
+var stream_port = 8082;
+var socket_port = 8084;
+
+var development = false;
 if(!development) {
-    ip_command = 'configure_edison --showWiFiIP';
+    createIP();
 }
 
-var getIP = childProcess.exec(ip_command);
-getIP.stdout.on('data', function (data) {
-    var ip = 'ws://'+data.toString().slice(0,-1)+':8084/';
-    fs.writeFile("./client/ip.txt", ip, function(err) {
-        if(err) {
-            return console.log(err);
-        }
-        console.log(ip, "saved to file");
-    });
-});
-getIP.stderr.on('err', function(err) {
-    console.log("Error finding IP!");
-})
-
-// app parameters
-app.set('port', configServer.httpPort);
-app.use(express.static(configServer.staticFolder));
-app.use(morgan('dev'));
-
-// serve index
-require('./lib/routes').serveIndex(app, configServer.staticFolder);
-
-// HTTP server
-http.createServer(app).listen(app.get('port'), function() {
-    console.log('HTTP server listening on port ' + app.get('port'));
-});
-
-/// Video streaming section
-// Reference: https://github.com/phoboslab/jsmpeg/blob/master/stream-server.js
-
+/// VIDEO STREAMING
 var STREAM_MAGIC_BYTES = 'jsmp'; // Must be 4 bytes
 var width = 320;
 var height = 240;
 
-// WebSocket server
-var wsServer = new(ws.Server)({
-    port: configServer.wsPort
-});
+// WEBSOCKET SERVER
+var wsServer = new(ws.Server)({ port: socket_port });
+console.log('WebSocket server listening on port ' + socket_port);
 
-console.log('WebSocket server listening on port ' + configServer.wsPort);
-
+/*
+*    UNIX SOCKET – SERVER & C++ PROGRAM
+*/
 var commands = [];
-var process_executing = false;
-function execute_next_item_in_queue () {
-    if (!process_executing && commands.length){
-        process_executing = true;
-        childProcess.exec('echo ' + commands[0] + ' > /dev/ttymcu0', function() {
-            commands.splice(0,1);
-            process_executing = false;
-            execute_next_item_in_queue();
-        });
+var client_socket = false;
+var unix_socket = false; // set global unix socket
+var mode = -1;
+var heartbeat = 0;
+var last_heartbeat = 0;
+var check_status = setInterval(function(){
+    if(last_heartbeat === heartbeat) {
+        unix_socket = false;
+        console.log("UNIX SOCKET NOT CONNECTED");
     }
-};
+    last_heartbeat = heartbeat;
+}, 250);
 
-wsServer.on('connection', function(socket) {
-    socket.on("message", function(code) {
-        if(!development){
-            console.log(code);
-            commands.push(code);
-            execute_next_item_in_queue(code);
+function unix_socket_emit() {
+    if(unix_socket) {
+        if(!client_socket) {
+            ipc.server.emit(unix_socket,[-1,0]);
+        } else if(commands.length) {
+            console.log("sending: ",commands[0]);
+            ipc.server.emit(unix_socket,commands[0]);
+            commands.splice(0,1);
+        } else {
+            // idle mode or same as last command
+            ipc.server.emit(unix_socket,[0,0]);
         }
-    })
-    var streamHeader = new Buffer(8);
+    }
+}
+ipc.config.appspace = "breakerbot.";
+ipc.config.id = 'socket';
+ipc.config.retry = 1500;
+ipc.config.rawBuffer = true;
+ipc.config.encoding = 'hex';
+ipc.config.silent = true;
+ipc.serve(function() {
+    ipc.server.on('connect', function(socket){
+        unix_socket = socket;
+        console.log("UNIX SOCKET CONNECTED");
+    });
+    ipc.server.on('data', function(data,socket){
+        heartbeat++;
+        unix_socket_emit()
+    });
+});
+ipc.server.start();
 
+/*
+*    TCP/IP SOCKET – CLIENT & SERVER
+*/
+wsServer.on('connection', function(socket) {
+    console.log('New WebSocket Connection (' + wsServer.clients.length + ' total)');
+    client_socket = true;
+    socket.on("message", function(command) {
+        command = JSON.parse(command);
+        commands.push([command.mode, command.code]);
+    })
+    socket.on('close', function(code, message) {
+        console.log('Disconnected WebSocket (' + wsServer.clients.length + ' total)');
+        client_socket = false;
+    });
+
+    var streamHeader = new Buffer(8);
     streamHeader.write(STREAM_MAGIC_BYTES);
     streamHeader.writeUInt16BE(width, 4);
     streamHeader.writeUInt16BE(height, 6);
-    socket.send(streamHeader, {
-        binary: true
-    });
-
-    console.log('New WebSocket Connection (' + wsServer.clients.length + ' total)');
-
-    socket.on('close', function(code, message) {
-        console.log('Disconnected WebSocket (' + wsServer.clients.length + ' total)');
-        if(!development){
-            childProcess.exec('echo "0000" > /dev/ttymcu0');
-        }
-    });
+    socket.send(streamHeader, { binary: true });
 });
 
+// HTTP STATIC SERVER
+app.set('port', static_port);
+app.use(express.static("./client"));
+http.createServer(app).listen(app.get('port'), function() {
+    console.log('HTTP server listening on port ' + app.get('port'));
+});
+
+// HTTP SERVER FOR MPEG1 STREAM
 wsServer.broadcast = function(data, opts) {
     for (var i in this.clients) {
         if (this.clients[i].readyState == 1) {
@@ -112,25 +114,12 @@ wsServer.broadcast = function(data, opts) {
     }
 };
 
-// HTTP server to accept incoming MPEG1 stream
 http.createServer(function(req, res) {
-    console.log(
-        'Stream Connected: ' + req.socket.remoteAddress +
-        ':' + req.socket.remotePort + ' size: ' + width + 'x' + height
-    );
+    console.log('Stream Connected: ' + req.socket.remoteAddress + ':' + req.socket.remotePort + ' size: ' + width + 'x' + height);
     req.on('data', function(data) {
-        wsServer.broadcast(data, {
-            binary: true
-        });
+        wsServer.broadcast(data, { binary: true });
     });
-}).listen(configServer.streamPort, function() {
-    console.log('Listening for video stream on port ' + configServer.streamPort);
-
-    if(!development) {
-        childProcess.exec('./bin/init)pins.sh');
-    }
-    // Run do_ffmpeg.sh from node
+}).listen(stream_port, function() {
+    console.log('Listening for video stream on port ' + stream_port);
     childProcess.exec('./bin/do_ffmpeg.sh');
 });
-
-module.exports.app = app;
