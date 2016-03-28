@@ -1,11 +1,9 @@
 #include <sys/socket.h>
 #include <sys/un.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <cstring>
 #include <netdb.h>
-#include <vector>
 
 #ifndef IPC_Module_H
 #define IPC_Module_H
@@ -17,36 +15,34 @@ const char *socket_path;
 struct sockaddr_un addr;
 char buffer[225];
 int fd;
-std::vector<int> instructions;
 
 public:
     IPC_Module(const char* path) {
         socket_path = path;
     };
-    // functions will return -1 if error occurs
     int unix_socket_initialize() {
-        // create socket
+        // create socket – functions will return -1 if error occurs
         if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
             return -1;
         }
-        // initialize all socket memory to 0
-        memset(&addr, 0, sizeof(addr));
+        memset(&addr, 0, sizeof(addr)); // initialize all socket memory to 0
         addr.sun_family = AF_UNIX;
         strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
-        // connect to socket
-        return (connect(fd, (struct sockaddr*)&addr, sizeof(addr)));
+        return (connect(fd, (struct sockaddr*)&addr, sizeof(addr))); // connect to socket
     }
     int unix_socket_write() {
         return write(fd,"Hello",5);
     }
-    void unix_socket_read() {
+    void unix_socket_read(int16_t * instructions) {
         write(fd,"Hello", 5);
         read(fd,buffer,4);
-        if(buffer[0]) {
-            printf("Reading from buffer: ");
-            printf("MODE: %d INPUT1: %d",buffer[0],buffer[1]);
-            printf("\n");
-        }
+        *(instructions) = buffer[0];
+        *(instructions+1) = buffer[1];
+        // if(buffer[0]) {
+        //     printf("Reading from buffer: ");
+        //     printf("MODE: %d INPUT1: %d",buffer[0],buffer[1]);
+        //     printf("\n");
+        // }
     }
 };
 

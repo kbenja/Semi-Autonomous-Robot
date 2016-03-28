@@ -45,8 +45,8 @@ ipc.serve(function() {
         // console.log("Data",data);
         // ipc.log('got a message', data.toString('utf-8'));
         if(commands.length) {
-            console.log("sending: ",[1,commands[0].code]);
-            ipc.server.emit(socket, [1,commands[0].code]);
+            console.log("sending: ",[commands[0].mode,commands[0].code]);
+            ipc.server.emit(socket, [commands[0].mode,commands[0].code]);
             commands.splice(0,1);
         } else {
             ipc.server.emit(socket, [0,0]);
@@ -71,13 +71,8 @@ function execute_next_item () {
 *    TCP/IP SOCKET – CLIENT & SERVER
 */
 wsServer.on('connection', function(socket) {
-    var streamHeader = new Buffer(8);
-    streamHeader.write(STREAM_MAGIC_BYTES);
-    streamHeader.writeUInt16BE(width, 4);
-    streamHeader.writeUInt16BE(height, 6);
-    socket.send(streamHeader, { binary: true });
-
     console.log('New WebSocket Connection (' + wsServer.clients.length + ' total)');
+    commands.push({mode: 0, code: 0});
 
     socket.on("message", function(command) {
         command = JSON.parse(command);
@@ -87,9 +82,17 @@ wsServer.on('connection', function(socket) {
 
     socket.on('close', function(code, message) {
         console.log('Disconnected WebSocket (' + wsServer.clients.length + ' total)');
+        commands.push({mode: -1, code: 0});
     });
+
+    var streamHeader = new Buffer(8);
+    streamHeader.write(STREAM_MAGIC_BYTES);
+    streamHeader.writeUInt16BE(width, 4);
+    streamHeader.writeUInt16BE(height, 6);
+    socket.send(streamHeader, { binary: true });
 });
 
+// we can maybe remove this completely
 wsServer.broadcast = function(data, opts) {
     for (var i in this.clients) {
         if (this.clients[i].readyState == 1) {

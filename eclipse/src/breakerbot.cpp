@@ -16,7 +16,15 @@ bool pot_module = false;
 bool navx_module = false;
 bool manual_control = false;
 
-int mode = 1; //idle by default
+/*
+* Instructions = { MODE, INPUT1 }
+* MODE:
+* -1 = disconnected
+* 0 = idle mode
+* 1 = manual input
+*/
+int16_t instructions[2] = {-1,0};
+int16_t *p_instructions = instructions;
 
 int main(int argc, char** argv) {
 
@@ -27,8 +35,14 @@ int main(int argc, char** argv) {
             printf("Cannot connect to socket\n");
         }
         while(1) {
-            usleep(100000);
-            ipc.unix_socket_read();
+            usleep(25000);
+            ipc.unix_socket_read(p_instructions);
+            if(instructions[0] == -1) {
+                printf("CLIENT IS NOT CONNECTED\n");
+            } else if (instructions[0] == 1) {
+                printf("Mode = %d ", instructions[0]);
+                printf("Input = %d\n", instructions[1]);
+            }
         }
     }
 

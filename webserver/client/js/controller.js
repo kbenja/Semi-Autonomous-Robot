@@ -20,6 +20,8 @@ Controller.prototype.keyPressed = function(key) {
         this.client.send(JSON.stringify(this.command));
     }
     if(!this.breaking) {
+        // put this only on game pad connection
+        this.command.mode = 1;
         if (key === "up" || key === 38) {
             if(!this.keysDown[key]) {
                 this.command.code = 1;
