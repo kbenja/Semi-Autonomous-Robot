@@ -11,7 +11,7 @@ var static_port = 8080;
 var stream_port = 8082;
 var socket_port = 8084;
 
-var development = true;
+var development = false;
 if(!development) {
     createIP();
 }
@@ -25,8 +25,37 @@ var height = 240;
 var wsServer = new(ws.Server)({ port: socket_port });
 console.log('WebSocket server listening on port ' + socket_port);
 
-
+/*
+*    UNIX SOCKET – SERVER & C++ PROGRAM
+*/
 var commands = [];
+
+ipc.config.appspace = "breakerbot.";
+ipc.config.id = 'socket';
+ipc.config.retry = 1500;
+ipc.config.rawBuffer = true;
+ipc.config.encoding = 'hex';
+ipc.config.silent = true;
+ipc.serve(function() {
+    ipc.server.on('connect', function(socket){
+        ipc.server.emit(socket, [-1,-2]);
+        unix_socket = socket;
+    });
+    ipc.server.on('data', function(data,socket){
+        // console.log("Data",data);
+        // ipc.log('got a message', data.toString('utf-8'));
+        if(commands.length) {
+            console.log("sending: ",[1,commands[0].code]);
+            ipc.server.emit(socket, [1,commands[0].code]);
+            commands.splice(0,1);
+        } else {
+            ipc.server.emit(socket, [0,0]);
+        }
+    });
+});
+ipc.server.start();
+
+// processing queues synchonously
 
 var process_executing = false;
 function execute_next_item () {
@@ -50,10 +79,10 @@ wsServer.on('connection', function(socket) {
 
     console.log('New WebSocket Connection (' + wsServer.clients.length + ' total)');
 
-    socket.on("message", function(code) {
-        console.log("RECEIVED: ", code);
-        commands.push(code);
-        execute_next_item(code);
+    socket.on("message", function(command) {
+        command = JSON.parse(command);
+        console.log("RECEIVED: ", command.mode, command.code);
+        commands.push(command);
     })
 
     socket.on('close', function(code, message) {
@@ -70,34 +99,6 @@ wsServer.broadcast = function(data, opts) {
         }
     }
 };
-
-/*
-*    UNIX SOCKET – SERVER & C++ PROGRAM
-*/
-ipc.config.appspace = "breakerbot.";
-ipc.config.id = 'socket';
-ipc.config.retry= 1500;
-ipc.config.rawBuffer=true;
-ipc.config.encoding='hex';
-
-ipc.serve(function() {
-    ipc.server.on('connect', function(socket){
-        ipc.server.emit(
-            socket,
-            [0xaa]
-        );
-    });
-    ipc.server.on('data', function(data,socket){
-        console.log("Data",data);
-        ipc.log('got a message', data.toString('utf-8'));
-        ipc.server.emit(
-            socket,
-            [0x77,0x66]
-        );
-    });
-});
-
-ipc.server.start();
 
 // HTTP STATIC SERVER
 app.set('port', static_port);

@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <netdb.h>
+#include <vector>
 
 #ifndef IPC_Module_H
 #define IPC_Module_H
@@ -16,7 +17,7 @@ const char *socket_path;
 struct sockaddr_un addr;
 char buffer[225];
 int fd;
-
+std::vector<int> instructions;
 
 public:
     IPC_Module(const char* path) {
@@ -39,15 +40,12 @@ public:
         return write(fd,"Hello",5);
     }
     void unix_socket_read() {
-        int n;
-        while(1) {
-            n = read(fd,buffer,100);
-            if (n > 0) {
-                printf("Reading from buffer: ");
-                printf("%02x",buffer[0]);
-                printf("%02x",buffer[1]);
-                printf("\n");
-            }
+        write(fd,"Hello", 5);
+        read(fd,buffer,4);
+        if(buffer[0]) {
+            printf("Reading from buffer: ");
+            printf("MODE: %d INPUT1: %d",buffer[0],buffer[1]);
+            printf("\n");
         }
     }
 };

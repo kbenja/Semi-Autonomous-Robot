@@ -6,8 +6,8 @@ var Controller = function(client) {
     this.gamepad = {};
     this.last_state = {};
     this.command = {
-        mode: "0",
-        code: "0"
+        mode: 0,
+        code: 0
     };
     this.client = client;
 }
@@ -17,9 +17,9 @@ Controller.prototype.keyPressed = function(key) {
     if (key === "b_button" || key === 32 && !this.breaking) {
         this.breaking = true;
         this.command.code = 0;
-        this.client.send(convert_command(this.command));
+        this.client.send(JSON.stringify(this.command));
     }
-    if(true) {
+    if(!this.breaking) {
         if (key === "up" || key === 38) {
             if(!this.keysDown[key]) {
                 this.command.code = 1;
@@ -39,13 +39,13 @@ Controller.prototype.keyPressed = function(key) {
             this.keysDown[key] = true;
         }
         if (key === "right" || key === 39) {
-
             if(!this.keysDown[key]) {
                 this.command.code = 4;
             }
             this.keysDown[key] = true;
         }
-        this.client.send(convert_command(this.command));
+        this.client.send(JSON.stringify(this.command));
+        console.log(this.command);
     }
 }
 
@@ -71,7 +71,7 @@ Controller.prototype.keyReleased = function(key) {
             this.keysDown[key] = false;
             this.command.code = 0;
         }
-        this.client.send(convert_command(this.command));
+        this.client.send(JSON.stringify(this.command));
     }
 }
 
@@ -91,7 +91,7 @@ Controller.prototype.initialize = function() {
         that.gamepad_connected = true;
         that.gamepad = navigator.getGamepads()[0];
         that.command.mode = -1;
-        that.client.send(convert_command(that.command));
+        that.client.send(JSON.stringify(that.command));
         console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.", that.gamepad.index, that.gamepad.id, that.gamepad.buttons.length, that.gamepad.axes.length);
         $(".controls").css("opacity","1");
         $(".connect").css("display","none");
@@ -102,16 +102,16 @@ Controller.prototype.initialize = function() {
         that.gamepad = {};
         console.log("Gamepad disconnected");
         that.command.mode = -1;
-        that.client.send(convert_command(that.command));
+        that.client.send(JSON.stringify(that.command));
         $(".controls").css("opacity","0.2");
         $(".connect").css("display","block");
     }, false);
 }
 
 function convert_command(object) {
-    var final = "";
-    final += object.mode + "\n";
-    final += object.code + "\n";
+    var final = " ";
+    final += object.mode + " ";
+    final += object.code + " ";
     return final;
 }
 

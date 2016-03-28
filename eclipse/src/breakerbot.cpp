@@ -26,12 +26,10 @@ int main(int argc, char** argv) {
         if (status < 0) {
             printf("Cannot connect to socket\n");
         }
-        sleep(1);
-        status = ipc.unix_socket_write();
-        if (status < 0) {
-            printf("Cannot write to socket\n");
+        while(1) {
+            usleep(100000);
+            ipc.unix_socket_read();
         }
-        ipc.unix_socket_read();
     }
 
     if (pot_module) {
