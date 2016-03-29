@@ -1,10 +1,7 @@
 #include "mraa.h"
 #include "motor_module.h"
 #include "i2c_library.h"
-<<<<<<< HEAD
-#include "dir_feedback.h"
-=======
->>>>>>> 6babf5f... WIP move to eclipse dir
+
 
 #define CW_LIMIT 2529   //clockwise limit
 #define CCW_LIMIT 1505  //counter-clockwise limit
@@ -18,36 +15,19 @@ class Swerve_Module {
     int id;                 //module unique ID
     uint16_t direction;     //swerve orientation
     uint16_t speed;         //swerve speed
-<<<<<<< HEAD
 
     bool limit_cw;          //rotational limits
     bool limit_ccw;
 
-    mraa_i2c_context i2c_context;   //i2c context for communication
 
     Motor_Module dir_motor;         //steering motor
     Motor_Module drive_motor;       //driving motor
+
     Pot_Module dir_feedback;        //potentiometer for angular reference
     Encoder_Module drive_feedback;  //optical encoder for drive
 
 public:
-
-
-=======
-    
-    bool limit_cw;          //rotational limits
-    bool limit_ccw;         
-
-
-    motor_module dir_motor;         //steering motor
-    motor_module drive_motor;       //driving motor
-
-    pot_module dir_feedback;        //potentiometer for angular reference
-    encoder_module drive_feedback;  //optical encoder for drive
-
-public:
     //constructors
->>>>>>> 6babf5f... WIP move to eclipse dir
     /*
         Initializes swerve module with ID 0 and:
             2x Motor_Modules both on port 0
@@ -56,7 +36,6 @@ public:
     */
     Swerve_Module() {
         id = 0;
-<<<<<<< HEAD
 
         //object creation
         dir_motor = Motor_Module(0);
@@ -76,14 +55,22 @@ public:
         i2c_context = mraa_i2c_init(6);
         mraa_i2c_address(i2c_context, 0x40);
 
-=======
         dir_motor = Motor_Module(0);
         drive_motor = Motor_Module(0);
         pot_module = Pot_Module(0);
         encoder_module = Encoder_Module(0);
         limit_cw = (pot_module.get_val() < CW_LIMIT) ? false : true;    //check for clockwise limit
         limit_ccw = (pot_module.get_val() > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
->>>>>>> 6babf5f... WIP move to eclipse dir
+        dir_feedback = Pot_Module(0);
+        drive_feedback = Encoder_Module(0);
+
+        //potentiometer initialization
+        direction = dir_feedback.get_val();
+        limit_cw = (direction < CW_LIMIT) ? false : true;    //check for clockwise limit
+        limit_ccw = (direction > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
+
+        //encoder initialization
+        speed = 0;
         printf("[ init ] Swerve module initialized with ID 0\n");
     }
 
@@ -99,7 +86,6 @@ public:
         id = module_id;
         dir_motor = Motor_Module(0);
         drive_motor = Motor_Module(0);
-<<<<<<< HEAD
         dir_feedback = Pot_Module(0);
         drive_feedback = Encoder_Module(0);
 
@@ -114,13 +100,11 @@ public:
         //i2c initialization
         i2c_context = mraa_i2c_init(6);
         mraa_i2c_address(i2c_context, 0x40);
-
-=======
         pot_module = Pot_Module(0);
         encoder_module = Encoder_Module(0);
         limit_cw = (pot_module.get_val() < CW_LIMIT) ? false : true;    //check for clockwise limit
         limit_ccw = (pot_module.get_val() > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
->>>>>>> 6babf5f... WIP move to eclipse dir
+
         printf("[ init ] Swerve module initialized with ID %d\n", module_id);
 
     }
@@ -136,7 +120,6 @@ public:
         @param drive_port:      ptr to motor controlling swerve movement
 
     */
-<<<<<<< HEAD
     Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int dir_port, int drive_port, int pot_adc, int encoder_port) {
         id = module_id;
         dir_motor = Motor_Module(dir_port);
@@ -159,24 +142,11 @@ public:
         printf("[ init ] Swerve module initialized with ID %d\n", module_id);
     }
 
+
     /*
         Default destructor for swerve module.
 
     */
-=======
-    Swerve_Module(int module_id, int dir_port, int drive_port, int pot_adc, int encoder_port) {
-        id = module_id;
-        dir_motor = Motor_Module(dir_port);
-        drive_motor = Motor_Module(drive_port);
-        pot_module = Pot_Module(pot_adc);
-        encoder_module = Encoder_Module(encoder_port);
-        limit_cw = (pot_module.get_val() < CW_LIMIT) ? false : true;    //check for clockwise limit
-        limit_ccw = (pot_module.get_val() > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
-        printf("[ init ] Swerve module initialized with ID %d\n", module_id);
-    }
-
-    //destructor
->>>>>>> 6babf5f... WIP move to eclipse dir
     ~Swerve_Module() {
         printf("[ dest ] Swerve module %d deleted\n", id);
     }
@@ -198,26 +168,10 @@ public:
         }
     }
 
-<<<<<<< HEAD
-=======
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> 6babf5f... WIP move to eclipse dir
     /*
         Rotates wheel clockwise. Stops if limit is reached.
     */
     mraa_result_t rotate_cw() {
-<<<<<<< HEAD
         dir_motor.send_signal(i2c_context, -0.3);
         printf("CW – Value: %d, Limit: %d\n", dir_feedback.get_val(), CW_LIMIT);
         return 0;
@@ -266,48 +220,10 @@ public:
         printf("Stopping all motors\n");
         dir_motor.send_signal(i2c_context, 0);
         drive_motor.send_signal(i2c_context, 0);
-=======
-
-        limit_ccw = false;
-        if (pot_module.get_val() >= CW_LIMIT) { //if limit reached
-            limit_cw = true;//stop
-        }
-            
-        //else
-            //send signal to motor to rotate clockwise
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-        Rotates wheel counter-clockwise. Stops if limit is reached.
-    */
-    mraa_result_t rotate_ccw() {
-        //if limit not reached
->>>>>>> 6babf5f... WIP move to eclipse dir
     }
 
 
 };
 
-<<<<<<< HEAD
 #endif
-=======
-#endif
->>>>>>> 6babf5f... WIP move to eclipse dir
+
