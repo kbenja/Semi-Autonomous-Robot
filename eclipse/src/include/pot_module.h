@@ -11,6 +11,7 @@ public:
     Pot_Module() {
         adc_port = mraa_aio_init(0);
         mraa_aio_set_bit(adc_port, 10);
+        adc_value = mraa_aio_read(adc_port);        //read port
         printf("Potentiometer module initialized to ADC 0\n");
     }
 
@@ -18,6 +19,7 @@ public:
     Pot_Module(uint8_t port, uint8_t adc_precision) {
         adc_port = mraa_aio_init(port);
         mraa_aio_set_bit(adc_port, adc_precision);
+        adc_value = mraa_aio_read(adc_port);        //read port
         printf("Potentiometer module initialized to ADC %d\n", port);
     }
 
