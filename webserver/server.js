@@ -11,7 +11,7 @@ var static_port = 8080;
 var stream_port = 8082;
 var socket_port = 8084;
 
-var development = true;
+var development = false;
 if(!development) {
     createIP();
 }
@@ -40,9 +40,10 @@ var check_status = setInterval(function(){
             unix_socket = false;
             console.log("UNIX SOCKET NOT CONNECTED");
         }
+        heartbeat = heartbeat%1000;
         last_heartbeat = heartbeat;
     }
-}, 250);
+}, 500);
 
 function unix_socket_emit() {
     if(unix_socket) {
@@ -67,6 +68,7 @@ ipc.config.silent = true;
 ipc.serve(function() {
     ipc.server.on('connect', function(socket){
         unix_socket = socket;
+        commands = [];
         console.log("UNIX SOCKET CONNECTED");
     });
     ipc.server.on('data', function(data,socket){
@@ -117,11 +119,16 @@ wsServer.broadcast = function(data, opts) {
 };
 
 http.createServer(function(req, res) {
-    console.log('Stream Connected: ' + req.socket.remoteAddress + ':' + req.socket.remotePort + ' size: ' + width + 'x' + height);
+    console.log('CLIENT VIDEO STREAM CONNECTED: ' + req.socket.remoteAddress + ':' + req.socket.remotePort + ' size: ' + width + 'x' + height);
     req.on('data', function(data) {
         wsServer.broadcast(data, { binary: true });
     });
 }).listen(stream_port, function() {
     console.log('Listening for video stream on port ' + stream_port);
-    childProcess.exec('./bin/do_ffmpeg.sh');
+    var video_stream = childProcess.exec('./bin/do_ffmpeg.sh');
+    video_stream.on('exit', function (code) {
+        console.log('VIDEO STREAM EXITED, RESTARTING');
+        video_stream = childProcess.exec('./bin/do_ffmpeg.sh');
+    });
 });
+

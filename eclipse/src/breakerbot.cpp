@@ -44,8 +44,6 @@ int main(int argc, char** argv) {
 
         Motor_Module m1(1);                         // create motors to ports 1, 2, and 3
         Motor_Module m2(2);
-        Motor_Module m3(3);
-        Motor_Module m4(4);
 
         /*
          * UNIX SOCKET INITIALIZATION
@@ -57,7 +55,7 @@ int main(int argc, char** argv) {
         }
         // int heartbeat = 0; //make sure to communicate every 0.25 sec;
         while(1) {
-            usleep(25000); // cycle time
+            usleep(100000); // cycle time
             ipc.unix_socket_write(); // check for status .. eventually send status of devices
             ipc.unix_socket_read(p_instructions);
             mode = instructions[0];
@@ -72,16 +70,25 @@ int main(int argc, char** argv) {
                     if(instructions[1] == 1) {
                         m1.send_signal(i2c, user_input);
                         m2.send_signal(i2c, user_input);
-                        m3.send_signal(i2c, user_input);
-                        m4.send_signal(i2c, user_input);
+                        printf("waking up the board\n");
+                        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                     } else if (instructions[1] == 3) {
                         m1.send_signal(i2c, -user_input);
                         m2.send_signal(i2c, -user_input);
-                        m3.send_signal(i2c, -user_input);
-                        m4.send_signal(i2c, -user_input);
+                        printf("waking up the board\n");
+                        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
+                    } else if (instructions[1] == 2) {
+                        user_input += 0.1;
+                        printf("Speed = %f\n",user_input);
+                    } else if (instructions[1] == 4) {
+                        user_input -= 0.1;
+                        printf("Speed = %f\n",user_input);
+                    } else if (instructions[1] == 0) {
+                        m1.send_signal(i2c, 0);
+                        m2.send_signal(i2c, 0);
+                        printf("waking up the board\n");
+                        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                     }
-                    printf("waking up the board\n");
-                    mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                     break;
                 default:
                     printf("CAUGHT IN DEFAULT\n");
