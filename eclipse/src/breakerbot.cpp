@@ -36,14 +36,17 @@ int main(int argc, char** argv) {
 
     if (ipc_module) {
         /*
-         *  MOTOR MODULE INITIALIZATION
+         *  SWERVE MODULE INITIALIZATION
          */
         uint8_t address = 0x40;
         mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
         i2c_init_board(i2c, address);               // initialize the board
 
-        Motor_Module m1(1);                         // create motors to ports 1, 2, and 3
-        Motor_Module m2(2);
+        // direction = port 1
+        // driving = port 2
+        // pot_adc = port 1
+        // encoder = port 0
+        Swerve_Module s1 = Swerve_Module(i2c, 1, 1, 2, 1, 0);
 
         /*
          * UNIX SOCKET INITIALIZATION
@@ -67,21 +70,24 @@ int main(int argc, char** argv) {
                     break;
                 case 1:
                     printf("MODE = MANUAL CONTROL, INPUT = %d\n", instructions[1]);
-                    if(instructions[1] == 1) {
-                        m1.send_signal(i2c, user_input);
-                        m2.send_signal(i2c, user_input);
-                    } else if (instructions[1] == 3) {
-                        m1.send_signal(i2c, -user_input);
-                        m2.send_signal(i2c, -user_input);
-                    } else if (instructions[1] == 2) {
-                        user_input += 0.1;
-                        printf("Speed = %f\n",user_input);
-                    } else if (instructions[1] == 4) {
-                        user_input -= 0.1;
-                        printf("Speed = %f\n",user_input);
-                    } else if (instructions[1] == 0) {
-                        m1.send_signal(i2c, 0);
-                        m2.send_signal(i2c, 0);
+                    switch(instructions[1]) {
+                        case 1:
+                            s1.drive_forward(user_input);
+                            break;
+                        case 2:
+                            s1.rotate_cw();
+                            break;
+                        case 3:
+                            s1.drive_forward(-user_input);
+                            break;
+                        case 4:
+                            s1.rotate_ccw();
+                            break;
+                        case 0:
+                            s1.stop_motors();
+                            break;
+                        default:
+                            break;
                     }
                     mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                     break;
