@@ -15,9 +15,9 @@ class Swerve_Module {
     int id;                 //module unique ID
     uint16_t direction;     //swerve orientation
     uint16_t speed;         //swerve speed
-    
+
     bool limit_cw;          //rotational limits
-    bool limit_ccw;         
+    bool limit_ccw;
 
     mraa_i2c_context i2c_context;   //i2c context for communication
 
@@ -148,13 +148,12 @@ public:
         }
     }
 
-
-
     /*
         Rotates wheel clockwise. Stops if limit is reached.
     */
     mraa_result_t rotate_cw() {
-        printf("Current value: %d\n", dir_feedback.get_val());
+        dir_motor.send_signal(i2c_context, -0.3);
+        printf("CW – Value: %d, Limit: %d\n", dir_feedback.get_val(), CW_LIMIT);
         return 0;
         /*
         limit_ccw = false;
@@ -164,22 +163,43 @@ public:
           */
         //else
             //send signal to motor to rotate clockwise
-
     }
-
-
-
-
-
-
 
     /*
         Rotates wheel counter-clockwise. Stops if limit is reached.
     */
     mraa_result_t rotate_ccw() {
-        printf("Current value: %d\n", dir_feedback.get_val());
+        dir_motor.send_signal(i2c_context, 0.3);
+        printf("CCW – Value: %d, Limit: %d\n", dir_feedback.get_val(), CCW_LIMIT);
         return 0;
         //if limit not reached
+    }
+
+    /*
+        Rotates drive wheel forwards
+    */
+    mraa_result_t drive_forward(float speed) {
+        dir_motor.send_signal(i2c_context, speed);
+        printf("Driving wheel FORWARDS");
+        return 0;
+    }
+
+    /*
+        Rotates drive wheel backwards
+    */
+    mraa_result_t drive_backward(float speed) {
+        dir_motor.send_signal(i2c_context, speed);
+        printf("Driving wheel BACKWARDS");
+        return 0;
+    }
+
+    /*
+        Stops all motors
+    */
+    mraa_result_t stop_motors() {
+        printf("Stopping all motors\n");
+        dir_motor.send_signal(i2c_context, 0);
+        drive_motor.send_signal(i2c_context, 0);
     }
 
 
