@@ -19,10 +19,10 @@ class Swerve_Module {
     bool limit_cw;          //rotational limits
     bool limit_ccw;         
 
+    mraa_i2c_context i2c_context;   //i2c context for communication
 
     Motor_Module dir_motor;         //steering motor
     Motor_Module drive_motor;       //driving motor
-
     Pot_Module dir_feedback;        //potentiometer for angular reference
     Encoder_Module drive_feedback;  //optical encoder for drive
 
@@ -37,6 +37,8 @@ public:
     */
     Swerve_Module() {
         id = 0;
+
+        //object creation
         dir_motor = Motor_Module(0);
         drive_motor = Motor_Module(0);
         dir_feedback = Pot_Module(0);
@@ -49,6 +51,11 @@ public:
 
         //encoder initialization
         speed = 0;
+
+        //i2c initialization
+        i2c_context = mraa_i2c_init(6);
+        mraa_i2c_address(i2c_context, 0x40);
+
         printf("[ init ] Swerve module initialized with ID 0\n");
     }
 
@@ -74,6 +81,11 @@ public:
 
         //encoder initialization
         speed = 0;
+
+        //i2c initialization
+        i2c_context = mraa_i2c_init(6);
+        mraa_i2c_address(i2c_context, 0x40);
+
         printf("[ init ] Swerve module initialized with ID %d\n", module_id);
 
     }
@@ -89,7 +101,7 @@ public:
         @param drive_port:      ptr to motor controlling swerve movement
 
     */
-    Swerve_Module(int module_id, int dir_port, int drive_port, int pot_adc, int encoder_port) {
+    Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int dir_port, int drive_port, int pot_adc, int encoder_port) {
         id = module_id;
         dir_motor = Motor_Module(dir_port);
         drive_motor = Motor_Module(drive_port);
@@ -103,6 +115,11 @@ public:
 
         //encoder initialization
         speed = 0;
+
+        //i2c initialization
+        i2c_context = i2c_in;
+        mraa_i2c_address(i2c_context, 0x40);
+
         printf("[ init ] Swerve module initialized with ID %d\n", module_id);
     }
 
@@ -133,26 +150,18 @@ public:
 
 
 
-
-
-
-
-
-
-
-
-
-
     /*
         Rotates wheel clockwise. Stops if limit is reached.
     */
     mraa_result_t rotate_cw() {
-
+        printf("Current value: %d\n", dir_feedback.get_val());
+        return 0;
+        /*
         limit_ccw = false;
         if (dir_feedback.get_val() >= CW_LIMIT) { //if limit reached
             limit_cw = true;//stop
         }
-            
+          */
         //else
             //send signal to motor to rotate clockwise
 
@@ -164,21 +173,12 @@ public:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     /*
         Rotates wheel counter-clockwise. Stops if limit is reached.
     */
     mraa_result_t rotate_ccw() {
+        printf("Current value: %d\n", dir_feedback.get_val());
+        return 0;
         //if limit not reached
     }
 
