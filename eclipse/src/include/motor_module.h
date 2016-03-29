@@ -17,7 +17,7 @@ double_reg float_to_PWM(float start) {
     }
     double_reg final;
     final.u_sixteen = ((uint16_t) 2816-(start*768.0));
-    printf("\nSTART %f becomes 0x%04x \n", start, final.u_sixteen);
+    // printf("\nSTART %f becomes 0x%04x \n", start, final.u_sixteen);
     return final;
 }
 
@@ -59,7 +59,8 @@ public:
         if(result != MRAA_SUCCESS)
         {
             printf("[ !!!! ] Could NOT write to register 0x%02x\n", end_reg);
-            return result;
+        } else {
+            printf("[ send ] Write signal 0x%04x to register 0x%02x\n", signal.u_sixteen, end_reg);
         }
 
         return result;

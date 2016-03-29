@@ -109,10 +109,9 @@ union signed_double_reg {
     @return mraa_result_t                   should equal MRAA_SUCCESS if no errors
 */
 mraa_result_t i2c_send_signal(const mraa_i2c_context & i2c_context, uint8_t reg, double_reg signal) {
-    printf("\nRegister = 0x%02x\n", reg);
-    printf("Bits sent = 0x%04x\n", signal.u_sixteen);
-    printf("Sending HI = 0x%02x to register 0x%02x\n", signal.u_eight[1], reg + 0x01);
-    printf("Sending LO = 0x%02x to register 0x%02x\n", signal.u_eight[0], reg);
+    // printf("\nRegister = 0x%02x\n", reg);
+    // printf("Sending HI = 0x%02x to register 0x%02x\n", signal.u_eight[1], reg + 0x01);
+    // printf("Sending LO = 0x%02x to register 0x%02x\n", signal.u_eight[0], reg);
 
     mraa_result_t status = MRAA_SUCCESS;
     status = mraa_i2c_write_byte_data(i2c_context, signal.u_eight[1], reg + 0x01);  // set high bit
@@ -132,17 +131,15 @@ mraa_result_t i2c_send_signal(const mraa_i2c_context & i2c_context, uint8_t reg,
 mraa_result_t i2c_init_board(const mraa_i2c_context & i2c_context, uint8_t address) {
     mraa_result_t result = MRAA_SUCCESS;
 
-    printf("\n[ init ] Initializing i2c board to address = 0x%02x\n", address);
     result = mraa_i2c_address(i2c_context, address);
-    printf("sleeping the board enable auto increment\n");
-    result = mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0x30), ((uint8_t) 0x00));
-    printf("setting prescale value to 400Hz\n");
-    result = mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0x0e), ((uint8_t) 0xfe));
-    printf("setting off value to 0\n");
-    result = mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0x00), ((uint8_t) 0xfd));
+    result = mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0x30), ((uint8_t) 0x00)); //sleeping the board enable auto increment
+    result = mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0x0e), ((uint8_t) 0xfe)); //setting prescale value to 400Hz
+    result = mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0x00), ((uint8_t) 0xfd)); //setting off value to 0
 
     if(result != MRAA_SUCCESS) {
         printf("[ !!!! ] cannot initialize board to address 0x%02x\n", address);
+    } else {
+        printf("\n[ init ] Initializing i2c board to address = 0x%02x\n", address);
     }
     return result;
 

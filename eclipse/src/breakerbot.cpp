@@ -70,13 +70,9 @@ int main(int argc, char** argv) {
                     if(instructions[1] == 1) {
                         m1.send_signal(i2c, user_input);
                         m2.send_signal(i2c, user_input);
-                        printf("waking up the board\n");
-                        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                     } else if (instructions[1] == 3) {
                         m1.send_signal(i2c, -user_input);
                         m2.send_signal(i2c, -user_input);
-                        printf("waking up the board\n");
-                        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                     } else if (instructions[1] == 2) {
                         user_input += 0.1;
                         printf("Speed = %f\n",user_input);
@@ -86,9 +82,8 @@ int main(int argc, char** argv) {
                     } else if (instructions[1] == 0) {
                         m1.send_signal(i2c, 0);
                         m2.send_signal(i2c, 0);
-                        printf("waking up the board\n");
-                        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                     }
+                    mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                     break;
                 default:
                     printf("CAUGHT IN DEFAULT\n");
