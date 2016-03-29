@@ -17,8 +17,8 @@
  	<body>
  		<div onclick="change_mode()" class="dev-container">
  			<button>DEV: change mode</button>
- 			<button id="Menu">Menu</button>
  		</div>
+ 			<button id="Menu">Menu</button>
  		<div class="basic-info-container">
  			<img src="signal.png">
  			<img src="battery.png">
@@ -33,6 +33,10 @@
  			<p>e.g. We'll have a stream of data, like, Robot Connected at 14:23, Robot Aligned at 14:59, etc.</p>
  			<button id="stop">STOP</button>
  		</div>
+ 		<div class="status-container">
+ 				<div id="breaker-status">Breaker Engagaged</div>
+ 				<div id="robot-status">Robot Asleep</div>		
+ 		</div>
  		
 		<div class="wrapper">
   			<h4>Streaming live from Intel Edison</h4>
@@ -44,7 +48,7 @@
  			</div>
  			<div class="mode-container">
  				<div class="auto mode">
- 					Hello this is auto alignment mode
+ 					Hello this is auto alignment mode <br>
  						<div class="alignment-status"> Rotational Alignment</div>
  						<div class="alignment-status"> Distance Alignment</div>
  						<div class="alignment-status"> Fine Alignment</div>
@@ -53,7 +57,7 @@
 		 			<div class="control-container">
 						<div class="connect">
 			 				Please connect controller.
-						</div>
+			 				</div>
 			 			<div class="controls">
 				 			<div class="cartesian">
 				 				<div class="command up">&#9650;</div>
@@ -75,6 +79,7 @@
 				 			</div>
 			 			</div>
 			 		</div>
+			 		<div id="alignment-instructions"> Here will be the instructions to manually align the robot</div>
 			 	</div>
  			</div>
  		</div>
