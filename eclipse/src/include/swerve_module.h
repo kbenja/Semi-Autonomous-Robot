@@ -1,6 +1,7 @@
 #include "mraa.h"
 #include "motor_module.h"
 #include "i2c_library.h"
+#include "dir_feedback.h"
 
 #define CW_LIMIT 2529   //clockwise limit
 #define CCW_LIMIT 1505  //counter-clockwise limit
@@ -19,14 +20,15 @@ class Swerve_Module {
     bool limit_ccw;         
 
 
-    motor_module dir_motor;         //steering motor
-    motor_module drive_motor;       //driving motor
+    Motor_Module dir_motor;         //steering motor
+    Motor_Module drive_motor;       //driving motor
 
-    pot_module dir_feedback;        //potentiometer for angular reference
-    encoder_module drive_feedback;  //optical encoder for drive
+    Pot_Module dir_feedback;        //potentiometer for angular reference
+    Encoder_Module drive_feedback;  //optical encoder for drive
 
 public:
-    //constructors
+
+
     /*
         Initializes swerve module with ID 0 and:
             2x Motor_Modules both on port 0
@@ -37,10 +39,16 @@ public:
         id = 0;
         dir_motor = Motor_Module(0);
         drive_motor = Motor_Module(0);
-        pot_module = Pot_Module(0);
-        encoder_module = Encoder_Module(0);
-        limit_cw = (pot_module.get_val() < CW_LIMIT) ? false : true;    //check for clockwise limit
-        limit_ccw = (pot_module.get_val() > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
+        dir_feedback = Pot_Module(0);
+        drive_feedback = Encoder_Module(0);
+
+        //potentiometer initialization
+        direction = dir_feedback.get_val();
+        limit_cw = (direction < CW_LIMIT) ? false : true;    //check for clockwise limit
+        limit_ccw = (direction > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
+
+        //encoder initialization
+        speed = 0;
         printf("[ init ] Swerve module initialized with ID 0\n");
     }
 
@@ -56,10 +64,16 @@ public:
         id = module_id;
         dir_motor = Motor_Module(0);
         drive_motor = Motor_Module(0);
-        pot_module = Pot_Module(0);
-        encoder_module = Encoder_Module(0);
-        limit_cw = (pot_module.get_val() < CW_LIMIT) ? false : true;    //check for clockwise limit
-        limit_ccw = (pot_module.get_val() > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
+        dir_feedback = Pot_Module(0);
+        drive_feedback = Encoder_Module(0);
+
+        //potentiometer initialization
+        direction = dir_feedback.get_val();
+        limit_cw = (direction < CW_LIMIT) ? false : true;    //check for clockwise limit
+        limit_ccw = (direction > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
+
+        //encoder initialization
+        speed = 0;
         printf("[ init ] Swerve module initialized with ID %d\n", module_id);
 
     }
@@ -79,14 +93,23 @@ public:
         id = module_id;
         dir_motor = Motor_Module(dir_port);
         drive_motor = Motor_Module(drive_port);
-        pot_module = Pot_Module(pot_adc);
-        encoder_module = Encoder_Module(encoder_port);
-        limit_cw = (pot_module.get_val() < CW_LIMIT) ? false : true;    //check for clockwise limit
-        limit_ccw = (pot_module.get_val() > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
+        dir_feedback = Pot_Module(pot_adc);
+        drive_feedback = Encoder_Module(encoder_port);
+
+        //potentiometer initialization
+        direction = dir_feedback.get_val();
+        limit_cw = (direction < CW_LIMIT) ? false : true;    //check for clockwise limit
+        limit_ccw = (direction > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
+
+        //encoder initialization
+        speed = 0;
         printf("[ init ] Swerve module initialized with ID %d\n", module_id);
     }
 
-    //destructor
+    /*
+        Default destructor for swerve module.
+
+    */
     ~Swerve_Module() {
         printf("[ dest ] Swerve module %d deleted\n", id);
     }
@@ -126,7 +149,7 @@ public:
     mraa_result_t rotate_cw() {
 
         limit_ccw = false;
-        if (pot_module.get_val() >= CW_LIMIT) { //if limit reached
+        if (dir_feedback.get_val() >= CW_LIMIT) { //if limit reached
             limit_cw = true;//stop
         }
             
