@@ -25,7 +25,7 @@ double_reg float_to_PWM(float start) {
 class Motor_Module {
 uint8_t end_reg;
 public:
-
+    //constructors
     /**
         Initializes motor module port 1
         @param int port     decides which port to talk to
@@ -40,8 +40,13 @@ public:
         @param int port     decides which port to talk to
     */
     Motor_Module(int port) {
-        end_reg = 0x0C + (port - 1)*4;
+        end_reg = 0x08 + (port*4);
         printf("[ init ] Motor module initialized to port %d (register 0x%02x)\n", port, end_reg);
+    }
+
+    //destructor
+    ~Motor_Module() {
+        printf("[ dest ] Motor module deleted\n");
     }
 
     /**
