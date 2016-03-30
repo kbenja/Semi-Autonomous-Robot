@@ -62,10 +62,11 @@ body {
         .wrapper .panel.panel-middle .video-container #alignment-instructions {
           position: absolute;
           bottom: 0;
-          width: 100%;
+          width: calc(100% - 4px);
           height: 50px;
           line-height: 50px;
-          background-color: rgba(255, 255, 255, 0.5); }
+          background-color: rgba(255, 255, 255, 0.5);
+          margin: 0px 2px 6px; }
         .wrapper .panel.panel-middle .video-container #canvas-video {
           border: 2px #aaaaaa solid;
           background-color: #dddddd;
@@ -138,18 +139,23 @@ body {
         margin: 20px auto;
         padding: 20px; }
       .wrapper .panel.panel-right #stop {
+        background: none;
+        border: none;
+        position: relative;
         width: 100px;
+        color: #000000;
         height: 100px;
         background: red;
-        position: relative; }
+        margin: 0 auto;
+        cursor: pointer; }
       .wrapper .panel.panel-right #stop:before {
         content: "";
         position: absolute;
         top: 0;
         left: 0;
         border-bottom: 29px solid red;
-        border-left: 29px solid #eee;
-        border-right: 29px solid #eee;
+        border-left: 29px solid #fff;
+        border-right: 29px solid #fff;
         width: 42px;
         height: 0; }
       .wrapper .panel.panel-right #stop:after {
@@ -158,7 +164,7 @@ body {
         bottom: 0;
         left: 0;
         border-top: 29px solid red;
-        border-left: 29px solid #eee;
-        border-right: 29px solid #eee;
+        border-left: 29px solid #fff;
+        border-right: 29px solid #fff;
         width: 42px;
         height: 0; }

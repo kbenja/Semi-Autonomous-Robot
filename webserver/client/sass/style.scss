@@ -13,41 +13,6 @@ body {
   z-index: 999;
 }
 
-
-// you can combine these into one class and use
-// display: inline-block to make them sit in a row!
-// look at solution in .panel-left > .status-container > .status
-//
-// #breaker-status {
-//   position: absolute;
-//   top: 615px;
-//   left: 20px;
-//   text-align: center;
-//   width: 100px;
-//   height: 100px;
-//   margin: 1em;
-//   border-radius: 75px;
-//   font-size: 10px;
-//   color: #000;
-//   line-height: 100px;
-//   background: #00ff00;
-// }
-// #robot-status {
-//   position: absolute;
-//   top: 615px;
-//   left: 130px;
-//   text-align: center;
-//   width: 100px;
-//   height: 100px;
-//   margin: 1em;
-//   border-radius: 75px;
-//   font-size: 10px;
-//   color: #000;
-//   line-height: 100px;
-//   background: #00ff00;
-//   float: left;
-// }
-
 .wrapper {
   position: relative;
   width: 100%;
@@ -66,14 +31,7 @@ body {
       max-width: 17.25%;
       height: 100%;
       .position-container {
-        // making this relative
-        // position: absolute;
-        // top: 100px;
-        // left: 45px;
-        // width: 200px;
-        // height: 350px;
-        // margin: 20px auto;
-        // padding: 20px;
+
       }
       .status-container {
         .status {
@@ -121,17 +79,16 @@ body {
           img {
             height: 25px;
             width: auto;
-            // position: relative;
-            // top: -10px;
           }
         }
         #alignment-instructions {
           position: absolute;
           bottom: 0;
-          width: 100%;
+          width: calc(100% - 4px);
           height: 50px;
           line-height:50px;
           background-color: rgba(255,255,255,0.5);
+          margin: 0px 2px 6px;
         }
         #canvas-video {
           border: 2px #aaaaaa solid;
@@ -232,10 +189,15 @@ body {
         padding: 20px;
       }
       #stop {
+        background:none;
+        border:none;
+        position: relative;
         width: 100px;
+        color: #000000;
         height: 100px;
         background: red;
-        position: relative;
+        margin: 0 auto;
+        cursor: pointer;
       }
       #stop:before {
         content: "";
@@ -243,8 +205,8 @@ body {
         top: 0;
         left: 0;
         border-bottom: 29px solid red;
-        border-left: 29px solid #eee;
-        border-right: 29px solid #eee;
+        border-left: 29px solid #fff;
+        border-right: 29px solid #fff;
         width: 42px;
         height: 0;
       }
@@ -254,8 +216,8 @@ body {
         bottom: 0;
         left: 0;
         border-top: 29px solid red;
-        border-left: 29px solid #eee;
-        border-right: 29px solid #eee;
+        border-left: 29px solid #fff;
+        border-right: 29px solid #fff;
         width: 42px;
         height: 0;
       }
