@@ -17,70 +17,73 @@
  	<body>
  		<div onclick="change_mode()" class="dev-container">
  			<button>DEV: change mode</button>
- 		</div>
  			<button id="Menu">Menu</button>
- 		<div class="basic-info-container">
- 			<img src="signal.png">
- 			<img src="battery.png">
  		</div>
- 		<div class="position-container"> 
- 			<h4>Postion Stuff</h4>
- 			<p>This section will include the gyro, compass, and other postion stuff...</p>
- 		</div>
-
- 		<div class="output-container">
- 			<h>This will be the output of the robot</h>
- 			<p>e.g. We'll have a stream of data, like, Robot Connected at 14:23, Robot Aligned at 14:59, etc.</p>
- 			<button id="stop">STOP</button>
- 		</div>
- 		<div class="status-container">
- 				<div id="breaker-status">Breaker Engagaged</div>
- 				<div id="robot-status">Robot Asleep</div>		
- 		</div>
- 		
-		<div class="wrapper">
-  			<h4>Streaming live from Intel Edison</h4>
- 			<div class="video-container">
-	 			<div class="watermark">
-	 				<img src="logo_white.png">
-	 			</div>
- 			  <canvas id="canvas-video" width="640" height="480"></canvas>
+ 		<div class="wrapper">
+ 			<div class="panel panel-left">
+		 		<div class="position-container">
+		 			<h4>Postion Stuff</h4>
+		 			<p>This section will include the gyro, compass, and other postion stuff...</p>
+		 		</div>
+		 		<div class="status-container">
+		 				<div class="status">Breaker Engagaged</div>
+		 				<div class="status">Robot Asleep</div>
+		 		</div>
  			</div>
- 			<div class="mode-container">
- 				<div class="auto mode">
- 					Hello this is auto alignment mode <br>
- 						<div class="alignment-status"> Rotational Alignment</div>
- 						<div class="alignment-status"> Distance Alignment</div>
- 						<div class="alignment-status"> Fine Alignment</div>
+ 			<div class="panel panel-middle">
+	 			<div class="video-container">
+		 			<div class="watermark">
+		 				<img src="logo_white.png">
+		 			</div>
+	 				<div class="basic-info-container">
+	 					<img src="signal.png">
+	 					<img src="battery.png">
+	 				</div>
+	 				<div id="alignment-instructions"> Here will be the instructions to manually align the robot</div>
+	 			  <canvas id="canvas-video" width="640" height="480"></canvas>
+	 			</div>
+	 			<div class="mode-container">
+	 				<div class="auto mode">
+	 					Hello this is auto alignment mode <br>
+	 						<div class="alignment-status"> Rotational Alignment</div>
+	 						<div class="alignment-status"> Distance Alignment</div>
+	 						<div class="alignment-status"> Fine Alignment</div>
+	 				</div>
+	 				<div class="manual mode">
+			 			<div class="control-container">
+							<div class="connect">
+				 				Please connect or reconnect the controller.
+				 				</div>
+				 			<div class="controls">
+					 			<div class="cartesian">
+					 				<div class="command up">&#9650;</div>
+					 				<div class="command left">&#9664;</div>
+					 				<div class="command right">&#9654;</div>
+					 				<div class="command down">&#9660;</div>
+					 			</div>
+				 				<div class="cartesian">
+					 				<div class="command y_button">Y</div>
+					 				<div class="command x_button">X</div>
+					 				<div class="command b_button">B</div>
+					 				<div class="command a_button">A</div>
+					 			</div>
+					 			<div class="joystick">
+					 				<div class="pos left_joystick"></div>
+					 			</div>
+					 			<div class="joystick">
+					 				<div class="pos right_joystick"></div>
+					 			</div>
+				 			</div>
+				 		</div>
+				 	</div>
+				 </div>
+ 			</div>
+ 			<div class="panel panel-right">
+ 				<div class="output-container">
+ 					<h4>This will be the output of the robot</h4>
+ 					<p>e.g. We'll have a stream of data, like, Robot Connected at 14:23, Robot Aligned at 14:59, etc.</p>
+ 					<button id="stop">STOP</button>
  				</div>
- 				<div class="manual mode">
-		 			<div class="control-container">
-						<div class="connect">
-			 				Please connect controller.
-			 				</div>
-			 			<div class="controls">
-				 			<div class="cartesian">
-				 				<div class="command up">&#9650;</div>
-				 				<div class="command left">&#9664;</div>
-				 				<div class="command right">&#9654;</div>
-				 				<div class="command down">&#9660;</div>
-				 			</div>
-			 				<div class="cartesian">
-				 				<div class="command y_button">Y</div>
-				 				<div class="command x_button">X</div>
-				 				<div class="command b_button">B</div>
-				 				<div class="command a_button">A</div>
-				 			</div>
-				 			<div class="joystick">
-				 				<div class="pos left_joystick"></div>
-				 			</div>
-				 			<div class="joystick">
-				 				<div class="pos right_joystick"></div>
-				 			</div>
-			 			</div>
-			 		</div>
-			 		<div id="alignment-instructions"> Here will be the instructions to manually align the robot</div>
-			 	</div>
  			</div>
  		</div>
 		<script type="text/javascript" src="js/main.js"></script>

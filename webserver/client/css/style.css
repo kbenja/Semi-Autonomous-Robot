@@ -2,212 +2,163 @@ body {
   font-size: 16px; }
 
 * {
+  -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box; }
+  box-sizing: border-box; }
 
 .dev-container {
   position: absolute;
   z-index: 999; }
 
-#Menu {
-  background-color: #FF0000;
-  position: relative;
-  top: 25px; }
-
-.basic-info-container {
-  position: absolute;
-  right: 0px;
-  top: 0px;
-  width: 400px;
-  height: 50px;
-  margin: 20px auto;
-  padding: 20px;
-  border: solid #ff0000 10px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box; }
-  .basic-info-container img {
-    height: 25px;
-    width: auto;
-    position: relative;
-    top: -10px; }
-
-.position-container {
-  position: absolute;
-  top: 100px;
-  left: 45px;
-  width: 200px;
-  height: 350px;
-  margin: 20px auto;
-  padding: 20px;
-  border: solid #ff0000 10px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box; }
-
-.output-container {
-  position: absolute;
-  top: 100px;
-  right: 30px;
-  width: 300px;
-  height: 400px;
-  margin: 20px auto;
-  padding: 20px;
-  border: solid #ff0000 10px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box; }
-
-#stop {
-  width: 100px;
-  height: 100px;
-  background: red;
-  position: relative; }
-
-#stop:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  border-bottom: 29px solid red;
-  border-left: 29px solid #eee;
-  border-right: 29px solid #eee;
-  width: 42px;
-  height: 0; }
-
-#stop:after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  border-top: 29px solid red;
-  border-left: 29px solid #eee;
-  border-right: 29px solid #eee;
-  width: 42px;
-  height: 0; }
-
-#breaker-status {
-  position: absolute;
-  top: 615px;
-  left: 20px;
-  text-align: center;
-  width: 100px;
-  height: 100px;
-  margin: 1em;
-  border-radius: 75px;
-  font-size: 10px;
-  color: #000;
-  line-height: 100px;
-  background: #00ff00; }
-
-#robot-status {
-  position: absolute;
-  top: 615px;
-  left: 130px;
-  text-align: center;
-  width: 100px;
-  height: 100px;
-  margin: 1em;
-  border-radius: 75px;
-  font-size: 10px;
-  color: #000;
-  line-height: 100px;
-  background: #00ff00;
-  float: left; }
-
 .wrapper {
-  position: absolute;
-  top: 75px;
-  left: 25%;
+  position: relative;
+  width: 100%;
+  min-width: 1000px;
   text-align: center;
-  margin: 5px auto; }
-  .wrapper .video-container {
-    margin: 0 auto;
-    width: 50%;
-    min-width: 600px;
-    position: relative; }
-    .wrapper .video-container .watermark {
-      position: absolute;
-      top: 20px;
-      right: 20px; }
-      .wrapper .video-container .watermark img {
-        width: 100px;
-        height: auto;
-        opacity: 0.5; }
-    .wrapper .video-container #canvas-video {
-      border: 2px #aaaaaa solid;
-      background-color: #dddddd;
-      width: 100%;
-      height: auto; }
-  .wrapper .mode-container .mode {
-    height: 150px;
-    width: 100%; }
-  .wrapper .mode-container .manual {
-    display: block; }
-    .wrapper .mode-container .manual #alignment-instructions {
-      width: 450px;
-      height: 30px;
-      margin: auto;
-      border: dotted #ff0000 5px;
-      -webkit-box-sizing: border-box;
-      -moz-box-sizing: border-box;
-      box-sizing: border-box; }
-  .wrapper .mode-container .auto {
-    display: none; }
-    .wrapper .mode-container .auto .alignment-status {
-      text-align: center;
-      width: 100px;
-      height: 100px;
-      margin: 1em;
-      border-radius: 75px;
-      font-size: 10px;
-      color: #000;
-      line-height: 100px;
-      background: #00ff00;
-      clear: right;
-      float: left; }
-  .wrapper .control-container {
+  margin: 25px auto; }
+  .wrapper .panel {
+    min-height: 100%;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
     position: relative;
-    width: 49; }
-    .wrapper .control-container .connect {
-      position: absolute;
-      margin: 0 auto;
-      width: 100%;
-      margin-top: 54px; }
-    .wrapper .control-container .controls {
-      width: 100%;
-      margin: 5px auto;
-      opacity: 0.2;
-      -webkit-transition: opacity 500ms ease-out;
-      -moz-transition: opacity 500ms ease-out;
-      -o-transition: opacity 500ms ease-out;
-      transition: opacity 500ms ease-out; }
-      .wrapper .control-container .controls .joystick {
-        position: relative;
+    vertical-align: middle; }
+    .wrapper .panel.panel-left {
+      max-width: 17.25%;
+      height: 100%; }
+      .wrapper .panel.panel-left .status-container .status {
         display: inline-block;
+        text-align: center;
         width: 100px;
         height: 100px;
-        margin: 10px;
-        margin-left: 30px;
-        background: #aaaaaa;
-        border-radius: 100%; }
-        .wrapper .control-container .controls .joystick .pos {
+        border-radius: 75px;
+        font-size: 10px;
+        color: #000;
+        line-height: 100px;
+        background: #00ff00; }
+    .wrapper .panel.panel-middle {
+      max-width: 65%;
+      min-width: 630px; }
+      .wrapper .panel.panel-middle .video-container {
+        margin: 0 auto;
+        width: 50%;
+        min-width: 600px;
+        position: relative; }
+        .wrapper .panel.panel-middle .video-container .watermark {
           position: absolute;
-          margin-left: 25px;
-          margin-top: 25px;
-          width: 50px;
+          top: 20px;
+          right: 20px; }
+          .wrapper .panel.panel-middle .video-container .watermark img {
+            width: 100px;
+            height: auto;
+            opacity: 0.5; }
+        .wrapper .panel.panel-middle .video-container .basic-info-container {
+          position: absolute;
+          left: 20px;
+          top: 20px; }
+          .wrapper .panel.panel-middle .video-container .basic-info-container img {
+            height: 25px;
+            width: auto; }
+        .wrapper .panel.panel-middle .video-container #alignment-instructions {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
           height: 50px;
-          background: #333333;
-          border-radius: 100%; }
-      .wrapper .control-container .controls .cartesian {
-        vertical-align: top;
-        display: inline-block;
-        padding: 0 20px; }
-        .wrapper .control-container .controls .cartesian .command {
-          height: 30px;
-          width: 60px;
-          line-height: 30px;
-          margin: 3px auto;
-          background-color: #aaaaaa; }
-          .wrapper .control-container .controls .cartesian .command.left, .wrapper .control-container .controls .cartesian .command.right, .wrapper .control-container .controls .cartesian .command.x_button, .wrapper .control-container .controls .cartesian .command.b_button {
-            display: inline-block; }
+          line-height: 50px;
+          background-color: rgba(255, 255, 255, 0.5); }
+        .wrapper .panel.panel-middle .video-container #canvas-video {
+          border: 2px #aaaaaa solid;
+          background-color: #dddddd;
+          width: 100%;
+          height: auto; }
+      .wrapper .panel.panel-middle .mode-container .mode {
+        height: 150px;
+        width: 100%; }
+      .wrapper .panel.panel-middle .mode-container .auto {
+        display: none; }
+        .wrapper .panel.panel-middle .mode-container .auto .alignment-status {
+          display: inline-block;
+          text-align: center;
+          line-height: 100px;
+          font-size: 10px;
+          width: 100px;
+          height: 100px;
+          border-radius: 75px;
+          color: #000;
+          background: #00ff00; }
+      .wrapper .panel.panel-middle .mode-container .manual {
+        display: block; }
+        .wrapper .panel.panel-middle .mode-container .manual .control-container {
+          position: relative; }
+          .wrapper .panel.panel-middle .mode-container .manual .control-container .connect {
+            position: absolute;
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 54px; }
+          .wrapper .panel.panel-middle .mode-container .manual .control-container .controls {
+            width: 100%;
+            margin: 5px auto;
+            opacity: 0.2;
+            -webkit-transition: opacity 500ms ease-out;
+            -moz-transition: opacity 500ms ease-out;
+            -o-transition: opacity 500ms ease-out;
+            transition: opacity 500ms ease-out; }
+            .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .joystick {
+              position: relative;
+              display: inline-block;
+              width: 100px;
+              height: 100px;
+              margin: 10px;
+              margin-left: 30px;
+              background: #aaaaaa;
+              border-radius: 100%; }
+              .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .joystick .pos {
+                position: absolute;
+                margin-left: 25px;
+                margin-top: 25px;
+                width: 50px;
+                height: 50px;
+                background: #333333;
+                border-radius: 100%; }
+            .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian {
+              vertical-align: top;
+              display: inline-block;
+              padding: 0 20px; }
+              .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command {
+                height: 30px;
+                width: 60px;
+                line-height: 30px;
+                margin: 3px auto;
+                background-color: #aaaaaa; }
+                .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.left, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.right, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.x_button, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.b_button {
+                  display: inline-block; }
+    .wrapper .panel.panel-right {
+      max-width: 17.25%; }
+      .wrapper .panel.panel-right .output-container {
+        margin: 20px auto;
+        padding: 20px; }
+      .wrapper .panel.panel-right #stop {
+        width: 100px;
+        height: 100px;
+        background: red;
+        position: relative; }
+      .wrapper .panel.panel-right #stop:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-bottom: 29px solid red;
+        border-left: 29px solid #eee;
+        border-right: 29px solid #eee;
+        width: 42px;
+        height: 0; }
+      .wrapper .panel.panel-right #stop:after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        border-top: 29px solid red;
+        border-left: 29px solid #eee;
+        border-right: 29px solid #eee;
+        width: 42px;
+        height: 0; }

@@ -1,3 +1,6 @@
+var development = true;
+
+
 var express = require('express');
 var app = express();
 var http = require('http');
@@ -11,7 +14,6 @@ var static_port = 8080;
 var stream_port = 8082;
 var socket_port = 8084;
 
-var development = false;
 if(!development) {
     createIP();
 }
