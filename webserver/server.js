@@ -20,8 +20,8 @@ if(!development) {
 
 /// VIDEO STREAMING
 var STREAM_MAGIC_BYTES = 'jsmp'; // Must be 4 bytes
-var width = 320;
-var height = 240;
+var width = 640;
+var height = 480;
 
 // WEBSOCKET SERVER
 var wsServer = new(ws.Server)({ port: socket_port });
@@ -57,7 +57,7 @@ function unix_socket_emit() {
             commands.splice(0,1);
         } else {
             // idle mode or same as last command
-            ipc.server.emit(unix_socket,[0,0]);
+            // ipc.server.emit(unix_socket,[0,0]);
         }
     }
 }
@@ -97,8 +97,8 @@ wsServer.on('connection', function(socket) {
 
     var streamHeader = new Buffer(8);
     streamHeader.write(STREAM_MAGIC_BYTES);
-    streamHeader.writeUInt16BE(width, 4);
-    streamHeader.writeUInt16BE(height, 6);
+    streamHeader.writeUInt16BE(width, 8);
+    streamHeader.writeUInt16BE(height, 12);
     socket.send(streamHeader, { binary: true });
 });
 
@@ -120,6 +120,17 @@ wsServer.broadcast = function(data, opts) {
     }
 };
 
+var video_stream;
+function start_video() {
+    video_stream = childProcess.exec('./bin/do_ffmpeg.sh');
+    video_stream.on('exit', function() {
+        console.log('VIDEO STREAM EXITED, RESTARTING');
+        setTimeout(function() {
+            start_video();
+        }, 250);
+    })
+}
+
 http.createServer(function(req, res) {
     console.log('CLIENT VIDEO STREAM CONNECTED: ' + req.socket.remoteAddress + ':' + req.socket.remotePort + ' size: ' + width + 'x' + height);
     req.on('data', function(data) {
@@ -127,10 +138,6 @@ http.createServer(function(req, res) {
     });
 }).listen(stream_port, function() {
     console.log('Listening for video stream on port ' + stream_port);
-    var video_stream = childProcess.exec('./bin/do_ffmpeg.sh');
-    video_stream.on('exit', function (code) {
-        console.log('VIDEO STREAM EXITED, RESTARTING');
-        video_stream = childProcess.exec('./bin/do_ffmpeg.sh');
-    });
+    start_video();
 });
 
