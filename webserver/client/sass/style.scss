@@ -20,11 +20,12 @@ body {
   text-align: center;
   margin: 25px auto;
   .panel {
-    min-height: 100%;
+    border: 2px red dotted;
+    position: relative;
     display: inline-block;
+    min-height: 100%;
     margin: 0;
     padding: 0;
-    position: relative;
     vertical-align: middle;
     // border: solid #ff0000 10px;
     &.panel-left {

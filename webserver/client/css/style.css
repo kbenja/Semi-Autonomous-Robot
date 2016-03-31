@@ -17,11 +17,12 @@ body {
   text-align: center;
   margin: 25px auto; }
   .wrapper .panel {
-    min-height: 100%;
+    border: 2px red dotted;
+    position: relative;
     display: inline-block;
+    min-height: 100%;
     margin: 0;
     padding: 0;
-    position: relative;
     vertical-align: middle; }
     .wrapper .panel.panel-left {
       max-width: 17.25%;
