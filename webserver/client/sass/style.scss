@@ -116,6 +116,13 @@ body {
             color: #000;
             background: #00ff00;
           }
+          .img_updates-container{
+            display: inline-block;
+            img {
+              height: 400px;
+              width: 400px;
+          }
+          }
         }
         .manual {
           display: block;

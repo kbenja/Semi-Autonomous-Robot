@@ -88,6 +88,11 @@ body {
           border-radius: 75px;
           color: #000;
           background: #00ff00; }
+        .wrapper .panel.panel-middle .mode-container .auto .img_updates-container {
+          display: inline-block; }
+          .wrapper .panel.panel-middle .mode-container .auto .img_updates-container img {
+            height: 400px;
+            width: 400px; }
       .wrapper .panel.panel-middle .mode-container .manual {
         display: block; }
         .wrapper .panel.panel-middle .mode-container .manual .control-container {
