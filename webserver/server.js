@@ -1,6 +1,5 @@
 var development = true;
 
-
 var express = require('express');
 var app = express();
 var http = require('http');
@@ -57,7 +56,7 @@ function unix_socket_emit() {
             commands.splice(0,1);
         } else {
             // idle mode or same as last command
-            // ipc.server.emit(unix_socket,[0,0]);
+            ipc.server.emit(unix_socket,[0,0]);
         }
     }
 }
@@ -74,6 +73,7 @@ ipc.serve(function() {
         console.log("UNIX SOCKET CONNECTED");
     });
     ipc.server.on('data', function(data,socket){
+        console.log(data);
         heartbeat++;
         unix_socket_emit()
     });

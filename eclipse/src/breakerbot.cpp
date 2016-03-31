@@ -24,8 +24,11 @@ bool manual_control = false;
 * 1 = manual input
 */
 int16_t instructions[2] = {-1,0};
-int mode = -1;
 int16_t *p_instructions = instructions;
+int16_t sending[2] = {-1,0};
+int16_t *p_sending = sending;
+
+int mode = -1;
 
 int main(int argc, char** argv) {
     float user_input = 0.0;                          // receive signal from argv or use default (stop)
@@ -56,7 +59,9 @@ int main(int argc, char** argv) {
         // int heartbeat = 0; //make sure to communicate every 0.25 sec;
         while(1) {
             usleep(100000); // cycle time
-            ipc.unix_socket_write(); // check for status .. eventually send status of devices
+            sending[0] = sending[0]+1;
+            sending[1] = sending[1]+1;
+            ipc.unix_socket_write(p_sending);
             ipc.unix_socket_read(p_instructions);
             mode = instructions[0];
             switch(mode) {
