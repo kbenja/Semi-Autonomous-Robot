@@ -30,8 +30,8 @@ public:
         strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
         return (connect(fd, (struct sockaddr*)&addr, sizeof(addr))); // connect to socket
     }
-    int unix_socket_write(int16_t * sending, int16_t length) {
-        return write(fd, *(sending), sizeof(*sending));
+    int unix_socket_write(int16_t sending[]) {
+        return write(fd, sending, sizeof(sending));
     }
     void unix_socket_read(int16_t * instructions) {
         read(fd,buffer,4);

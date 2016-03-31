@@ -1,4 +1,4 @@
-var development = true;
+var development = false;
 
 var express = require('express');
 var app = express();
@@ -29,6 +29,7 @@ console.log('WebSocket server listening on port ' + socket_port);
 /*
 *    UNIX SOCKET – SERVER & C++ PROGRAM
 */
+
 var commands = [];
 var client_socket = false;
 var unix_socket = false; // set global unix socket
@@ -73,7 +74,7 @@ ipc.serve(function() {
         console.log("UNIX SOCKET CONNECTED");
     });
     ipc.server.on('data', function(data,socket){
-        console.log(data);
+        console.log(data.toString('hex').split(''));
         heartbeat++;
         unix_socket_emit()
     });
@@ -138,6 +139,6 @@ http.createServer(function(req, res) {
     });
 }).listen(stream_port, function() {
     console.log('Listening for video stream on port ' + stream_port);
-    start_video();
+//    start_video();
 });
 

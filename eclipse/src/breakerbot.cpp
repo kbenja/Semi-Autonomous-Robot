@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
             usleep(100000); // cycle time
             sending[0] = sending[0]+1;
             sending[1] = sending[1]+1;
-            ipc.unix_socket_write(p_sending);
+            ipc.unix_socket_write(sending);
             ipc.unix_socket_read(p_instructions);
             mode = instructions[0];
             switch(mode) {
