@@ -7,14 +7,16 @@
 #include "include/encoder_module.h"
 #include "include/pot_module.h"
 #include "include/navx_module.h"
+#include "include/swerve_module.h"
 
 bool lidar_module = false;
 bool motor_module = false;
-bool ipc_module = true;
+bool ipc_module = false;
 bool encoder_module = false;
 bool pot_module = false;
 bool navx_module = false;
 bool manual_control = false;
+bool swerve_module = true;
 
 /*
 * Instructions = { MODE, INPUT1 }
@@ -58,7 +60,7 @@ int main(int argc, char** argv) {
         }
         // int heartbeat = 0; //make sure to communicate every 0.25 sec;
         while(1) {
-            usleep(100000); // cycle time
+            usleep(25000); // cycle time
             ipc.unix_socket_write(); // check for status .. eventually send status of devices
             ipc.unix_socket_read(p_instructions);
             mode = instructions[0];
@@ -71,16 +73,17 @@ int main(int argc, char** argv) {
                 case 1:
                     printf("MODE = MANUAL CONTROL, INPUT = %d\n", instructions[1]);
                     switch(instructions[1]) {
-                        case 1:
+                        case 1: //UP
                             s1.drive_forward(user_input);
                             break;
-                        case 2:
+                        case 2: //LEFT
                             s1.rotate_cw();
                             break;
-                        case 3:
+                        case 3: // DOWN
                             s1.drive_forward(-user_input);
                             break;
-                        case 4:
+                        case 4: // RIGHT
+                            // turn to X angle
                             s1.rotate_ccw();
                             break;
                         case 0:
@@ -97,6 +100,23 @@ int main(int argc, char** argv) {
             }
         }
     }
+    if (swerve_module) {
+        uint8_t address = 0x40;
+        mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
+        i2c_init_board(i2c, address);               // initialize the board
+        // direction = port 1
+        // driving = port 2
+        // pot_adc = port 1
+        // encoder = port 0
+        Swerve_Module s1 = Swerve_Module(i2c, 1, 1, 2, 1, 0);
+        while(1) {
+            usleep(25000);
+            s1.rotate(1926);
+            mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
+        }
+
+    }
+
 
     if (pot_module) {
         printf("Pot module testing");
