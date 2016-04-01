@@ -84,7 +84,7 @@ public:
     mraa_result_t rotate(uint16_t pos) {
         mraa_result_t result = MRAA_SUCCESS;
         uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
-        if ((pos - 2 > current_pos || current_pos ) && (pos < CW_LIMIT)) {
+        if ((pos - 2 > current_pos) && (pos < CW_LIMIT)) {
             result = rotate_cw();     //rotate clockwise to position -> increases value
         }
         else if ((pos + 2 < current_pos) && (pos > CCW_LIMIT)) {
