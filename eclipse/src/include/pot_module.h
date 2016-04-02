@@ -1,5 +1,4 @@
 #include "mraa.h"
-
 #ifndef POT_MODULE_H
 #define POT_MODULE_H
 
@@ -30,6 +29,7 @@ public:
 
 
     /*FUNCTIONS*/
+    //Averaging 10 values
     uint16_t get_average_val() {
         adc_value = mraa_aio_read(adc_port);        //read port
         usleep(50);
@@ -40,7 +40,18 @@ public:
         adc_value += mraa_aio_read(adc_port);
         usleep(50);
         adc_value += mraa_aio_read(adc_port);
-        return adc_value/5;
+        usleep(50);
+        adc_value += mraa_aio_read(adc_port);
+        usleep(50);
+        adc_value += mraa_aio_read(adc_port);
+        usleep(50);
+        adc_value += mraa_aio_read(adc_port);
+        usleep(50);
+        adc_value += mraa_aio_read(adc_port);
+        usleep(50);
+        adc_value += mraa_aio_read(adc_port);
+
+        return adc_value/10;
     }
 
     uint16_t get_val() {
