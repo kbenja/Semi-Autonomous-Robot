@@ -100,31 +100,63 @@ int main(int argc, char** argv) {
             }
         }
     }
+
     if (swerve_module) {
         uint8_t address = 0x40;
         mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
         i2c_init_board(i2c, address);               // initialize the board
-        // direction = port 1
-        // driving = port 2
-        // pot_adc = port 1
-        // encoder = port 0
+        // ID field
+        // steering = I2C-PWM port 1
+        // driving = I2C-PWM port 2
+        // pot_adc = Analog port 1
+        // encoder = I2C-PWM port 0
         Swerve_Module s1 = Swerve_Module(i2c, 1, 1, 2, 1, 0);
+
+        //Swerve_Module FR = Swerve_Module(i2c, 1, 1, 5, 1, 0); //Front-Right Wheel
+        //Swerve_Module BR = Swerve_Module(i2c, 2, 2, 6, 2, 0); //Back-Right Wheel
+        //Swerve_Module FL = Swerve_Module(i2c, 3, 3, 7, 3, 0); //Front-Left Wheel
+        //Swerve_Module BL = Swerve_Module(i2c, 4, 4, 8, 4, 0); //Front-Left Wheel
+
         while(1) {
             usleep(25000);
-            s1.rotate(1926);
+            s1.rotate(1926); //desired_pos Rotate to a specific ADC value, considering mapping ADC to Degree
+
+            /*
+
+            //Y_translation
+            FR.Y_translation();
+            BR.Y_translation();
+            FL.Y_translation();
+            BL.Y_translation();
+
+            //X_translation
+           	FR.X_right_translation();
+            BR.X_right_translation();
+            FL.X_left_translation();
+            BL.X_left_translation();
+
+            //Z_rotation
+            FR.Z_rotation_FR();
+            BR.Z_rotation_BR();
+            FL.Z_rotation_FL();
+            BL.Z_rotation_BL();
+
+            */
+
             mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
+
         }
 
     }
 
-
     if (pot_module) {
         printf("Pot module testing");
-        Pot_Module P0(0,12);
+        //Pot_Module P0(0,12);
         Pot_Module P1(1,12);
 
         while(pot_module) {
-            printf("Pot 1: %d     Pot 2: %d\n",P0.get_val(),P1.get_val());
+            //printf("Pot 1: %d     Pot 2: %d\n",P0.get_val(),P1.get_val());
+        	printf("Pot: %d\n",P1.get_average_val());
             usleep(500000);
         }
     }
