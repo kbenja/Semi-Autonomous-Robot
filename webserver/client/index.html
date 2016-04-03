@@ -19,6 +19,7 @@
  		<div onclick="change_mode()" class="dev-container">
  			<button>DEV: change mode</button>
  			<button>Menu</button>
+<!--  			<img id="image-test" src="https://trackingjs.com/bower/tracking.js/examples/assets/psmove.png"> -->
  		</div>
  		<div class="wrapper">
  			<div class="panel panel-left">
@@ -41,7 +42,9 @@
 	 					<img src="battery_100.png">
 	 				</div>
 	 				<div id="alignment-instructions"> Here will be the instructions to manually align the robot</div>
-	 			  <canvas id="canvas-video" width="640" height="480"></canvas>
+	 			  <div id="canvas-container">
+		 			  <canvas id="canvas-video" width="640" height="480"></canvas>
+	 			  </div>
 	 			</div>
 	 			<div class="mode-container">
 	 				<div class="auto mode">

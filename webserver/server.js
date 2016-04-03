@@ -71,7 +71,7 @@ ipc.serve(function() {
     ipc.server.on('connect', function(socket){
         unix_socket = socket;
         commands = [];
-        console.log("UNIX SOCKET CONNECTED");
+        // console.log("UNIX SOCKET CONNECTED");
     });
     ipc.server.on('data', function(data,socket){
         heartbeat++;

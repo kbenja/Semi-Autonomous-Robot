@@ -11,7 +11,6 @@ function change_mode() {
     display_manual = !display_manual;
 }
 
-
 $(document).ready(function() {
     // init canvas and display loading text
     var canvas = document.getElementById('canvas-video');
@@ -36,19 +35,34 @@ $(document).ready(function() {
         // initialize 60fps loop
         loopManager.run(cycle)
 
-        // tracking colors:
-        var colors = new tracking.ColorTracker(['magenta', 'cyan', 'yellow']);
-
-        colors.on('track', function(event) {
-            if (event.data.length === 0) {
-                console.log("did not find any colors!");
-            } else {
+        // computer vision
+        var rects;
+        var tracker = new tracking.ColorTracker(['yellow']);
+        tracker.on('track', function(event) {
+            rects = document.querySelector('.rect');
+            if (rects) {
+                $('.rect').remove(); // jquery way
+                // javascript way change to this if we use angular
+                // Array.prototype.forEach.call(rects, function(node) {
+                //     node.parentNode.removeChild(node);
+                // });
+            }
+            if (event.data.length !== 0) {
                 event.data.forEach(function(rect) {
-                    console.log(rect.x, rect.y, rect.height, rect.width, rect.color);
+                    var bounding_box = document.createElement('div');
+                    document.querySelector('#canvas-container').appendChild(bounding_box);
+                    bounding_box.classList.add('rect');
+                    bounding_box.style["border"] = '2px solid ' + rect.color;
+                    bounding_box.style["position"] = 'absolute';
+                    bounding_box.style["width"] = rect.width + 'px';
+                    bounding_box.style["height"] = rect.height + 'px';
+                    bounding_box.style["left"] = rect.x + 'px';
+                    bounding_box.style["top"] = rect.y + 'px';
                 });
             }
         });
-
-        tracking.track('#canvas-video', colors);
+        setInterval(function() {
+            tracking.track('#canvas-video', tracker);
+        }, 100);
     });
 })
