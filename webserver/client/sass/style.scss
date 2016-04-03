@@ -105,23 +105,23 @@ body {
         }
         .auto {
           display: none;
-          .alignment-status {
+          .alignment-mode-container {
+            margin: 0 auto;
             display: inline-block;
-            text-align: center;
-            line-height: 100px;
-            font-size: 10px;
-            width: 100px;
-            height: 100px;
-            border-radius: 75px;
-            color: #000;
-            background: #00ff00;
-          }
-          .img_updates-container{
-            display: inline-block;
+            .alignment-status {
+              text-align: center;
+              line-height: 100px;
+              font-size: 10px;
+              width: 100px;
+              height: 100px;
+              border-radius: 75px;
+              color: #000;
+              background: #00ff00;
+            }
             img {
-              height: 400px;
-              width: 400px;
-          }
+              width: 200px;
+              height: auto;
+            }
           }
         }
         .manual {
