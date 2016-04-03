@@ -1,4 +1,4 @@
-var development = true;
+var development = false;
 
 
 var express = require('express');
@@ -20,8 +20,8 @@ if(!development) {
 
 /// VIDEO STREAMING
 var STREAM_MAGIC_BYTES = 'jsmp'; // Must be 4 bytes
-var width = 320;
-var height = 240;
+var width = 640;
+var height = 480;
 
 // WEBSOCKET SERVER
 var wsServer = new(ws.Server)({ port: socket_port });
