@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="Breakerbot" ng-cloak>
 	<head>
 		<meta content = "text/html" charset = "UTF-8">
 		<title>BreakerBot</title>
@@ -8,6 +8,10 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" type = "text/css" href = "css/normalize.css" >
 		<link rel="stylesheet" type = "text/css" href = "css/style.css" >
+		<script src="js/vendor/angular.min.js"></script>
+		<script src="js/controllers/GamepadCtrl.js"></script>
+		<script src="js/controllers/DataCtrl.js"></script>
+		<script src="js/services/CommunicationService.js"></script>
 		<script src="js/vendor/jquery-2.2.0.min.js"></script>
 		<script src="js/vendor/tracking-min.js"></script>
 		<script src="js/XMLHTTPRequest.js"></script>
@@ -19,12 +23,13 @@
  		<div onclick="change_mode()" class="dev-container">
  			<button>DEV: change mode</button>
  			<button>Menu</button>
-<!--  			<img id="image-test" src="https://trackingjs.com/bower/tracking.js/examples/assets/psmove.png"> -->
  		</div>
  		<div class="wrapper">
  			<div class="panel panel-left">
-		 		<div class="position-container">
+		 		<div ng-controller="DataCtrl" class="position-container">
 		 			<h4>Postion Stuff</h4>
+		 			<button ng-click="update()">Update</button>
+		 			<p>Data from Intel Edison: {{ data }}</p>
 		 			<p>This section will include the gyro, compass, and other postion stuff...</p>
 		 		</div>
 		 		<div class="status-container">
@@ -58,14 +63,16 @@
  							<div class="alignment-status"> Rotational Alignment</div>
 	 					</div>
 	 					<div class="alignment-mode-container">
- 							<div class="alignment-status"> Distance Alignment</div>	
+ 							<div class="alignment-status"> Distance Alignment</div>
 	 					</div>
 	 					<div class="alignment-mode-container">
  							<div class="alignment-status"> Fine Alignment</div>
 	 					</div>
 	 				</div>
-	 				<div class="manual mode">
+	 				<div ng-controller="GamepadCtrl" class="manual mode">
+	 					<p>{{ command.mode }}, {{ command.code }}</p>
 			 			<div class="control-container">
+							<!-- <div class="connect">Please connect or reconnect the controller.</div> -->
 							<div class="connect">Please connect or reconnect the controller.</div>
 				 			<div class="controls">
 					 			<div class="cartesian">
@@ -126,6 +133,7 @@
  				</div>
  			</div>
  		</div>
-		<script type="text/javascript" src="js/main.js"></script>
+		<!-- <script type="text/javascript" src="js/main.js"></script> -->
+ 		<script type="text/javascript" src="js/app.js"></script>
   	</body>
 </html>
