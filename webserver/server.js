@@ -10,6 +10,7 @@ var createIP = require('./createIP');
 var ipc = require('node-ipc');
 
 var static_port = 8080;
+var comm_port   = 8088;
 var stream_port = 8082;
 var socket_port = 8084;
 
@@ -17,21 +18,34 @@ if(!development) {
     createIP();
 }
 
-// VIDEO STREAMING
-var STREAM_MAGIC_BYTES = 'jsmp'; // Must be 4 bytes
-var width = 640;
-var height = 480;
+/*
+ *  CLIENT & SERVER COMMUNICATION -  TCP/IP SOCKET
+ */
+ var tcp_socket = false;
 
-// WEBSOCKET SERVER
-var wsServer = new(ws.Server)({ port: socket_port });
-console.log('WebSocket server listening on port ' + socket_port);
+var comm_socket = new(ws.Server)({port: comm_port});
+console.log('SOCKET client - server listening on PORT ' + comm_port);
+comm_socket.on('connection', function(socket) {
+    tcp_socket = socket; // set global socket object
+
+    console.log('New WebSocket Connection (' + comm_socket.clients.length + ' total)');
+    socket.on("message", function(command) {
+        command = JSON.parse(command);
+        commands.push([command.mode, command.code]);
+        console.log([command.mode, command.code]);
+    })
+    socket.on('close', function(code, message) {
+        tcp_socket = false;
+        console.log('Disconnected WebSocket (' + comm_socket.clients.length + ' total)');
+    });
+});
 
 /*
-*    UNIX SOCKET – SERVER & C++ PROGRAM
+*   SERVER & C++ PROGRAM COMMUNICATION - UNIX SOCKET
 */
-var commands = [];
-var client_socket = false;
 var unix_socket = false; // set global unix socket
+
+var commands = [];
 var mode = -1;
 var heartbeat = 0;
 var last_heartbeat = 0;
@@ -48,7 +62,7 @@ var check_status = setInterval(function(){
 
 function unix_socket_emit() {
     if(unix_socket) {
-        if(!client_socket) {
+        if(!tcp_socket) {
             ipc.server.emit(unix_socket,[-1,0]);
         } else if(commands.length) {
             console.log("sending: ",commands[0]);
@@ -80,18 +94,22 @@ ipc.serve(function() {
 ipc.server.start();
 
 /*
-*    TCP/IP SOCKET – CLIENT & SERVER
+*    VIDEO STREAMING
 */
+
+var STREAM_MAGIC_BYTES = 'jsmp'; // Must be 4 bytes
+var width = 640;
+var height = 480;
+
+// Create socket for video stream
+var wsServer = new(ws.Server)({ port: socket_port });
+console.log('SOCKET communication for video stream PORT ' + socket_port);
+
 wsServer.on('connection', function(socket) {
-    console.log('New WebSocket Connection (' + wsServer.clients.length + ' total)');
-    client_socket = true;
-    socket.on("message", function(command) {
-        command = JSON.parse(command);
-        commands.push([command.mode, command.code]);
-    })
+    console.log('VIDEO STREAM connection OPENED (' + wsServer.clients.length + ' total)');
+
     socket.on('close', function(code, message) {
-        console.log('Disconnected WebSocket (' + wsServer.clients.length + ' total)');
-        client_socket = false;
+        console.log('VIDEO STREAM connection CLOSED(' + wsServer.clients.length + ' total)');
     });
 
     var streamHeader = new Buffer(8);
@@ -100,15 +118,7 @@ wsServer.on('connection', function(socket) {
     streamHeader.writeUInt16BE(height, 6);
     socket.send(streamHeader, { binary: true });
 });
-
-// HTTP STATIC SERVER
-app.set('port', static_port);
-app.use(express.static("./client"));
-http.createServer(app).listen(app.get('port'), function() {
-    console.log('HTTP server listening on port ' + app.get('port'));
-});
-
-// HTTP SERVER FOR MPEG1 STREAM
+// Broadcast video to clients
 wsServer.broadcast = function(data, opts) {
     for (var i in this.clients) {
         if (this.clients[i].readyState == 1) {
@@ -118,6 +128,27 @@ wsServer.broadcast = function(data, opts) {
         }
     }
 };
+
+http.createServer(function(req, res) {
+    console.log('CLIENT VIDEO STREAM CONNECTED: ' + req.socket.remoteAddress + ':' + req.socket.remotePort + ' size: ' + width + 'x' + height);
+    req.on('data', function(data) {
+        wsServer.broadcast(data, { binary: true });
+    });
+}).listen(stream_port, function() {
+    console.log('SOCKET listening for video stream on PORT ' + stream_port);
+    start_video();
+
+});
+
+
+/*
+ *  STATIC FILES SERVER
+ */
+app.set('port', static_port);
+app.use(express.static("./client"));
+http.createServer(app).listen(app.get('port'), function() {
+    console.log('HTTP server listening on PORT ' + app.get('port'));
+});
 
 var video_stream;
 function start_video() {
@@ -131,14 +162,4 @@ function start_video() {
         });
     }
 }
-http.createServer(function(req, res) {
-    console.log('CLIENT VIDEO STREAM CONNECTED: ' + req.socket.remoteAddress + ':' + req.socket.remotePort + ' size: ' + width + 'x' + height);
-    req.on('data', function(data) {
-        wsServer.broadcast(data, { binary: true });
-    });
-}).listen(stream_port, function() {
-    console.log('Listening for video stream on port ' + stream_port);
-    start_video();
-
-});
 
