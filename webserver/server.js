@@ -1,4 +1,4 @@
-var development = false;
+var development = true;
 
 var express = require('express');
 var app = express();
@@ -121,11 +121,15 @@ wsServer.broadcast = function(data, opts) {
 
 var video_stream;
 function start_video() {
-    video_stream = childProcess.exec('./bin/do_ffmpeg.sh');
-    video_stream.on('exit', function (code) {
-        console.log('VIDEO STREAM EXITED, RESTARTING');
-        setTimeout(start_video(), 500);
-    });
+    if(!development) {
+        video_stream = childProcess.exec('./bin/do_ffmpeg.sh');
+        video_stream.on('exit', function (code) {
+            setTimeout(function() {
+                console.log('VIDEO STREAM EXITED, RESTARTING');
+                start_video();
+            }, 500);
+        });
+    }
 }
 http.createServer(function(req, res) {
     console.log('CLIENT VIDEO STREAM CONNECTED: ' + req.socket.remoteAddress + ':' + req.socket.remotePort + ' size: ' + width + 'x' + height);
