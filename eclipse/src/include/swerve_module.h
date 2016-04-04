@@ -204,20 +204,23 @@ public:
 
     */
 
-    mraa_result_t rotate(uint16_t desired_pos) {
+    int rotate(uint16_t desired_pos) {
         mraa_result_t result = MRAA_SUCCESS;
         uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
         if ((desired_pos - 3 >= current_pos) && (desired_pos < CW_LIMIT)) { //1926-2 = 1924
             result = rotate_cw();     //rotate clockwise to position -> increases value
+            return (result == MRAA_SUCCESS ? 1 : -1;
         }
         else if ((desired_pos + 3 <= current_pos) && (desired_pos > CCW_LIMIT)) { //1926+2 = 1928
             result = rotate_ccw();    //rotate counterclockwise to position -> decreases value
+            return (result == MRAA_SUCCESS ? 1 : -1;
         }
         else {
             result = steer_motor->send_signal(i2c_context, 0); //Stop Signal to Motor
             sleep(2);
+            return (result == MRAA_SUCCESS ? 0 : -1;
         }
-        return result;
+
     }
 
     /*

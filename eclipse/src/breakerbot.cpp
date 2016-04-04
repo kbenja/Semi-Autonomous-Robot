@@ -8,6 +8,7 @@
 #include "include/pot_module.h"
 #include "include/navx_module.h"
 #include "include/swerve_module.h"
+#include "include/steering_module.h"
 
 bool lidar_module = false;
 bool motor_module = false;
