@@ -37,6 +37,17 @@ body {
         color: #000;
         line-height: 100px;
         background: #00ff00; }
+      .wrapper .panel.panel-left .alignment-positions {
+        display: inline-block;
+        position: relative;
+        top: 92px;
+        /*right: 75px;*/ }
+      .wrapper .panel.panel-left #breakerbot {
+        -webkit-transform: rotate(45deg); }
+      .wrapper .panel.panel-left #cubicle {
+        max-width: 100%;
+        position: relative;
+        padding-right: 10px; }
     .wrapper .panel.panel-middle {
       max-width: 65%;
       min-width: 630px; }
@@ -144,20 +155,6 @@ body {
       .wrapper .panel.panel-right .output-container {
         margin: 20px auto;
         padding: 20px; }
-      .wrapper .panel.panel-right table, td, th {
-        text-align: left;
-        border: 1px solid black;
-        height: 50px;
-        width: 250px;
-        position: center;
-        padding: 10px;
-      }
-      .wrapper .panel.panel-right h4{
-        border:2px solid black;
-      }
-      .wrapper .panel.panel-right p{
-        border:1px solid black;
-      }
       .wrapper .panel.panel-right #stop {
         background: none;
         border: none;

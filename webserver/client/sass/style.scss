@@ -46,8 +46,23 @@ body {
           line-height: 100px;
           background: #00ff00;
         }
+       } 
+      .alignment-positions{
+        display: inline-block;
+        position: relative;
+        top: 92px;
+        /*right: 75px;*/
 
-      }
+       } 
+       #breakerbot {
+        -webkit-transform: rotate(45deg);
+       }
+
+       #cubicle {
+        max-width:100%;
+        position: relative;
+        padding-right: 10px;
+       }
     }
     &.panel-middle {
       max-width: 65%;
