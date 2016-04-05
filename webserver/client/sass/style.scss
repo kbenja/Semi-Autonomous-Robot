@@ -121,7 +121,6 @@ body {
           width: 100%;
         }
         .auto {
-          display: none;
           .alignment-mode-container {
             margin: 0 auto;
             display: inline-block;
@@ -142,7 +141,6 @@ body {
           }
         }
         .manual {
-          display: block;
           .control-container {
             position: relative;
             .connect {

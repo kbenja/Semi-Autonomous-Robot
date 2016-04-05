@@ -20,8 +20,8 @@
 		<script src="js/vendor/jsmpg.js"></script>
 	</head>
  	<body>
- 		<div onclick="change_mode()" class="dev-container">
- 			<button>DEV: change mode</button>
+ 		<div ng-controller="DevCtrl" class="dev-container">
+ 			<button ng-click="toggle_mode()">MODE : {{ manual_mode ? 'MANUAL' : 'AUTO' }}</button>
  			<button>Menu</button>
  		</div>
  		<div class="wrapper">
@@ -57,7 +57,7 @@
 	 			  </div>
 	 			</div>
 	 			<div class="mode-container">
-	 				<div class="auto mode">
+	 				<div ng-hide="manual_mode" class="auto mode">
 
 	 					<div>Hello this is auto alignment mode</div>
 	 					<div class="alignment-mode-container">
@@ -70,8 +70,7 @@
  							<div class="alignment-status"> Fine Alignment</div>
 	 					</div>
 	 				</div>
-	 				<div ng-controller="GamepadCtrl" class="manual mode">
-	 					<p>{{ command.mode }}, {{ command.code }}</p>
+	 				<div ng-controller="GamepadCtrl" ng-show="manual_mode" class="manual mode">
 			 			<div class="control-container">
 							<!-- <div class="connect">Please connect or reconnect the controller.</div> -->
 							<div class="connect">Please connect or reconnect the controller.</div>
