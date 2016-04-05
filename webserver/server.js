@@ -1,4 +1,4 @@
-var development = true;
+var development = false;
 
 var express = require('express');
 var app = express();
@@ -27,18 +27,32 @@ var comm_socket = new(ws.Server)({port: comm_port});
 console.log('SOCKET client - server listening on PORT ' + comm_port);
 comm_socket.on('connection', function(socket) {
     tcp_socket = socket; // set global socket object
-
     console.log('New WebSocket Connection (' + comm_socket.clients.length + ' total)');
+    var counter = 0;
     socket.on("message", function(command) {
         command = JSON.parse(command);
         commands.push([command.mode, command.code]);
-        console.log([command.mode, command.code]);
+        counter++;
+
+        comm_socket.broadcast(JSON.stringify({count: counter}));
+        console.log(JSON.stringify({count: counter}));
     })
     socket.on('close', function(code, message) {
         tcp_socket = false;
         console.log('Disconnected WebSocket (' + comm_socket.clients.length + ' total)');
     });
 });
+
+comm_socket.broadcast = function(data) {
+    for (var i in this.clients) {
+        if (this.clients[i].readyState == 1) {
+            this.clients[i].send(data);
+            console.log("data being sent: ", data);
+        } else {
+            console.log('Error: Client (' + i + ') not connected.');
+        }
+    }
+};
 
 /*
 *   SERVER & C++ PROGRAM COMMUNICATION - UNIX SOCKET

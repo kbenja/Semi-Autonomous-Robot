@@ -10,7 +10,7 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
         mode: 0,
         code: 0
     };
-    $scope.socket = communication.socket;
+    $scope.socket = communication.comm_socket;
 
     function keyPressed(key) {
         if (key === "b_button" || key === 32 && !$scope.breaking) {

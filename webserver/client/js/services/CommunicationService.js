@@ -1,23 +1,13 @@
 angular.module('CommunicationService', []).factory('communication', [function($http, $rootScope) {
-    // var socket = function() {
-    //     return $http({
-    //         method: 'GET',
-    //         url: '../../ip.txt'
-    //     }).then(function(response) {
-    //         return "hello";
-    //     }, function(error) {
-    //         return "error";
-    //     });
-    // }
-
-
     // create socket for server-client communication
-    // var socket = new WebSocket("ws://155.41.119.205:8088/");
-    var comm_socket = new WebSocket("ws://localhost:8088/");
+
+    var comm_socket = new WebSocket("ws://155.41.119.205:8088/");
+    // var comm_socket = new WebSocket("ws://localhost:8088/");
 
     // create socket for video stream
-    // var socket = new WebSocket("ws://155.41.119.205:8084/");
-    var stream_socket = new WebSocket("ws://localhost:8084/");
+
+    var stream_socket = new WebSocket("ws://155.41.119.205:8084/");
+    // var stream_socket = new WebSocket("ws://localhost:8084/");
 
     // canvas for video stream
     var canvas = document.getElementById('canvas-video');
@@ -29,7 +19,17 @@ angular.module('CommunicationService', []).factory('communication', [function($h
 
     }
     var test = "hello world";
+
     return {
-        comm_socket: comm_socket
+        comm_socket: comm_socket,
+        read_data: function(callback) {
+            comm_socket.onmessage = function(evt) {
+                console.log("evt!", evt);
+                callback(evt);
+            };
+        }
     }
+
+
+    // helpful example : https://gist.github.com/ae6rt/7865161
 }]);
