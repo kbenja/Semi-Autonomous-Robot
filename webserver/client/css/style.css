@@ -40,8 +40,7 @@ body {
       .wrapper .panel.panel-left .alignment-positions {
         display: inline-block;
         position: relative;
-        top: 92px;
-        /*right: 75px;*/ }
+        top: 92px; }
       .wrapper .panel.panel-left #breakerbot {
         -webkit-transform: rotate(45deg); }
       .wrapper .panel.panel-left #cubicle {
