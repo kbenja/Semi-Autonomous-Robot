@@ -25,7 +25,7 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
         });
     });
     setInterval(function() {
-        $scope.$apply();
         tracking.track('#canvas-video', tracker);
+        $scope.$apply();
     }, 100);
 });
