@@ -21,8 +21,8 @@ if(!development) {
 /*
  *  CLIENT & SERVER COMMUNICATION -  TCP/IP SOCKET
  */
- var tcp_socket = false;
-
+var tcp_socket = false;
+var to_send = false;
 var comm_socket = new(ws.Server)({port: comm_port});
 console.log('SOCKET client - server listening on PORT ' + comm_port);
 comm_socket.on('connection', function(socket) {
@@ -32,9 +32,7 @@ comm_socket.on('connection', function(socket) {
     socket.on("message", function(command) {
         command = JSON.parse(command);
         commands.push([command.mode, command.code]);
-        counter++;
-
-        comm_socket.broadcast(JSON.stringify({count: counter}));
+        comm_socket.broadcast(JSON.stringify({count: to_send}));
         console.log(JSON.stringify({count: counter}));
     })
     socket.on('close', function(code, message) {
@@ -101,6 +99,8 @@ ipc.serve(function() {
         console.log("UNIX SOCKET CONNECTED");
     });
     ipc.server.on('data', function(data,socket){
+        to_send = data.toString('hex').split('');
+        console.log(data.toString('hex').split(''));
         heartbeat++;
         unix_socket_emit()
     });

@@ -23,9 +23,11 @@ bool manual_control = false;
 * 0 = idle mode
 * 1 = manual input
 */
-int16_t instructions[2] = {-1,0};
 int mode = -1;
+int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
+int16_t sending[2] = {-1,0};
+int16_t *p_sending = sending;
 
 int main(int argc, char** argv) {
     float user_input = 0.0;                          // receive signal from argv or use default (stop)
@@ -35,6 +37,11 @@ int main(int argc, char** argv) {
     }
 
     if (ipc_module) {
+        /*
+         * NAVX MODULE INITIALIZATION
+         */
+        NavX_Module x1;
+        x1.set_zero();
         /*
          *  MOTOR MODULE INITIALIZATION
          */
@@ -56,7 +63,8 @@ int main(int argc, char** argv) {
         // int heartbeat = 0; //make sure to communicate every 0.25 sec;
         while(1) {
             usleep(100000); // cycle time
-            ipc.unix_socket_write(); // check for status .. eventually send status of devices
+            sending[0] =  x1.get_yaw()/100;
+            ipc.unix_socket_write(sending);
             ipc.unix_socket_read(p_instructions);
             mode = instructions[0];
             switch(mode) {
