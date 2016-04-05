@@ -11,6 +11,7 @@
 		<script src="js/vendor/angular.min.js"></script>
 		<script src="js/controllers/GamepadCtrl.js"></script>
 		<script src="js/controllers/DataCtrl.js"></script>
+		<script src="js/controllers/VideoCtrl.js"></script>
 		<script src="js/services/CommunicationService.js"></script>
 		<script src="js/vendor/jquery-2.2.0.min.js"></script>
 		<script src="js/vendor/tracking-min.js"></script>
@@ -43,7 +44,7 @@
 		 	    </div>
  			</div>
  			<div class="panel panel-middle">
-	 			<div class="video-container">
+	 			<div ng-controller="VideoCtrl" class="video-container">
 		 			<div class="watermark">
 		 				<img src="logo_white.png">
 		 			</div>
@@ -54,6 +55,7 @@
 	 				<div id="alignment-instructions"> Here will be the instructions to manually align the robot</div>
 	 			  <div id="canvas-container">
 		 			  <canvas id="canvas-video" width="640" height="480"></canvas>
+		 			  <div ng-repeat="rect in rects" ng-style="{position:absolute, border: '2px solid {{rect.color}}', width: '{{rect.width}}'+'px', height: '{{rect.height}}' + 'px', top: '{{rect.y}}'+'px', left: '{{rect.x}}'+'px'}"></div>
 	 			  </div>
 	 			</div>
 	 			<div class="mode-container">
