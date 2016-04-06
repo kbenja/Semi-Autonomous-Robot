@@ -9,19 +9,19 @@
 #include "navx_module.h"
 #include "swerve_module.h"
 
-void test_pot_module {
+void test_pot_module() {
     printf("Pot module testing");
     //Pot_Module P0(0,12);
     Pot_Module P1(1,12);
 
-    while(pot_module) {
+    while(true) {
         //printf("Pot 1: %d     Pot 2: %d\n",P0.get_val(),P1.get_val());
         printf("Pot: %d\n",P1.get_average_val());
         usleep(500000);
     }
 }
 
-void test_manual_control {
+void test_manual_control() {
     printf("MANUAL CONTROL MODULE TESTING\n\n");
 
     Manual_Control input;
@@ -31,7 +31,7 @@ void test_manual_control {
     }
 }
 
-void test_lidar_module {
+void test_lidar_module() {
     printf("LIDAR MODULE TESTING\n\n");
 
     Lidar_Module l1(2);
@@ -40,7 +40,7 @@ void test_lidar_module {
     }
 }
 
-void test_motor_module {
+void test_motor_module(float user_input) {
     printf("MOTOR MODULE TESTING\n\n");
 
     uint8_t address = 0x40;
@@ -61,7 +61,7 @@ void test_motor_module {
     mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
 }
 
-void test_encoder_module {
+void test_encoder_module() {
     sleep(1);
     mraa_i2c_context i2c = mraa_i2c_init(6);
     mraa_result_t result = MRAA_SUCCESS;
@@ -81,7 +81,7 @@ void test_encoder_module {
     }
 }
 
-void test_navx_module {
+void test_navx_module() {
     int count = 0;
     printf("Creating NavX module\n");
     NavX_Module x1;

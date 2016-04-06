@@ -13,6 +13,9 @@
 * 5 = testing suite
 */
 
+bool ipc_module = true;
+bool swerve_module = false;
+
 int mode = -1;
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
@@ -32,10 +35,9 @@ int main(int argc, char** argv) {
          */
         IPC_Module ipc("/tmp/breakerbot.socket");
         int status = ipc.unix_socket_initialize();
-        while(status < 0)
+        while(status < 0) {
             status = ipc.unix_socket_initialize();
             usleep(500000);
-            printf("")
         }
 
         /*

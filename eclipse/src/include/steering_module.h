@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "mraa.h"
-#include "include/swerve_module.h"
+#include "swerve_module.h"
 
 #ifndef STEERING_MODULE_H
 #define STEERING_MODULE_H
@@ -22,6 +22,7 @@ values of pots
 values of optical encoder
 
 */
+/*
 
 class Steering_Module {
 public:
@@ -59,5 +60,6 @@ int stop() {
 ~Steering_Module() {
     printf("[ dest ] Steering Module %d deleted\n", id);
 }
+*/
 
 #endif
