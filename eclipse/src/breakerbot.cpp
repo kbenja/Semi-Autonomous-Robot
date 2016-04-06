@@ -12,11 +12,11 @@
 * 3 = intake mode
 * 5 = testing suite
 */
+int mode = -1;
 
 bool ipc_module = true;
 bool swerve_module = false;
 
-int mode = -1;
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
 int16_t sending[2] = {-1,0};
@@ -30,9 +30,7 @@ int main(int argc, char** argv) {
     }
 
     if (ipc_module) {
-        /*
-         * UNIX SOCKET INITIALIZATION
-         */
+        // UNIX SOCKET INITIALIZATION
         IPC_Module ipc("/tmp/breakerbot.socket");
         int status = ipc.unix_socket_initialize();
         while(status < 0) {
@@ -40,19 +38,16 @@ int main(int argc, char** argv) {
             usleep(500000);
         }
 
-        /*
-         * NAVX MODULE INITIALIZATION
-         */
+        // NAVX MODULE INITIALIZATION
         NavX_Module x1;
-        x1.set_zero();
-        /*
-         *  SWERVE MODULE INITIALIZATION
-         */
-        uint8_t address = 0x40;
-        mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
-        i2c_init_board(i2c, address);               // initialize the board
+        x1.set_zero(); // calibrate NavX
 
-        Swerve_Module s1 = Swerve_Module(i2c, 1, 1, 2, 1, 0);
+        // SWERVE MODULE INITIALIZATION
+        uint8_t address = 0x40; // i2c chip is @ i2c address 0x40
+        mraa_i2c_context i2c = mraa_i2c_init(6);    // create original context for i2c (bus 6)
+        i2c_init_board(i2c, address);               // initialize the board (our i2c library function)
+
+        Swerve_Module s1 = Swerve_Module(i2c, 1, 1, 2, 1, 0); //initialize one swerve module
 
         while(1) {
             usleep(100000); // cycle time
