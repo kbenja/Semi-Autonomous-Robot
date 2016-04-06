@@ -35,6 +35,17 @@ int main(int argc, char** argv) {
 
     if (ipc_module) {
         /*
+         * UNIX SOCKET INITIALIZATION
+         */
+        IPC_Module ipc("/tmp/breakerbot.socket");
+        int status = ipc.unix_socket_initialize();
+        while(status < 0)
+            status = ipc.unix_socket_initialize();
+            usleep(500000);
+            printf("")
+        }
+
+        /*
          * NAVX MODULE INITIALIZATION
          */
         NavX_Module x1;
@@ -47,15 +58,6 @@ int main(int argc, char** argv) {
         i2c_init_board(i2c, address);               // initialize the board
 
         Swerve_Module s1 = Swerve_Module(i2c, 1, 1, 2, 1, 0);
-
-        /*
-         * UNIX SOCKET INITIALIZATION
-         */
-        IPC_Module ipc("/tmp/breakerbot.socket");
-        int status = ipc.unix_socket_initialize();
-        if (status < 0) {
-            printf("Cannot connect to socket\n");
-        }
 
         while(1) {
             usleep(100000); // cycle time
