@@ -15,9 +15,7 @@ angular.module('CommunicationService', []).factory('communication', [function($h
     ctx.fillText('Loading...', canvas.width / 2 - 30, canvas.height / 3);
 
     var player = new jsmpeg(stream_socket, { canvas: canvas });
-    var read_socket = function() {
 
-    }
     var test = "hello world";
 
     return {
