@@ -1,5 +1,15 @@
+@import "fonts";
+$title-size: 1.5em;
+
 body {
-  font-size: 16px;
+  font-size: 16px; //set 1em to be 16px
+  color: #ffffff;
+  background-color: #000000;
+  font-family: 'DIN-Medium';
+}
+
+button {
+  color: #000000;
 }
 
 * {
@@ -10,27 +20,50 @@ body {
 
 .dev-container {
   position: absolute;
+  bottom: 20px;
+  right: 20px;
   z-index: 999;
+}
+
+.header {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  border-bottom: 4px white solid;
+  div {
+    margin: 0 10px;
+    display: inline-block;
+    font-size: $title-size;
+    &.menu-button {
+      float: right;
+      cursor: pointer;
+    }
+  }
 }
 
 .wrapper {
   position: relative;
   width: 100%;
-  min-width: 1000px;
+  min-width: 1100px;
   text-align: center;
   margin: 25px auto;
   .panel {
-    border: 2px red dotted;
+    background-color: rgba(215,215,215,0.13);
     position: relative;
     display: inline-block;
     min-height: 100%;
-    margin: 0;
+    margin: 10px;
     padding: 0;
     vertical-align: middle;
-    // border: solid #ff0000 10px;
     &.panel-left {
       max-width: 17.25%;
       height: 100%;
+      .battery-container {
+        img {
+          height: 25px;
+          width: auto;
+        }
+      }
       .position-container {
 
       }
@@ -46,16 +79,16 @@ body {
           line-height: 100px;
           background: #00ff00;
         }
-       } 
+       }
       .alignment-positions{
         display: inline-block;
         position: relative;
         top: 92px;
-       } 
+       }
        #breakerbot {
         position: relative;
-        top: 50px:
-        left: 50px:
+        top: 50px;
+        left: 50px;
         -webkit-transform: rotate(45deg);
        }
 
@@ -67,49 +100,29 @@ body {
     }
     &.panel-middle {
       max-width: 65%;
-      min-width: 630px;
       .video-container {
-        background-color: #333333;
         margin: 0 auto;
-        width: 50%;
-        min-width: 600px;
         position: relative;
         .watermark {
           position: absolute;
-          top: 20px;
-          right: 20px;
+          bottom: 20px;
+          left: 20px;
           img {
             width: 100px;
             height: auto;
             opacity: 0.5;
           }
         }
-        .basic-info-container {
+        .instructions {
           position: absolute;
-          left: 20px;
-          top: 20px;
-          // keep it simple, less styling the better
-          // width: 400px;
-          // height: 50px;
-          // margin: 20px auto;
-          // padding: 20px;
-          // border: solid #ff0000 10px;
-          img {
-            height: 25px;
-            width: auto;
-          }
-        }
-        #alignment-instructions {
-          position: absolute;
-          bottom: 0;
-          width: calc(100% - 4px);
+          top: 0;
+          width: 100%;
           height: 50px;
           line-height:50px;
-          background-color: rgba(255,255,255,0.5);
-          margin: 0px 2px 6px;
+          font-size: $title-size;
+          background-color: rgba(65,163,62,0.36);
         }
         #canvas-video {
-          border: 2px #aaaaaa solid;
           background-color: #dddddd;
           width: 100%;
           height: auto;
@@ -151,7 +164,6 @@ body {
             }
             .controls {
               width: 100%;
-              margin: 5px auto;
               opacity: 0.2;
               -webkit-transition: opacity 500ms ease-out;
               -moz-transition: opacity 500ms ease-out;
@@ -228,8 +240,8 @@ body {
         top: 0;
         left: 0;
         border-bottom: 29px solid red;
-        border-left: 29px solid #fff;
-        border-right: 29px solid #fff;
+        border-left: 29px solid #000000;
+        border-right: 29px solid #000000;
         width: 42px;
         height: 0;
       }
@@ -239,8 +251,8 @@ body {
         bottom: 0;
         left: 0;
         border-top: 29px solid red;
-        border-left: 29px solid #fff;
-        border-right: 29px solid #fff;
+        border-left: 29px solid #000000;
+        border-right: 29px solid #000000;
         width: 42px;
         height: 0;
       }

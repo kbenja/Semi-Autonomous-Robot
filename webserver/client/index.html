@@ -21,18 +21,25 @@
 		<script src="js/vendor/jsmpg.js"></script>
 	</head>
  	<body>
- 		<div ng-controller="DevCtrl" class="dev-container">
- 			<button ng-click="toggle_mode()">MODE : {{ manual_mode ? 'MANUAL' : 'AUTO' }}</button>
- 			<button>Menu</button>
+ 		<div class="header">
+ 			<div class="header-title">BREAKERBOT CONSOLE</div>
+ 			<div class="menu-button">
+ 				MENU
+ 			</div>
  		</div>
  		<div class="wrapper">
  			<div class="panel panel-left">
+		 		<div class="battery-container">
+		 			<h4>BATTERY</h4>
+	 				<img src="battery_100.png">
+		 			<p>Last charge:</p>
+		 			<p>15 minutes ago.</p>
+		 		</div>
 		 		<div ng-controller="DataCtrl" class="position-container">
 		 			<h4>Postion Stuff</h4>
 		 			<button ng-click="update()">Update</button>
 		 			<p>Test connection to backend: {{ data }}</p>
 		 			<p>Data from Intel Edison: {{ message }}</p>
-		 			<p>This section will include the gyro, compass, and other postion stuff...</p>
 		 		</div>
 		 		<div class="status-container">
 		 				<div class="status">Breaker Engagaged</div>
@@ -44,23 +51,21 @@
 		 	    </div>
  			</div>
  			<div class="panel panel-middle">
-	 			<div ng-controller="VideoCtrl" class="video-container">
+	 			<div class="video-container">
+	 				<div class="instructions"> Here will be the instructions to manually align the robot</div>
 		 			<div class="watermark">
 		 				<img src="logo_white.png">
 		 			</div>
-	 				<div class="basic-info-container">
-	 					<img src="signal.png">
-	 					<img src="battery_100.png">
-	 				</div>
-	 				<div id="alignment-instructions"> Here will be the instructions to manually align the robot</div>
-	 			  <div id="canvas-container">
+		 			<div ng-controller="DevCtrl" class="dev-container">
+		 				<button ng-click="toggle_mode()">MODE : {{ manual_mode ? 'MANUAL' : 'AUTO' }}</button>
+		 			</div>
+	 			  <div ng-controller="VideoCtrl" id="canvas-container">
 		 			  <canvas id="canvas-video" width="640" height="480"></canvas>
-		 			  <div ng-repeat="rect in rects" ng-style="{position:'absolute', border: '2px solid {{rect.color}}', width: '{{rect.width}}'+'px', height: '{{rect.height}}' + 'px', top: '{{rect.y - 10}}'+'px', left: '{{rect.x - 20}}'+'px'}"></div>
+		 			  <div ng-repeat="rect in rects" ng-style="{position:'absolute', border: '2px solid {{rect.color}}', width: '{{rect.width}}'+'px', height: '{{rect.height}}' + 'px', top: '{{rect.y}}'+'px', left: '{{rect.x}}'+'px'}"></div>
 	 			  </div>
 	 			</div>
 	 			<div class="mode-container">
 	 				<div ng-hide="manual_mode" class="auto mode">
-
 	 					<div>Hello this is auto alignment mode</div>
 	 					<div class="alignment-mode-container">
  							<div class="alignment-status"> Rotational Alignment</div>
