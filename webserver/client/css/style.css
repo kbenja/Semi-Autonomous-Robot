@@ -87,69 +87,65 @@ body {
       .wrapper .panel.panel-middle .mode-container .mode {
         height: 150px;
         width: 100%; }
-      .wrapper .panel.panel-middle .mode-container .auto {
-        display: none; }
-        .wrapper .panel.panel-middle .mode-container .auto .alignment-mode-container {
+      .wrapper .panel.panel-middle .mode-container .auto .alignment-mode-container {
+        margin: 0 auto;
+        display: inline-block; }
+        .wrapper .panel.panel-middle .mode-container .auto .alignment-mode-container .alignment-status {
+          text-align: center;
+          line-height: 100px;
+          font-size: 10px;
+          width: 100px;
+          height: 100px;
+          border-radius: 75px;
+          color: #000;
+          background: #00ff00; }
+        .wrapper .panel.panel-middle .mode-container .auto .alignment-mode-container img {
+          width: 200px;
+          height: auto; }
+      .wrapper .panel.panel-middle .mode-container .manual .control-container {
+        position: relative; }
+        .wrapper .panel.panel-middle .mode-container .manual .control-container .connect {
+          position: absolute;
           margin: 0 auto;
-          display: inline-block; }
-          .wrapper .panel.panel-middle .mode-container .auto .alignment-mode-container .alignment-status {
-            text-align: center;
-            line-height: 100px;
-            font-size: 10px;
+          width: 100%;
+          margin-top: 54px; }
+        .wrapper .panel.panel-middle .mode-container .manual .control-container .controls {
+          width: 100%;
+          margin: 5px auto;
+          opacity: 0.2;
+          -webkit-transition: opacity 500ms ease-out;
+          -moz-transition: opacity 500ms ease-out;
+          -o-transition: opacity 500ms ease-out;
+          transition: opacity 500ms ease-out; }
+          .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .joystick {
+            position: relative;
+            display: inline-block;
             width: 100px;
             height: 100px;
-            border-radius: 75px;
-            color: #000;
-            background: #00ff00; }
-          .wrapper .panel.panel-middle .mode-container .auto .alignment-mode-container img {
-            width: 200px;
-            height: auto; }
-      .wrapper .panel.panel-middle .mode-container .manual {
-        display: block; }
-        .wrapper .panel.panel-middle .mode-container .manual .control-container {
-          position: relative; }
-          .wrapper .panel.panel-middle .mode-container .manual .control-container .connect {
-            position: absolute;
-            margin: 0 auto;
-            width: 100%;
-            margin-top: 54px; }
-          .wrapper .panel.panel-middle .mode-container .manual .control-container .controls {
-            width: 100%;
-            margin: 5px auto;
-            opacity: 0.2;
-            -webkit-transition: opacity 500ms ease-out;
-            -moz-transition: opacity 500ms ease-out;
-            -o-transition: opacity 500ms ease-out;
-            transition: opacity 500ms ease-out; }
-            .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .joystick {
-              position: relative;
-              display: inline-block;
-              width: 100px;
-              height: 100px;
-              margin: 10px;
-              margin-left: 30px;
-              background: #aaaaaa;
+            margin: 10px;
+            margin-left: 30px;
+            background: #aaaaaa;
+            border-radius: 100%; }
+            .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .joystick .pos {
+              position: absolute;
+              margin-left: 25px;
+              margin-top: 25px;
+              width: 50px;
+              height: 50px;
+              background: #333333;
               border-radius: 100%; }
-              .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .joystick .pos {
-                position: absolute;
-                margin-left: 25px;
-                margin-top: 25px;
-                width: 50px;
-                height: 50px;
-                background: #333333;
-                border-radius: 100%; }
-            .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian {
-              vertical-align: top;
-              display: inline-block;
-              padding: 0 20px; }
-              .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command {
-                height: 30px;
-                width: 60px;
-                line-height: 30px;
-                margin: 3px auto;
-                background-color: #aaaaaa; }
-                .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.left, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.right, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.x_button, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.b_button {
-                  display: inline-block; }
+          .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian {
+            vertical-align: top;
+            display: inline-block;
+            padding: 0 20px; }
+            .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command {
+              height: 30px;
+              width: 60px;
+              line-height: 30px;
+              margin: 3px auto;
+              background-color: #aaaaaa; }
+              .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.left, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.right, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.x_button, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.b_button {
+                display: inline-block; }
     .wrapper .panel.panel-right {
       max-width: 17.25%; }
       .wrapper .panel.panel-right .output-container {
