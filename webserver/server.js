@@ -1,4 +1,4 @@
-var development = true;
+var development = false;
 
 var express = require('express');
 var app = express();
@@ -39,6 +39,9 @@ comm_socket.on('connection', function(socket) {
         tcp_socket = false;
         console.log('Disconnected WebSocket (' + comm_socket.clients.length + ' total)');
     });
+    setInterval(function(){
+        comm_socket.broadcast(JSON.stringify({count: to_send}));
+    }, 1000);
 });
 
 comm_socket.broadcast = function(data) {

@@ -12,7 +12,7 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
         $scope.rects = event.data;
         $scope.rects.forEach(function(rect) {
 
-            console.log(rect);
+            // console.log(rect);
         });
     });
     setInterval(function() {

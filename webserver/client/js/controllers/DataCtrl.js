@@ -7,7 +7,9 @@ angular.module('Data', ['CommunicationService']).controller('DataCtrl', function
     $scope.read_data = function() {
         communication.read_data(function(evt) {
             $scope.$apply(function() {
-                $scope.message = evt.data;
+                var hex = JSON.parse(evt.data);
+                console.log(hex);
+                $scope.message = parseInt(hex.count[2] + hex.count[3] + hex.count[0] + hex.count[1], 16);
             });
         });
     }
