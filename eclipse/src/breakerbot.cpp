@@ -1,14 +1,7 @@
 #include <stdlib.h>
-#include "include/i2c_library.h"
 #include "include/ipc_module.h"
-#include "include/manual_control.h"
-#include "include/lidar_module.h"
-#include "include/motor_module.h"
-#include "include/encoder_module.h"
-#include "include/pot_module.h"
-#include "include/navx_module.h"
-#include "include/swerve_module.h"
 #include "include/test_module.h"
+#include "include/steering_module.h"
 
 /*
 * MODE:
