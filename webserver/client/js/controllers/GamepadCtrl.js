@@ -1,77 +1,85 @@
-angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", function ($scope, communication) {
+angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", function ($scope, $rootScope, communication) {
     // $scope.status = "Please connect or reconnect the controller";
     $scope.keyboard_controls = false;
     $scope.breaking = false;
     $scope.gamepad_connected = false;
-    $scope.keysDown = {};
     $scope.gamepad = {};
-    $scope.last_state = {};
     $scope.command = {
         mode: 0,
         code: 0
     };
-    $scope.socket = communication.comm_socket;
+
+    var keysDown = {};
+    var last_state = {};
+
+    function send_command(data) {
+        if($rootScope.mode === "MANUAL") {
+            communication.send_data(data);
+        } else {
+            console.log("not in manual mode");
+        }
+    }
 
     function keyPressed(key) {
         if (key === "b_button" || key === 32 && !$scope.breaking) {
             $scope.breaking = true;
             $scope.command.code = 0;
-            $scope.socket.send(JSON.stringify($scope.command));
+            send_command($scope.command);
         }
         if(!$scope.breaking) {
             // put $scope only on game pad connection
             if (key === "up" || key === 38) {
-                if(!$scope.keysDown[key]) {
+                if(!keysDown[key]) {
                     $scope.command.code = 1;
                 }
-                $scope.keysDown[key] = true;
+                keysDown[key] = true;
             }
             if (key === "left" || key === 37) {
-                if(!$scope.keysDown[key]) {
+                if(!keysDown[key]) {
                     $scope.command.code = 2;
                 }
-                $scope.keysDown[key] = true;
+                keysDown[key] = true;
             }
             if (key === "down" || key === 40) {
-                if(!$scope.keysDown[key]) {
+                if(!keysDown[key]) {
                     $scope.command.code = 3;
                 }
-                $scope.keysDown[key] = true;
+                keysDown[key] = true;
             }
             if (key === "right" || key === 39) {
-                if(!$scope.keysDown[key]) {
+                if(!keysDown[key]) {
                     $scope.command.code = 4;
                 }
-                $scope.keysDown[key] = true;
+                keysDown[key] = true;
             }
-            $scope.socket.send(JSON.stringify($scope.command));
+            send_command($scope.command);
             console.log($scope.command);
         }
     }
 
     function keyReleased(key) {
         if (key === "b_button" || key === 32) { // Player releases break
-            $scope.keysDown[key] = false;
+            keysDown[key] = false;
             $scope.breaking = false;
         }
         if (!$scope.breaking) {
             if (key === "up" || key === 38) {
-                $scope.keysDown[key] = false;
+                keysDown[key] = false;
                 $scope.command.code = 0;
             }
             if (key === "left" || key === 37) {
-                $scope.keysDown[key] = false;
+                keysDown[key] = false;
                 $scope.command.code = 0;
             }
             if (key === "down" || key === 40) {
-                $scope.keysDown[key] = false;
+                keysDown[key] = false;
                 $scope.command.code = 0;
             }
             if (key === "right" || key === 39) {
-                $scope.keysDown[key] = false;
+                keysDown[key] = false;
                 $scope.command.code = 0;
             }
-            $scope.socket.send(JSON.stringify($scope.command));
+            send_command($scope.command);
         }
     }
 
@@ -90,7 +98,7 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
             $scope.gamepad_connected = true;
             $scope.gamepad = navigator.getGamepads()[0];
             $scope.command.mode = 1;
-            $scope.socket.send(JSON.stringify($scope.command));
+            send_command($scope.command);
             console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.", $scope.gamepad.index, $scope.gamepad.id, $scope.gamepad.buttons.length, $scope.gamepad.axes.length);
             $(".controls").css("opacity","1");
             $(".connect").css("display","none");
@@ -101,17 +109,10 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
             $scope.gamepad = {};
             console.log("Gamepad disconnected");
             $scope.command.mode = 0;
-            $scope.socket.send(JSON.stringify($scope.command));
+            send_command($scope.command);
             $(".controls").css("opacity","0.2");
             $(".connect").css("display","block");
         }, false);
-    }
-
-    function convert_command(object) {
-        var final = " ";
-        final += object.mode + " ";
-        final += object.code + " ";
-        return final;
     }
 
     function readGamePad() {
@@ -120,17 +121,17 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
             $scope.gamepad.buttons.forEach(function(number, it){
                 var button = getButton(it);
                 if(number.pressed) {
-                    if($scope.last_state[it] === false && registeredButton(button)) {
+                    if(last_state[it] === false && registeredButton(button)) {
                         keyPressed(button);
                     }
-                    $scope.last_state[it] = true;
+                    last_state[it] = true;
                     $("." + button).css("background-color","#CCCCCC");
                 } else {
-                    if($scope.last_state[it]) {
+                    if(last_state[it]) {
                         console.log(number,it);
                         keyReleased(button);
                     }
-                    $scope.last_state[it] = false;
+                    last_state[it] = false;
                     $("." + button).css("background-color","#AAAAAA");
                 }
             })

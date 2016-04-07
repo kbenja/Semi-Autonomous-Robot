@@ -20,14 +20,15 @@ angular.module('CommunicationService', []).factory('communication', [function($h
 
     return {
         comm_socket: comm_socket,
+        send_data: function(data) {
+            comm_socket.send(JSON.stringify(data));
+        },
         read_data: function(callback) {
             comm_socket.onmessage = function(evt) {
-                console.log("evt!", evt);
                 callback(evt);
             };
         }
     }
-
 
     // helpful example : https://gist.github.com/ae6rt/7865161
 }]);

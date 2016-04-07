@@ -10,7 +10,7 @@ app.controller('OpenModalCtrl', function($scope, ModalService, $rootScope) {
     $scope.show = function() {
         ModalService.showModal({
             templateUrl: 'modal.html',
-            controller: "ModalController"
+            controller: "ModeCtrl"
         }).then(function(modal) {
             modal.element.modal();
             modal.close.then(function(result) {
@@ -20,7 +20,7 @@ app.controller('OpenModalCtrl', function($scope, ModalService, $rootScope) {
     };
 });
 
-app.controller('ModalController', function($scope, $rootScope, close) {
+app.controller('ModeCtrl', function($scope, $rootScope, close, communication) {
     $scope.close = function(result) {
         close(result, 500); // close, but give 500ms for bootstrap to animate
     };
