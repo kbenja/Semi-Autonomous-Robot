@@ -28,8 +28,10 @@
                 <div class="modal-content">
                     <div class="modal-body">
                         <h4 class="modal-title">SELECT MODE</h4>
-                        <button type="button" ng-click="change_mode('MANUAL')" ng-class="mode === 'MANUAL' ? 'active' : ''" class="btn-lg btn-default" data-dismiss="modal">Manul Mode</button>
-                        <button type="button" ng-click="change_mode('AUTO')" ng-class="mode === 'AUTO' ? 'active' : ''" class="btn-lg btn-default" data-dismiss="modal">Auto Mode</button>
+                        <button type="button" ng-click="change_mode('MANUAL')" ng-class="mode === 'MANUAL' ? 'active' : ''" class="btn-lg btn-default" data-dismiss="modal">Manual control</button>
+                        <button type="button" ng-click="change_mode('AUTO')" ng-class="mode === 'AUTO' ? 'active' : ''" class="btn-lg btn-default" data-dismiss="modal">Auto alignment</button>
+                        <button type="button" ng-click="change_mode('INTAKE')" ng-class="mode === 'INTAKE' ? 'active' : ''" class="btn-lg btn-default" data-dismiss="modal">Intake breaker</button>
+                        <button type="button" ng-click="change_mode('TESTING')" ng-class="mode === 'TESTING' ? 'active' : ''" class="btn-lg btn-default" data-dismiss="modal">Testing suite</button>
                         <div class="modal-footer">
                         	<button type="button" ng-click="close('Cancel')" class="btn-lg btn-danger" data-dismiss="modal">Cancel</button>
                         </div>
@@ -51,7 +53,7 @@
         <div class="panel panel-left">
             <div class="battery-container">
                 <h4>BATTERY</h4>
-                <img src="battery_100.png">
+                <img src="images/battery_100.png">
                 <p>Last charge:</p>
                 <p>15 minutes ago.</p>
             </div>
@@ -66,18 +68,19 @@
                 <div class="status">Robot Asleep</div>
             </div>
             <div class="alignment-positions">
-                <img id="cubicle" src="cubicle.png">
-                <img id="breakerbot" src="breakerbot_logo.png">
+                <img id="cubicle" src="images/cubicle.png">
+                <img id="breakerbot" src="images/breakerbot_logo.png">
             </div>
         </div>
         <div class="panel panel-middle">
             <div class="video-container">
                 <div class="instructions"> Here will be the instructions to manually align the robot</div>
                 <div class="watermark">
-                    <img src="logo_white.png">
+                    <img src="images/logo_white.png">
                 </div>
                 <div ng-controller="VideoCtrl" id="canvas-container">
-                    <canvas id="canvas-video" width="640" height="480"></canvas>
+                    <canvas id="canvas-video" width="640" height="480">
+                    </canvas>
                     <div ng-repeat="rect in rects" ng-style="{position:'absolute', border: '2px solid {{rect.color}}', width: '{{rect.width}}'+'px', height: '{{rect.height}}' + 'px', top: '{{rect.y}}'+'px', left: '{{rect.x}}'+'px'}"></div>
                 </div>
             </div>
