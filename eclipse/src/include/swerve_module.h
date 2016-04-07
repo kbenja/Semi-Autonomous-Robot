@@ -15,6 +15,10 @@ class Swerve_Module {
     uint16_t direction;     //swerve orientation
     uint16_t speed;         //swerve speed
 
+    uint16_t x_pos;
+    uint16_t y_pos;
+    uint16_t z_pos;
+
     bool limit_cw;          //rotational limits
     bool limit_ccw;
 
@@ -48,7 +52,8 @@ public:
         @param drive_port:      ptr to motor controlling swerve movement
 
     */
-    Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int steer_port, int drive_port, int pot_adc, int encoder_port) {
+    Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int steer_port, int drive_port, int pot_adc, int encoder_port,
+                    uint16_t swerve_x, uint16_t swerve_y, uint16_t swerve_z) {
         id = module_id;
         steer_motor = new Motor_Module(steer_port);
         drive_motor = new Motor_Module(drive_port);
@@ -66,6 +71,12 @@ public:
         //i2c initialization
         i2c_context = i2c_in;
 
+        //position initialization
+        x_pos = swerve_x;
+        y_pos = swerve_y;
+        z_pos = swerve_z;
+
+
         printf("[ init ] Swerve module initialized with ID %d\n", module_id);
     }
 
@@ -77,10 +88,27 @@ public:
     }
 
     /*
-        @param uint16_t pos:    desired ADC value of rotation (2047 = middle)
+        Rotates swerve module to correct position for Y translation. Position given as a @param in
+            constructor of Swerve_Module().
 
-        @returns:   the result of the operation as a mraa_result_t value
+        @returns:   the result of the Y-translation positioning as a mraa_result_t value
     */
+    mraa_result_t y_translation_pos() {
+        mraa_result_t result = MRAA_SUCCESS;
+        desired_pos = y_pos;    //get desired position for Y translation
+        direction = dir_feedback->get_average_val();    //get starting position
+        if (desired_pos - 3 > direction) {      //rotate CCW 
+            result = rotate_ccw();
+        }
+        else if (desired_pos - 3 < direction) { //rotate CW
+            result = rotate_cw();
+        }
+        else {      //close enough; stop steering
+            result = steer_motor->send_signal(i2c_context, 0);
+            sleep(2);
+        }
+        return result;
+    }
 
     /* PRE-PROGRAM STEERING IN X,Y,Z AXIS
     mraa_result_t Y_translation() { //Y-Axis Translation
@@ -99,7 +127,32 @@ public:
         }
         return result;
     }
+    */
+    /*
+        Rotates swerve module to correct position for X translation. Position given as a @param in
+            constructor of Swerve_Module().
 
+        @returns:   the result of the X-translation positioning as a mraa_result_t value
+    */
+    mraa_result_t x_translation_pos() {
+        mraa_result_t result = MRAA_SUCCESS;
+        desired_pos = x_pos;    //get desired position for X translation
+        directon = dir_feedback->get_average_val();     //get starting position
+        if (desired_pos - 3 > direction) {      //rotate CCW 
+            result = rotate_ccw();
+        }
+        else if (desired_pos - 3 < direction) { //rotate CW
+            result = rotate_cw();
+        }
+        else {      //close enough; stop steering
+            result = steer_motor->send_signal(i2c_context, 0);
+            sleep(2);
+        }
+        return result;
+    }
+
+
+    /*
     mraa_result_t X_right_translation() { //X-Axis Translation
         desired_pos = 90; //CHANGE this to be along the X-Axis for Right motors ***
         mraa_result_t result = MRAA_SUCCESS;

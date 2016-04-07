@@ -52,6 +52,32 @@ public:
         adc_value += mraa_aio_read(adc_port);
 
         return adc_value/10;
+
+        /* 
+        New averaging function; averages 8 values
+            and divides by shifting right 3 bits.
+            Potentially faster.
+        */
+        /*
+        adc_value += mraa_aio_read(adc_port);
+        usleep(50);
+        adc_value += mraa_aio_read(adc_port);
+        usleep(50);
+        adc_value += mraa_aio_read(adc_port);
+        usleep(50);
+        adc_value += mraa_aio_read(adc_port);
+        usleep(50);
+        adc_value += mraa_aio_read(adc_port);
+        usleep(50);
+        adc_value += mraa_aio_read(adc_port);
+        usleep(50);
+        adc_value += mraa_aio_read(adc_port);
+        usleep(50);
+        adc_value += mraa_aio_read(adc_port);
+        
+        return adc_value >> 3;      //shift right 3 bits = divide by 2^3 = divide by 8
+        */
+
     }
 
     uint16_t get_val() {
