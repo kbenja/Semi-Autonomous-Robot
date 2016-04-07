@@ -53,7 +53,7 @@ public:
 
     */
     Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int steer_port, int drive_port, int pot_adc, int encoder_port,
-                    uint16_t swerve_x, uint16_t swerve_y, uint16_t swerve_z) {
+                    uint16_t swerve_positions[3]) {
         id = module_id;
         steer_motor = new Motor_Module(steer_port);
         drive_motor = new Motor_Module(drive_port);
@@ -72,9 +72,9 @@ public:
         i2c_context = i2c_in;
 
         //position initialization
-        x_pos = swerve_x;
-        y_pos = swerve_y;
-        z_pos = swerve_z;
+        x_pos = swerve_positions[0];
+        y_pos = swerve_positions[1];
+        z_pos = swerve_positions[2];
 
 
         printf("[ init ] Swerve module initialized with ID %d\n", module_id);
@@ -93,58 +93,33 @@ public:
 
         @returns:   the result of the Y-translation positioning as a mraa_result_t value
     */
-    mraa_result_t y_translation_pos() {
+    mraa_result_t rotate_position(char position) {
         mraa_result_t result = MRAA_SUCCESS;
-        desired_pos = y_pos;    //get desired position for Y translation
+        uint16_t desired_pos;
+        switch(position) {
+        case 'X':
+        case 'x':
+            desired_pos = x_pos;
+            break;
+        case 'Y':
+        case 'y':
+            desired_pos = y_pos;
+            break;
+        case 'Z':
+        case 'z':
+            desired_pos = z_pos;
+            break;
+        default:
+            return MRAA_ERROR_INVALID_PARAMETER;
+        }
         direction = dir_feedback->get_average_val();    //get starting position
-        if (desired_pos - 3 > direction) {      //rotate CCW 
+        if (desired_pos - 3 > direction) {              //rotate CCW
             result = rotate_ccw();
         }
-        else if (desired_pos - 3 < direction) { //rotate CW
+        else if (desired_pos - 3 < direction) {         //rotate CW
             result = rotate_cw();
         }
-        else {      //close enough; stop steering
-            result = steer_motor->send_signal(i2c_context, 0);
-            sleep(2);
-        }
-        return result;
-    }
-
-    /* PRE-PROGRAM STEERING IN X,Y,Z AXIS
-    mraa_result_t Y_translation() { //Y-Axis Translation
-    	desired_pos = 0; //CHANGE this to be along the Y-Axis***
-        mraa_result_t result = MRAA_SUCCESS;
-        uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
-        if ((desired_pos - 3 > current_pos) && (desired_pos < CW_LIMIT)) { //1926-2 = 1924
-            result = rotate_cw();     //rotate clockwise to position -> increases value
-        }
-        else if ((desired_pos + 3 < current_pos) && (desired_pos > CCW_LIMIT)) { //1926+2 = 1928
-            result = rotate_ccw();    //rotate counterclockwise to position -> decreases value
-        }
-        else {
-            result = steer_motor->send_signal(i2c_context, 0); //Stop Signal to Motor
-            sleep(2);
-        }
-        return result;
-    }
-    */
-    /*
-        Rotates swerve module to correct position for X translation. Position given as a @param in
-            constructor of Swerve_Module().
-
-        @returns:   the result of the X-translation positioning as a mraa_result_t value
-    */
-    mraa_result_t x_translation_pos() {
-        mraa_result_t result = MRAA_SUCCESS;
-        desired_pos = x_pos;    //get desired position for X translation
-        directon = dir_feedback->get_average_val();     //get starting position
-        if (desired_pos - 3 > direction) {      //rotate CCW 
-            result = rotate_ccw();
-        }
-        else if (desired_pos - 3 < direction) { //rotate CW
-            result = rotate_cw();
-        }
-        else {      //close enough; stop steering
+        else {                                          //close enough; stop steering
             result = steer_motor->send_signal(i2c_context, 0);
             sleep(2);
         }
@@ -152,110 +127,11 @@ public:
     }
 
 
-    /*
-    mraa_result_t X_right_translation() { //X-Axis Translation
-        desired_pos = 90; //CHANGE this to be along the X-Axis for Right motors ***
-        mraa_result_t result = MRAA_SUCCESS;
-        uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
-        if ((desired_pos - 3 > current_pos) && (desired_pos < CW_LIMIT)) { //1926-2 = 1924
-            result = rotate_cw();     //rotate clockwise to position -> increases value
-        }
-        else if ((desired_pos + 3 < current_pos) && (desired_pos > CCW_LIMIT)) { //1926+2 = 1928
-            result = rotate_ccw();    //rotate counterclockwise to position -> decreases value
-        }
-        else {
-            result = steer_motor->send_signal(i2c_context, 0); //Stop Signal to Motor
-            sleep(2);
-        }
-        return result;
-    }
 
-    mraa_result_t X_left_translation() { //X-Axis Translation
-        desired_pos = -90; //CHANGE this to be along the X-Axis for Left motors ***
-        mraa_result_t result = MRAA_SUCCESS;
-        uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
-        if ((desired_pos - 3 > current_pos) && (desired_pos < CW_LIMIT)) { //1926-2 = 1924
-            result = rotate_cw();     //rotate clockwise to position -> increases value
-        }
-        else if ((desired_pos + 3 < current_pos) && (desired_pos > CCW_LIMIT)) { //1926+2 = 1928
-            result = rotate_ccw();    //rotate counterclockwise to position -> decreases value
-        }
-        else {
-            result = steer_motor->send_signal(i2c_context, 0); //Stop Signal to Motor
-            sleep(2);
-        }
-        return result;
-    }
 
-    mraa_result_t Z_rotation_FR() { //Z-Axis Translation
-        desired_pos = -90; //CHANGE this to be along the X-Axis for Left motors ***
-        mraa_result_t result = MRAA_SUCCESS;
-        uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
-        if ((desired_pos - 3 > current_pos) && (desired_pos < CW_LIMIT)) { //1926-2 = 1924
-            result = rotate_cw();     //rotate clockwise to position -> increases value
-        }
-        else if ((desired_pos + 3 < current_pos) && (desired_pos > CCW_LIMIT)) { //1926+2 = 1928
-            result = rotate_ccw();    //rotate counterclockwise to position -> decreases value
-        }
-        else {
-            result = steer_motor->send_signal(i2c_context, 0); //Stop Signal to Motor
-            sleep(2);
-        }
-        return result;
-    }
 
-    mraa_result_t Z_rotation_BR() { //Z-Axis Translation
-        desired_pos = -90; //CHANGE this to be along the X-Axis for Left motors ***
-        mraa_result_t result = MRAA_SUCCESS;
-        uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
-        if ((desired_pos - 3 > current_pos) && (desired_pos < CW_LIMIT)) { //1926-2 = 1924
-            result = rotate_cw();     //rotate clockwise to position -> increases value
-        }
-        else if ((desired_pos + 3 < current_pos) && (desired_pos > CCW_LIMIT)) { //1926+2 = 1928
-            result = rotate_ccw();    //rotate counterclockwise to position -> decreases value
-        }
-        else {
-            result = steer_motor->send_signal(i2c_context, 0); //Stop Signal to Motor
-            sleep(2);
-        }
-        return result;
-    }
 
-    mraa_result_t Z_rotation_FL() { //Z-Axis Translation
-        desired_pos = -90; //CHANGE this to be along the X-Axis for Left motors ***
-        mraa_result_t result = MRAA_SUCCESS;
-        uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
-        if ((desired_pos - 3 > current_pos) && (desired_pos < CW_LIMIT)) { //1926-2 = 1924
-            result = rotate_cw();     //rotate clockwise to position -> increases value
-        }
-        else if ((desired_pos + 3 < current_pos) && (desired_pos > CCW_LIMIT)) { //1926+2 = 1928
-            result = rotate_ccw();    //rotate counterclockwise to position -> decreases value
-        }
-        else {
-            result = steer_motor->send_signal(i2c_context, 0); //Stop Signal to Motor
-            sleep(2);
-        }
-        return result;
-    }
 
-    mraa_result_t Z_rotation_BL() { //Z-Axis Translation
-        desired_pos = -90; //CHANGE this to be along the X-Axis for Left motors ***
-        mraa_result_t result = MRAA_SUCCESS;
-        uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
-        if ((desired_pos - 3 > current_pos) && (desired_pos < CW_LIMIT)) { //1926-2 = 1924
-            result = rotate_cw();     //rotate clockwise to position -> increases value
-        }
-        else if ((desired_pos + 3 < current_pos) && (desired_pos > CCW_LIMIT)) { //1926+2 = 1928
-            result = rotate_ccw();    //rotate counterclockwise to position -> decreases value
-        }
-        else {
-            result = steer_motor->send_signal(i2c_context, 0); //Stop Signal to Motor
-            sleep(2);
-        }
-        return result;
-    }
-
-    */
 
     mraa_result_t rotate(uint16_t desired_pos) {
         mraa_result_t result = MRAA_SUCCESS;
