@@ -16,7 +16,7 @@ public:
         result = mraa_i2c_address(i2c, 0x32);
 
         if(result != MRAA_SUCCESS){
-            printf("was not able to connect to address\n");
+            // printf("was not able to connect to address\n");
             return -2;
         }
 
@@ -32,7 +32,7 @@ public:
         status = mraa_i2c_read(i2c, &low_bits, 1);
 
         if(status != 1) {
-            printf("Could not read from the navx board\n");
+            // printf("Could not read from the navx board\n");
             return -1;
         }
 

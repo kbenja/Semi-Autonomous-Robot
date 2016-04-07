@@ -78,14 +78,15 @@ var check_status = setInterval(function(){
 function unix_socket_emit() {
     if(unix_socket) {
         if(!tcp_socket) {
-            ipc.server.emit(unix_socket,[-1,0]);
+            // ipc.server.emit(unix_socket,[-1,0]);
+            console.log("Not writing back naha");
         } else if(commands.length) {
             console.log("sending: ",commands[0]);
             ipc.server.emit(unix_socket,commands[0]);
             commands.splice(0,1);
         } else {
             // idle mode or same as last command
-            ipc.server.emit(unix_socket,[0,0]);
+            // ipc.server.emit(unix_socket,[0,0]);
         }
     }
 }

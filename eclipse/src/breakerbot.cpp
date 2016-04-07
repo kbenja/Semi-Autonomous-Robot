@@ -32,13 +32,14 @@ int16_t *p_sending = sending;
 
 int mode;
 int input;
+int result;
 
 int main(int argc, char** argv) {
-    float user_input = 0.0;                          // receive signal from argv or use default (stop)
-    if (argc > 1) {
-        printf("***Using given value by user\n");
-        user_input = atof(argv[1]);
-    }
+    // float user_input = 0.0;                          // receive signal from argv or use default (stop)
+    // if (argc > 1) {
+    //     printf("***Using given value by user\n");
+    //     user_input = atof(argv[1]);
+    // }
 
     if (ipc_module) {
         // UNIX SOCKET INITIALIZATION
@@ -62,17 +63,22 @@ int main(int argc, char** argv) {
 
         while(1) {
             usleep(100000); // cycle time
-            ipc.unix_socket_write(sending);
-            ipc.unix_socket_read(p_instructions);
-            mode = instructions[0];
-            input = instructions[1];
+
+            ipc.unix_socket_write(sending); // send most recent data to socket
+            result = ipc.unix_socket_read(p_instructions); //result = 0 if empty socket, -1 if error, length if read
+            if(result > 0) {
+                mode = instructions[0];
+                input = instructions[1];
+            } else if (result < 0) {
+                printf("UNIX SOCKET ERROR");
+            }
 
             switch(mode) {
                 case DISCONNECTED:
-                    printf("CLIENT IS DISONNECTED\r");
+                    printf("CLIENT IS DISONNECTED\n");
                     break;
                 case IDLE:
-                    printf("IDLE MODE, INPUT = %d\n", input);
+                    // printf("IDLE MODE, INPUT = %d\n", input);
                     break;
                 case MANUAL:
                     printf("MANUAL MODE, INPUT = %d\n", input);

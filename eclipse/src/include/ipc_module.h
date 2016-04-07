@@ -1,9 +1,12 @@
+#include <stdio.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <sys/un.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <cstring>
 #include <netdb.h>
+#include <errno.h>
 
 #ifndef IPC_Module_H
 #define IPC_Module_H
@@ -25,7 +28,13 @@ public:
         if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
             return -1;
         }
+        // int flags = fcntl(fd, F_GETFL, 0);
+        // fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+        int opt = 1;
+        ioctl(fd, FIONBIO, &opt);
+
         memset(&addr, 0, sizeof(addr)); // initialize all socket memory to 0
+
         addr.sun_family = AF_UNIX;
         strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
         return (connect(fd, (struct sockaddr*)&addr, sizeof(addr))); // connect to socket
@@ -33,11 +42,17 @@ public:
     int unix_socket_write(int16_t sending[]) {
         return write(fd, sending, sizeof(sending));
     }
-    void unix_socket_read(int16_t * instructions) {
-        // write(fd,"Hello", 5);
-        read(fd,buffer,4);
+    int unix_socket_read(int16_t * instructions) {
+        int result = read(fd,buffer,4);
         *(instructions) = buffer[0];
         *(instructions+1) = buffer[1];
+        // should be "Resource temporarily unavailable" b/c of non blocking
+        // printf("ERROR: %s\n", strerror(errno));
+        if(errno != EAGAIN) {
+            printf("result: %d\n", result);
+            return 0; // everything is okay, string is empty
+        }
+        return -1;
     }
 };
 
