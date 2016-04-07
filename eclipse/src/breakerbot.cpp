@@ -3,24 +3,35 @@
 #include "include/test_module.h"
 #include "include/steering_module.h"
 
-/*
-* MODE:
-* -1 = disconnected
-* 0 = idle mode
-* 1 = manual input
-* 2 = auto alignment mode
-* 3 = intake mode
-* 5 = testing suite
-*/
-int mode = -1;
+enum modes {
+    DISCONNECTED = -1,
+    IDLE = 0,
+    MANUAL = 1,
+    AUTO = 2,
+    INTAKE = 3,
+    TESTING = 4
+};
+
+enum directions {
+    BREAK = 0,
+    FORWARD = 1,
+    LEFT = 2,
+    BACKWARD = 3,
+    RIGHT = 4,
+    ROTATE_CW = 5,
+    ROTATE_CCW = 6
+};
 
 bool ipc_module = true;
 bool swerve_module = false;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
-int16_t sending[2] = {-1,0};
+int16_t sending[3] = {-1,-1,-2};
 int16_t *p_sending = sending;
+
+int mode;
+int input;
 
 int main(int argc, char** argv) {
     float user_input = 0.0;                          // receive signal from argv or use default (stop)
@@ -35,60 +46,68 @@ int main(int argc, char** argv) {
         int status = ipc.unix_socket_initialize();
         while(status < 0) {
             status = ipc.unix_socket_initialize();
+            printf("Cannot connect to UNIX socket, retrying\n");
             usleep(500000);
         }
 
-        // NAVX MODULE INITIALIZATION
-        NavX_Module x1;
+        // INITIALIZE HARDWARE
+        NavX_Module x1; // initialize NavX
         x1.set_zero(); // calibrate NavX
 
-        // SWERVE MODULE INITIALIZATION
-        uint8_t address = 0x40; // i2c chip is @ i2c address 0x40
+        uint8_t address = 0x40;                     // i2c chip is @ i2c address 0x40
         mraa_i2c_context i2c = mraa_i2c_init(6);    // create original context for i2c (bus 6)
         i2c_init_board(i2c, address);               // initialize the board (our i2c library function)
 
-        Swerve_Module s1 = Swerve_Module(i2c, 1, 1, 2, 1, 0); //initialize one swerve module
+        Swerve_Module s1 = Swerve_Module(i2c, 1, 1, 2, 1, 0); // (i2c, id, direction_port, drive_port, pot_AI, optical_encoder_reg)
 
         while(1) {
             usleep(100000); // cycle time
-            sending[0] =  x1.get_yaw()/100;
             ipc.unix_socket_write(sending);
             ipc.unix_socket_read(p_instructions);
             mode = instructions[0];
+            input = instructions[1];
+
             switch(mode) {
-                case -1: // No user connected to web server
-                    printf("CLIENT IS NOT CONNECTED\r");
+                case DISCONNECTED:
+                    printf("CLIENT IS DISONNECTED\r");
                     break;
-                case 0: // Idle mode, no recent commands
+                case IDLE:
+                    printf("IDLE MODE, INPUT = %d\n", input);
                     break;
-                case 1:
-                    printf("MODE = MANUAL CONTROL, INPUT = %d\n", instructions[1]);
+                case MANUAL:
+                    printf("MANUAL MODE, INPUT = %d\n", input);
                     switch(instructions[1]) {
-                        case 1: //UP
-                            s1.drive_forward(user_input);
+                        case BREAK:
                             break;
-                        case 2: //LEFT
-                            s1.rotate_cw();
+                        case FORWARD:
                             break;
-                        case 3: // DOWN
-                            s1.drive_forward(-user_input);
+                        case LEFT:
                             break;
-                        case 4: // RIGHT
-                            // turn to X angle
-                            s1.rotate_ccw();
+                        case BACKWARD:
                             break;
-                        case 0:
-                            s1.stop_motors();
+                        case RIGHT:
                             break;
                         default:
                             break;
                     }
                     mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                     break;
+                case AUTO:
+                    printf("AUTO MODE, INPUT = %d\n", input);
+                    break;
+                case INTAKE:
+                    printf("INTAKE MODE, INPUT = %d\n", input);
+                    break;
+                case TESTING:
+                    printf("TESTING MODE, INPUT = %d\n", input);
+                    break;
                 default:
-                    printf("CAUGHT IN DEFAULT\n");
+                    printf("DEFAULT MODE\n");
                     break;
             }
+            sending[0] = mode;
+            sending[1] = input;
+            sending[2] =  x1.get_yaw()/100;
         }
     }
 

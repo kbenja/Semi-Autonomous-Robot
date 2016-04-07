@@ -11,11 +11,9 @@
 
 void test_pot_module() {
     printf("Pot module testing");
-    //Pot_Module P0(0,12);
     Pot_Module P1(1,12);
 
     while(true) {
-        //printf("Pot 1: %d     Pot 2: %d\n",P0.get_val(),P1.get_val());
         printf("Pot: %d\n",P1.get_average_val());
         usleep(500000);
     }
