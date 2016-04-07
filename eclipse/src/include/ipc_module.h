@@ -43,14 +43,13 @@ public:
         return write(fd, sending, sizeof(sending));
     }
     int unix_socket_read(int16_t * instructions) {
-        int result = read(fd,buffer,4);
-        *(instructions) = buffer[0];
-        *(instructions+1) = buffer[1];
+        read(fd,buffer,4);
         // should be "Resource temporarily unavailable" b/c of non blocking
         // printf("ERROR: %s\n", strerror(errno));
         if(errno != EAGAIN) {
-            printf("result: %d\n", result);
-            return 0; // everything is okay, string is empty
+            *(instructions) = buffer[0];
+            *(instructions+1) = buffer[1];
+            return 1;
         }
         return -1;
     }

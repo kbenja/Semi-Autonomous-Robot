@@ -70,51 +70,47 @@ int main(int argc, char** argv) {
             if(result > 0) {
                 mode = instructions[0];
                 input = instructions[1];
-            } else if (result < 0) {
-                printf("UNIX SOCKET ERROR");
-            }
-
-            switch(mode) {
-                case DISCONNECTED:
-                    printf("CLIENT IS DISONNECTED\n");
-                    break;
-                case IDLE:
-                    // printf("IDLE MODE, INPUT = %d\n", input);
-                    break;
-                case MANUAL:
-                    printf("MANUAL MODE, INPUT = %d\n", input);
-                    switch(instructions[1]) {
-                        case BREAK:
-                            break;
-                        case FORWARD:
-                            break;
-                        case LEFT:
-                            break;
-                        case BACKWARD:
-                            break;
-                        case RIGHT:
-                            break;
-                        default:
-                            break;
-                    }
-                    mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
-                    break;
-                case AUTO:
-                    printf("AUTO MODE, INPUT = %d\n", input);
-                    break;
-                case INTAKE:
-                    printf("INTAKE MODE, INPUT = %d\n", input);
-                    break;
-                case TESTING:
-                    printf("TESTING MODE, INPUT = %d\n", input);
-                    break;
-                default:
-                    printf("DEFAULT MODE\n");
-                    break;
+                switch(mode) {
+                    case -1:
+                        printf("CLIENT IS DISONNECTED\r");
+                        break;
+                    case 0:
+                        // printf("IDLE MODE, INPUT = %d\n", input);
+                        break;
+                    case 1:
+                        printf("MANUAL MODE, INPUT = %d\n", input);
+                        switch(instructions[1]) {
+                            case BREAK:
+                                break;
+                            case FORWARD:
+                                break;
+                            case LEFT:
+                                break;
+                            case BACKWARD:
+                                break;
+                            case RIGHT:
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case AUTO:
+                        printf("AUTO MODE, INPUT = %d\n", input);
+                        break;
+                    case INTAKE:
+                        printf("INTAKE MODE, INPUT = %d\n", input);
+                        break;
+                    case TESTING:
+                        printf("TESTING MODE, INPUT = %d\n", input);
+                        break;
+                    default:
+                        printf("DEFAULT MODE\n");
+                        break;
+                }
             }
             sending[0] = mode;
             sending[1] = input;
-            sending[2] =  x1.get_yaw()/100;
+            sending[2] = x1.get_yaw()/100;
         }
     }
 
