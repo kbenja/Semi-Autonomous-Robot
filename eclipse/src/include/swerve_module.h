@@ -53,7 +53,7 @@ public:
 
     */
     Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int steer_port, int drive_port, int pot_adc, int encoder_port,
-                    uint16_t swerve_positions[3]) {
+                    uint16_t x_position, uint16_t y_position, uint16_t z_position) {
         id = module_id;
         steer_motor = new Motor_Module(steer_port);
         drive_motor = new Motor_Module(drive_port);
@@ -72,9 +72,9 @@ public:
         i2c_context = i2c_in;
 
         //position initialization
-        x_pos = swerve_positions[0];
-        y_pos = swerve_positions[1];
-        z_pos = swerve_positions[2];
+        x_pos = x_position;
+        y_pos = y_position;
+        z_pos = z_position;
 
 
         printf("[ init ] Swerve module initialized with ID %d\n", module_id);

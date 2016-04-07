@@ -2,6 +2,7 @@
 #include "include/ipc_module.h"
 #include "include/test_module.h"
 #include "include/steering_module.h"
+#include "include/swerve_module.h"
 
 enum modes {
     DISCONNECTED = -1,
@@ -22,8 +23,8 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool ipc_module = true;
-bool swerve_module = false;
+bool ipc_module = false;
+bool swerve_module = true;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
@@ -59,7 +60,7 @@ int main(int argc, char** argv) {
         mraa_i2c_context i2c = mraa_i2c_init(6);    // create original context for i2c (bus 6)
         i2c_init_board(i2c, address);               // initialize the board (our i2c library function)
 
-        Swerve_Module s1 = Swerve_Module(i2c, 1, 1, 2, 1, 0); // ORIGINAL (i2c, id, direction_port, drive_port, pot_AI, optical_encoder_reg, SWERVE_position)
+        //Swerve_Module s1 = Swerve_Module(i2c, 1, 1, 2, 1, 0); // ORIGINAL (i2c, id, direction_port, drive_port, pot_AI, optical_encoder_reg, SWERVE_position)
 
         while(1) {
             usleep(100000); // cycle time
@@ -131,32 +132,32 @@ int main(int argc, char** argv) {
 
         //(i2c, id, direction_port, drive_port, pot_AI, optical_encoder_reg, SWERVE_position)
 
-        Swerve_Module FR = Swerve_Module(i2c, 1, 1, 5, 1, 0, [1952,2451,2087]); //Front-Right Wheel
-        Swerve_Module BR = Swerve_Module(i2c, 2, 2, 6, 2, 0, [1877,1392,1733]); //Back-Right Wheel
-        Swerve_Module FL = Swerve_Module(i2c, 3, 3, 7, 3, 0, [2027,1392,1505]); //Front-Left Wheel
-        Swerve_Module BL = Swerve_Module(i2c, 4, 4, 8, 4, 0, [1994,2488,2139]); //Front-Left Wheel
+        Swerve_Module FR = Swerve_Module(i2c, 1, 1, 5, 1, 0, 1952, 2451, 2087); //Front-Right Wheel
+        Swerve_Module BR = Swerve_Module(i2c, 2, 2, 6, 2, 0, 1877, 1392, 1733); //Back-Right Wheel
+        Swerve_Module FL = Swerve_Module(i2c, 3, 3, 7, 3, 0, 2027, 1392, 1505); //Front-Left Wheel
+        Swerve_Module BL = Swerve_Module(i2c, 4, 4, 8, 4, 0, 1994, 2488, 2139); //Front-Left Wheel
 
         while(1) {
             usleep(25000);
             //s1.rotate(1926); // ORIGINAL desired_pos Rotate to a specific ADC value, considering mapping ADC to Degree
 
             //Y_translation
-            FR.rotate_position(Y);
-            BR.rotate_position(Y);
-            FL.rotate_position(Y);
-            BL.rotate_position(Y);
+            FR.rotate_position('Y');
+            BR.rotate_position('Y');
+            FL.rotate_position('Y');
+            BL.rotate_position('Y');
 
             //X_translation
-           	FR.rotate_position(X);
-            BR.rotate_position(X);
-            FL.rotate_position(X);
-            BL.rotate_position(X);
+           	FR.rotate_position('X');
+            BR.rotate_position('X');
+            FL.rotate_position('X');
+            BL.rotate_position('X');
 
             //Z_rotation
-            FR.rotate_position(Z);
-            BR.rotate_position(Z);
-            FL.rotate_position(Z);
-            BL.rotate_position(Z);
+            FR.rotate_position('Z');
+            BR.rotate_position('Z');
+            FL.rotate_position('Z');
+            BL.rotate_position('Z');
 
             mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
 
