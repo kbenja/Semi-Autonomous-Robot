@@ -63,9 +63,9 @@ public:
         result = i2c_send_signal(i2c_context, end_reg, signal);
         if(result != MRAA_SUCCESS)
         {
-            printf("[ !!!! ] Could NOT write to register 0x%02x\n", end_reg);
+//            printf("[ !!!! ] Could NOT write to register 0x%02x\n", end_reg);
         } else {
-            printf("[ send ] Write signal 0x%04x to register 0x%02x\n", signal.u_sixteen, end_reg);
+//            printf("[ send ] Write signal 0x%04x to register 0x%02x\n", signal.u_sixteen, end_reg);
         }
 
         return result;

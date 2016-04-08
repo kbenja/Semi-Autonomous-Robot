@@ -134,21 +134,21 @@ int main(int argc, char** argv) {
 
         Swerve_Module FR = Swerve_Module(i2c, 1, 1, 5, 1, 0, 2451, 1952, 2087); //Front-Right Wheel
         //Swerve_Module BR = Swerve_Module(i2c, 2, 2, 6, 2, 0, 1392, 1877, 1733); //Back-Right Wheel
-        //Swerve_Module FL = Swerve_Module(i2c, 3, 3, 7, 3, 0, 1392, 2027, 1505); //Front-Left Wheel
+        Swerve_Module FL = Swerve_Module(i2c, 3, 3, 7, 3, 0, 1533, 2002, 1725); //Front-Left Wheel
         //Swerve_Module BL = Swerve_Module(i2c, 4, 4, 8, 4, 0, 2488, 1994, 2139); //Back-Left Wheel
 
         while(1) {
             usleep(25000); //10000
             //s1.rotate(1926); // ORIGINAL desired_pos Rotate to a specific ADC value, considering mapping ADC to Degree
 
-            //printf("current value: %d\n", FR.dir_feedback->get_average_val()); //Read Pot Value
+            printf("current value: %d\n", FL.dir_feedback->get_average_val()); //Read Pot Value
 
             //FR.rotate_position('Y');
 
             //FR.rotate_position('X');
 
             FR.rotate_position('Z');
-
+            FL.rotate_position('Z');
 
             /*
             //Y_translation
