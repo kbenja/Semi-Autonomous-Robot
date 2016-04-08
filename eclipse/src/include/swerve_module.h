@@ -11,8 +11,9 @@
 #define SWERVE_MODULE_H
 
 class Swerve_Module {
-    int id;                 //module unique ID
-    uint16_t direction;     //swerve orientation
+public:
+	int id;                 //module unique ID
+    uint16_t current_pos;     //swerve orientation
     uint16_t speed;         //swerve speed
 
     uint16_t x_pos;
@@ -29,7 +30,7 @@ class Swerve_Module {
     Pot_Module * dir_feedback;        //potentiometer for angular reference
     // Encoder_Module drive_feedback;  //optical encoder for drive
 
-public:
+
 
     /*
         Initializes swerve module with ID 0 and:
@@ -61,9 +62,9 @@ public:
         // drive_feedback = new Encoder_Module(encoder_port);
 
         //potentiometer initialization
-        direction = dir_feedback->get_val();
-        limit_cw = (direction < CW_LIMIT) ? false : true;    //check for clockwise limit
-        limit_ccw = (direction > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
+        current_pos = dir_feedback->get_val();
+        limit_cw = (current_pos < CW_LIMIT) ? false : true;    //check for clockwise limit
+        limit_ccw = (current_pos > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
 
         //encoder initialization
         speed = 0;
@@ -77,14 +78,14 @@ public:
         z_pos = z_position;
 
 
-        printf("[ init ] Swerve module initialized with ID %d\n", module_id);
+        //printf("[ init ] Swerve module initialized with ID %d\n", module_id);
     }
 
     /*
         Default destructor for swerve module.
     */
     ~Swerve_Module() {
-        printf("[ dest ] Swerve module %d deleted\n", id);
+        //printf("[ dest ] Swerve module %d deleted\n", id);
     }
 
     /*
@@ -112,25 +113,20 @@ public:
         default:
             return MRAA_ERROR_INVALID_PARAMETER;
         }
-        direction = dir_feedback->get_average_val();    //get starting position
-        if (desired_pos - 3 > direction) {              //rotate CCW
+        current_pos = dir_feedback->get_average_val();    //get starting position
+        if ((desired_pos + 3 < current_pos) || (desired_pos + 3 == current_pos)) {              //rotate CCW
             result = rotate_ccw();
+
         }
-        else if (desired_pos - 3 < direction) {         //rotate CW
+        else if ((desired_pos - 3 > current_pos) || (desired_pos - 3 == current_pos)) {         //rotate CW
             result = rotate_cw();
         }
         else {                                          //close enough; stop steering
             result = steer_motor->send_signal(i2c_context, 0);
-            sleep(2);
+            sleep(10);
         }
         return result;
     }
-
-
-
-
-
-
 
 
     mraa_result_t rotate(uint16_t desired_pos) {
@@ -153,8 +149,8 @@ public:
         Rotates wheel clockwise. Stops if limit is reached.
     */
     mraa_result_t rotate_cw() {
-        mraa_result_t result = steer_motor->send_signal(i2c_context, -0.35);
-        printf("CW – Value: %d, Limit: %d\n", dir_feedback->get_val(), CW_LIMIT);
+        mraa_result_t result = steer_motor->send_signal(i2c_context, -0.45);
+        //printf("CW – Value: %d, Limit: %d\n", dir_feedback->get_val(), CW_LIMIT);
         return result;
         /*
         limit_ccw = false;
@@ -169,8 +165,8 @@ public:
     */
     mraa_result_t rotate_ccw() {
         mraa_result_t result = MRAA_SUCCESS;
-        printf("CCW – Value: %d, Limit: %d\n", dir_feedback->get_val(), CCW_LIMIT);
-        result = steer_motor->send_signal(i2c_context, 0.35);
+        //printf("CCW – Value: %d, Limit: %d\n", dir_feedback->get_val(), CCW_LIMIT);
+        result = steer_motor->send_signal(i2c_context, 0.45);
         return result;
     }
 
