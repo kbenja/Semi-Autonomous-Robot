@@ -1,4 +1,4 @@
-var development = false;
+var development = true;
 
 var express = require('express');
 var app = express();
@@ -144,7 +144,7 @@ http.createServer(function(req, res) {
     });
 }).listen(stream_port, function() {
     console.log('SOCKET listening for video stream on PORT ' + stream_port);
-    //start_video();
+    start_video();
 
 });
 
