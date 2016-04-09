@@ -43,14 +43,19 @@ public:
     }
 
     /*
-        Initializes swerve module with specified ID and:
-            2x Motor_Modules with specified ports
-            1x Pot_Module on specified ADC
-            1x Encoder_Module on specified port
+        Initializes swerve module with specified ID:
 
-        @param int module_id:   ID of the swerve module
-        @param steer_port:        ptr to motor controlling swerve direction
-        @param drive_port:      ptr to motor controlling swerve movement
+        @param const        mraa_i2c_context &i2c_in:   i2c context for communication
+        @param int          module_id:                  ID of the swerve module
+        @param int          steer_port:                 ptr to motor controlling swerve direction
+        @param int          drive_port:                 ptr to motor controlling swerve movement
+        @param int          pot_adc:                    potentiometer ADC port
+        @param int          encoder_port:               encoder port/I2C address
+        @param unint16_t    x_position:                 swerve position for x translation
+        @param unint16_t    y_position:                 swerve position for y translation
+        @param unint16_t    z_position:                 swerve position for z translation
+
+        @returns:                                   Swerve_Module object
 
     */
     Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int steer_port, int drive_port, int pot_adc, int encoder_port,
@@ -89,15 +94,16 @@ public:
     }
 
     /*
-        Rotates swerve module to correct position for Y translation. Position given as a @param in
-            constructor of Swerve_Module().
+        Rotates swerve module to correct position for XYZ translation
+
+        @param  char    position:       desired translation position (XYZ), case-insensitive
 
         @returns:   the result of the Y-translation positioning as a mraa_result_t value
     */
     mraa_result_t rotate_position(char position) {
         mraa_result_t result = MRAA_SUCCESS;
         uint16_t desired_pos;
-        switch(position) {
+        switch(position) {          //desired swerve position based on desired axis translation
         case 'X':
         case 'x':
             desired_pos = x_pos;
@@ -128,7 +134,13 @@ public:
         return result;
     }
 
+    /*
+        Rotates swerve module to correct position for XYZ translation
 
+        @param  char    position:       desired translation position (XYZ), case-insensitive
+
+        @returns:   the result of the Y-translation positioning as a mraa_result_t value
+    */
     mraa_result_t rotate(uint16_t desired_pos) {
         mraa_result_t result = MRAA_SUCCESS;
         uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
