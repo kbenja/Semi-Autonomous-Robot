@@ -56,28 +56,28 @@ public:
         // first check each of the results of the swerve_controller function to see if it is 0 or 1
         // if all of the results are 0, then you can move forwards
         // otherwise, continue with each of the swerve_controller functions while waiting for alignment
-        FR_swerve_proceed = FR.ready;
-        FL_swerve_proceed = FL.ready;
-        BR_swerve_proceed = BR.ready;
-        BL_swerve_proceed = BL.ready;
+        FR_swerve_proceed = FR->ready;
+        FL_swerve_proceed = FL->ready;
+        BR_swerve_proceed = BR->ready;
+        BL_swerve_proceed = BL->ready;
         if(FR_swerve_proceed || FL_swerve_proceed || BR_swerve_proceed || BL_swerve_proceed) {
             drive_proceed = true;
             return 0;
         } else {
             drive_proceed = false;
-            swerve_controller_result = FR.swerve_controller(axes, speed, drive_proceed);
+            swerve_controller_result = FR->swerve_controller(axes, speed, drive_proceed);
             if(swerve_controller_result == -1) {
                 printf("FRONT RIGHT WHEEL STILL TURNING, AXIS = %c\n", axes);
             }
-            swerve_controller_result = FL.swerve_controller(axes, speed, drive_proceed);
+            swerve_controller_result = FL->swerve_controller(axes, speed, drive_proceed);
             if(swerve_controller_result == -1) {
                 printf("FRONT LEFT WHEEL STILL TURNING, AXIS = %c\n", axes);
             }
-            swerve_controller_result = BR.swerve_controller(axes, speed, drive_proceed);
+            swerve_controller_result = BR->swerve_controller(axes, speed, drive_proceed);
             if(swerve_controller_result == -1) {
                 printf("BACK RIGHT WHEEL STILL TURNING, AXIS = %c\n", axes);
             }
-            swerve_controller_result = BL.swerve_controller(axes, speed, drive_proceed);
+            swerve_controller_result = BL->swerve_controller(axes, speed, drive_proceed);
             if(swerve_controller_result == -1) {
                 printf("BACK LEFT WHEEL STILL TURNING, AXIS = %c\n", axes);
             }

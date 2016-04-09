@@ -3,6 +3,8 @@
 #include "include/test_module.h"
 #include "include/steering_module.h"
 #include "include/swerve_module.h"
+#include "include/pot_module.h"
+#include "include/drive_module.h"
 
 enum modes {
     DISCONNECTED = -1,
@@ -23,8 +25,9 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool ipc_module = true;
+bool ipc_module = false;
 bool swerve_module = false;
+bool pot_testing = true;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
@@ -36,13 +39,13 @@ int input;
 int result;
 
 int main(int argc, char** argv) {
-    float user_input = 0.0;                          // receive signal from argv or use default (stop)
-    if (argc > 1) {
-        printf("***Using given value by user\n");
-        user_input = atof(argv[1]);
-    }
-
     if (ipc_module) {
+        float user_input = 0.0;                          // receive signal from argv or use default (stop)
+        if (argc > 1) {
+            printf("***Using given value by user\n");
+            user_input = atof(argv[1]);
+        }
+
         // UNIX SOCKET INITIALIZATION
         IPC_Module ipc("/tmp/breakerbot.socket");
         int status = ipc.unix_socket_initialize();
@@ -145,64 +148,23 @@ int main(int argc, char** argv) {
             sending[2] = x1.get_yaw()/100;
         }
     }
-
     if (swerve_module) {
-        uint8_t address = 0x40;
-        mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
-        i2c_init_board(i2c, address);               // initialize the board
-        // ID field
-        // steering = I2C-PWM port 1
-        // driving = I2C-PWM port 2
-        // pot_adc = Analog port 1
-        // encoder = I2C-PWM port 0
+        printf("Testing swerve module\n");
+    }
 
-        //Swerve_Module s1 = Swerve_Module(i2c, 1, 1, 2, 1, 0); // ORIGINAL
-
-        //(i2c, id, direction_port, drive_port, pot_AI, optical_encoder_reg, SWERVE_position)
-
-        Swerve_Module FR = Swerve_Module(i2c, 1, 1, 5, 1, 0, 2451, 1952, 2087); //Front-Right Wheel
-        //Swerve_Module BR = Swerve_Module(i2c, 2, 2, 6, 2, 0, 1392, 1877, 1733); //Back-Right Wheel
-        Swerve_Module FL = Swerve_Module(i2c, 3, 3, 7, 3, 0, 1533, 2002, 1725); //Front-Left Wheel
-        //Swerve_Module BL = Swerve_Module(i2c, 4, 4, 8, 4, 0, 2488, 1994, 2139); //Back-Left Wheel
-
-        while(1) {
-            usleep(25000); //10000
-            //s1.rotate(1926); // ORIGINAL desired_pos Rotate to a specific ADC value, considering mapping ADC to Degree
-
-            printf("current value: %d\n", FL.dir_feedback->get_average_val()); //Read Pot Value
-
-            //FR.rotate_position('Y');
-
-            //FR.rotate_position('X');
-
-            FR.rotate_position('Z');
-            FL.rotate_position('Z');
-
-            /*
-            //Y_translation
-            FR.rotate_position('Y');
-            BR.rotate_position('Y');
-            FL.rotate_position('Y');
-            BL.rotate_position('Y');
-
-
-            //X_translation
-           	FR.rotate_position('X');//
-            BR.rotate_position('X');
-            FL.rotate_position('X');
-            BL.rotate_position('X');
-
-            //Z_rotation
-            FR.rotate_position('Z');//
-            BR.rotate_position('Z');
-            FL.rotate_position('Z');
-            BL.rotate_position('Z');
-            */
-
-            mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
-
+    if (pot_testing) {
+        int pot_testing = 0;                          // default value of pot is 0
+        if (argc > 1) {
+            printf("***Using given value by user\n");
+            pot_testing = atoi(argv[1]);
         }
-
+        if (pot_testing < 6 && pot_testing > -1) {
+            Pot_Module pot = Pot_Module(pot_testing, 12);
+            while(1) {
+                usleep(500000); // sleep for 0.5s
+                printf("VALUE for port: %d equals %d\n", pot_testing, pot.get_average_val());
+            }
+        }
     }
 
     return 0;

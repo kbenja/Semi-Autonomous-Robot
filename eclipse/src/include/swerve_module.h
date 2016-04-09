@@ -27,7 +27,7 @@ public:
     bool rotating_ccw;
     bool rotating_cw;
 
-    bool ready = false;
+    bool ready;
 
     mraa_i2c_context i2c_context;   //i2c context for communication
 
@@ -122,7 +122,7 @@ public:
                 ready = true;
                 return 0; // ready but other motors are not ready
             } else if (controller_result == 0 && proceed) {
-                controller_result = drive_motor(speed);
+                controller_result = drive_wheel(speed);
                 ready = true;
                 return 0; // all motors ready to drive
             } else if (controller_result == -1) {
