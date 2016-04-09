@@ -1,146 +1,177 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="Breakerbot" ng-cloak>
-	<head>
-		<meta content = "text/html" charset = "UTF-8">
-		<title>BreakerBot</title>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" type = "text/css" href = "css/normalize.css" >
-		<link rel="stylesheet" type = "text/css" href = "css/style.css" >
-		<script src="js/vendor/angular.min.js"></script>
-		<script src="js/controllers/GamepadCtrl.js"></script>
-		<script src="js/controllers/DataCtrl.js"></script>
-		<script src="js/controllers/VideoCtrl.js"></script>
-		<script src="js/services/CommunicationService.js"></script>
-		<script src="js/vendor/jquery-2.2.0.min.js"></script>
-		<script src="js/vendor/tracking-min.js"></script>
-		<script src="js/XMLHTTPRequest.js"></script>
-		<script src="js/controller.js"></script>
-		<script src="js/loopManager.js"></script>
-		<script src="js/vendor/jsmpg.js"></script>
-	</head>
- 	<body>
- 		<div class="header">
- 			<div class="header-title">BREAKERBOT CONSOLE</div>
- 			<div class="menu-button">
- 				MENU
- 			</div>
- 		</div>
- 		<div class="wrapper">
- 			<div class="panel panel-left">
-		 		<div class="battery-container">
-		 			<h4>BATTERY</h4>
-	 				<img src="battery_100.png">
-		 			<p>Last charge:</p>
-		 			<p>15 minutes ago.</p>
-		 		</div>
-		 		<div ng-controller="DataCtrl" class="position-container">
-		 			<h4>Postion Stuff</h4>
-		 			<button ng-click="update()">Update</button>
-		 			<p>Test connection to backend: {{ data }}</p>
-		 			<p>Data from Intel Edison: {{ message }}</p>
-		 		</div>
-		 		<div class="status-container">
-		 				<div class="status">Breaker Engagaged</div>
-		 				<div class="status">Robot Asleep</div>
-		 		</div>
-		 		<div class="alignment-positions">
-		 			<img id="cubicle" src="cubicle.png">
-		 			<img id="breakerbot" src="breakerbot_logo.png">
-		 	    </div>
- 			</div>
- 			<div class="panel panel-middle">
-	 			<div class="video-container">
-	 				<div class="instructions"> Here will be the instructions to manually align the robot</div>
-		 			<div class="watermark">
-		 				<img src="logo_white.png">
-		 			</div>
-		 			<div ng-controller="DevCtrl" class="dev-container">
-		 				<button ng-click="toggle_mode()">MODE : {{ manual_mode ? 'MANUAL' : 'AUTO' }}</button>
-		 			</div>
-	 			  <div ng-controller="VideoCtrl" id="canvas-container">
-		 			  <canvas id="canvas-video" width="640" height="480"></canvas>
-		 			  <div ng-repeat="rect in rects" ng-style="{position:'absolute', border: '2px solid {{rect.color}}', width: '{{rect.width}}'+'px', height: '{{rect.height}}' + 'px', top: '{{rect.y}}'+'px', left: '{{rect.x}}'+'px'}"></div>
-	 			  </div>
-	 			</div>
-	 			<div class="mode-container">
-	 				<div ng-hide="manual_mode" class="auto mode">
-	 					<div>Hello this is auto alignment mode</div>
-	 					<div class="alignment-mode-container">
- 							<div class="alignment-status"> Rotational Alignment</div>
-	 					</div>
-	 					<div class="alignment-mode-container">
- 							<div class="alignment-status"> Distance Alignment</div>
-	 					</div>
-	 					<div class="alignment-mode-container">
- 							<div class="alignment-status"> Fine Alignment</div>
-	 					</div>
-	 				</div>
-	 				<div ng-controller="GamepadCtrl" ng-show="manual_mode" class="manual mode">
-			 			<div class="control-container">
-							<!-- <div class="connect">Please connect or reconnect the controller.</div> -->
-							<div class="connect">Please connect or reconnect the controller.</div>
-				 			<div class="controls">
-					 			<div class="cartesian">
-					 				<div class="command up">&#9650;</div>
-					 				<div class="command left">&#9664;</div>
-					 				<div class="command right">&#9654;</div>
-					 				<div class="command down">&#9660;</div>
-					 			</div>
-				 				<div class="cartesian">
-					 				<div class="command y_button">Y</div>
-					 				<div class="command x_button">X</div>
-					 				<div class="command b_button">B</div>
-					 				<div class="command a_button">A</div>
-					 			</div>
-					 			<div class="joystick">
-					 				<div class="pos left_joystick"></div>
-					 			</div>
-					 			<div class="joystick">
-					 				<div class="pos right_joystick"></div>
-					 			</div>
-				 			</div>
-				 		</div>
-				 	</div>
-				 </div>
- 			</div>
- 			<div class="panel panel-right">
- 				<div class="output-container">
- 					<div class="top">
- 					<table>
- 						<tr>
- 							<th>Component</th>
- 							<th>Status</th>
- 						</tr>
- 						<tr>
- 							<td>Intel Edision</td>
- 							<td>ACTIVE</td>
- 						</tr>
- 						<tr>
- 							<td>LIDAR</td>
- 							<td>ACTIVE</td>
- 						</tr>
- 						<tr>
- 							<td>Buck Convertor</td>
- 							<td>ACTIVE</td>
- 						</tr>
- 					</table>
- 					</div>
- 					<div class="bottom">
- 					<table>
- 						<tr>
- 							<th>This will be the output of the robot</th>
- 						</tr>
- 						<tr>
- 							<td>e.g. We'll have a stream of data, like, Robot Connected at 14:23, Robot Aligned at 14:59, etc.</td>
- 						</tr>
- 					</table>
- 					<button id="stop">STOP</button>
- 				</div>
- 			</div>
- 		</div>
-		<!-- <script type="text/javascript" src="js/main.js"></script> -->
- 		<script type="text/javascript" src="js/app.js"></script>
-  	</body>
+
+<head>
+    <meta content="text/html" charset="UTF-8">
+    <title>BreakerBot</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="js/vendor/jquery-2.2.0.min.js"></script>
+    <script src="js/vendor/angular.min.js"></script>
+    <script src="js/vendor/angular-modal-service.min.js"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <script src="js/vendor/tracking-min.js"></script>
+    <script src="js/controllers/GamepadCtrl.js"></script>
+    <script src="js/controllers/DataCtrl.js"></script>
+    <script src="js/controllers/VideoCtrl.js"></script>
+    <script src="js/services/CommunicationService.js"></script>
+    <script src="js/XMLHTTPRequest.js"></script>
+    <script src="js/controller.js"></script>
+    <script src="js/loopManager.js"></script>
+    <script src="js/vendor/jsmpg.js"></script>
+    <script type="text/ng-template" id="modal.html">
+        <div class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <h4 class="modal-title">SELECT MODE</h4>
+                        <button type="button" ng-click="change_mode('MANUAL')" ng-class="mode === 'MANUAL' ? 'active' : ''" class="btn-lg btn-default" data-dismiss="modal">Manual control</button>
+                        <button type="button" ng-click="change_mode('AUTO')" ng-class="mode === 'AUTO' ? 'active' : ''" class="btn-lg btn-default" data-dismiss="modal">Auto alignment</button>
+                        <button type="button" ng-click="change_mode('INTAKE')" ng-class="mode === 'INTAKE' ? 'active' : ''" class="btn-lg btn-default" data-dismiss="modal">Intake breaker</button>
+                        <button type="button" ng-click="change_mode('TESTING')" ng-class="mode === 'TESTING' ? 'active' : ''" class="btn-lg btn-default" data-dismiss="modal">Testing suite</button>
+                        <div class="modal-footer">
+                            <button type="button" ng-click="close('Cancel')" class="btn-lg btn-danger" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+</head>
+
+<body>
+    <div ng-controller="OpenModalCtrl" class="header">
+        <div class="header-title">BREAKERBOT CONSOLE - {{mode}} MODE</div>
+        <div class="menu-button">
+            <a class="btn-lg btn-default" href ng-click="show()">MENU</a>
+        </div>
+    </div>
+    <div class="wrapper">
+        <div class="panel panel-left">
+            <div class="battery-container">
+                <h4>BATTERY</h4>
+                <img src="images/battery_100.png">
+                <p>Last charge:</p>
+                <p>15 minutes ago.</p>
+            </div>
+            <div ng-controller="DataCtrl" class="position-container">
+                <h4>Postion Stuff</h4>
+                <button ng-click="update()">Update</button>
+                <p>Test connection to backend: {{ data }}</p>
+                <p>Data from Intel Edison: {{ message }}</p>
+            </div>
+            <div class="status-container">
+                <div class="status">Breaker Engagaged</div>
+                <div class="status">Robot Asleep</div>
+            </div>
+            <div class="alignment-positions">
+                <img id="cubicle" src="images/cubicle.png">
+                <img id="breakerbot" src="images/breakerbot_logo.png">
+            </div>
+        </div>
+        <div class="panel panel-middle">
+            <div class="video-container">
+                <div class="instructions"> Here will be the instructions to manually align the robot</div>
+                <div class="watermark">
+                    <img src="images/logo_white.png">
+                </div>
+                <div ng-controller="VideoCtrl" id="canvas-container">
+                    <canvas id="canvas-video" width="640" height="480">
+                    </canvas>
+                    <div ng-repeat="rect in rects" ng-style="{position:'absolute', border: '2px solid {{rect.color}}', width: '{{rect.width}}'+'px', height: '{{rect.height}}' + 'px', top: '{{rect.y}}'+'px', left: '{{rect.x}}'+'px'}"></div>
+                </div>
+            </div>
+            <div class="mode-container">
+                <div ng-controller="InputCtrl">
+                    <div ng-show="mode === 'INTAKE'" class="auto mode">
+                        <button ng-click="intake_status()">TEST Intake mode</button>
+                    </div>
+                    <div ng-show="mode === 'TESTING'" class="auto mode">
+                        <button ng-click="testing_status()"> TEST Testing mode</button>
+                    </div>
+                    <div ng-show="mode === 'AUTO'" class="auto mode">
+                        <div>Hello this is auto alignment mode</div>
+                        <button ng-click="auto_status()"> TEST Testing mode</button>
+                        <div class="alignment-mode-container">
+                            <div class="alignment-status"> Rotational Alignment</div>
+                        </div>
+                        <div class="alignment-mode-container">
+                            <div class="alignment-status"> Distance Alignment</div>
+                        </div>
+                        <div class="alignment-mode-container">
+                            <div class="alignment-status"> Fine Alignment</div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-controller="GamepadCtrl" ng-show="mode === 'MANUAL'" class="manual mode">
+                    <div class="control-container">
+                        <!-- <div class="connect">Please connect or reconnect the controller.</div> -->
+                        <div class="connect">Please connect or reconnect the controller.</div>
+                        <div class="controls">
+                            <div class="cartesian">
+                                <div class="command up">&#9650;</div>
+                                <div class="command left">&#9664;</div>
+                                <div class="command right">&#9654;</div>
+                                <div class="command down">&#9660;</div>
+                            </div>
+                            <div class="cartesian">
+                                <div class="command y_button">Y</div>
+                                <div class="command x_button">X</div>
+                                <div class="command b_button">B</div>
+                                <div class="command a_button">A</div>
+                            </div>
+                            <div class="joystick">
+                                <div class="pos left_joystick"></div>
+                            </div>
+                            <div class="joystick">
+                                <div class="pos right_joystick"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-right">
+            <div class="output-container">
+                <div class="top">
+                    <table>
+                        <tr>
+                            <th>Component</th>
+                            <th>Status</th>
+                        </tr>
+                        <tr>
+                            <td>Intel Edision</td>
+                            <td>ACTIVE</td>
+                        </tr>
+                        <tr>
+                            <td>LIDAR</td>
+                            <td>ACTIVE</td>
+                        </tr>
+                        <tr>
+                            <td>Buck Convertor</td>
+                            <td>ACTIVE</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="bottom">
+                    <table>
+                        <tr>
+                            <th>This will be the output of the robot</th>
+                        </tr>
+                        <tr>
+                            <td>e.g. We'll have a stream of data, like, Robot Connected at 14:23, Robot Aligned at 14:59, etc.</td>
+                        </tr>
+                    </table>
+                    <button type="button" class="btn-lg btn-danger">Emergency Stop</button>
+                    <!-- <button id="stop">STOP</button> -->
+                </div>
+            </div>
+        </div>
+        <!-- <script type="text/javascript" src="js/main.js"></script> -->
+        <script type="text/javascript" src="js/app.js"></script>
+</body>
+
 </html>

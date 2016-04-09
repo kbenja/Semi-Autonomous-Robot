@@ -1,4 +1,4 @@
-var development = true;
+var development = false;
 
 var express = require('express');
 var app = express();
@@ -28,22 +28,18 @@ console.log('SOCKET client - server listening on PORT ' + comm_port);
 comm_socket.on('connection', function(socket) {
     tcp_socket = socket; // set global socket object
     console.log('New WebSocket Connection (' + comm_socket.clients.length + ' total)');
-    var counter = 0;
     socket.on("message", function(command) {
+        console.log("command", command);
         command = JSON.parse(command);
         commands.push([command.mode, command.code]);
-        comm_socket.broadcast(JSON.stringify({count: to_send}));
-        console.log(JSON.stringify({count: counter}));
     })
     socket.on('close', function(code, message) {
         tcp_socket = false;
         console.log('Disconnected WebSocket (' + comm_socket.clients.length + ' total)');
     });
-    setInterval(function(){
-        comm_socket.broadcast(JSON.stringify({count: to_send}));
-    }, 1000);
 });
 
+        // comm_socket.broadcast(JSON.stringify({count: to_send}));
 comm_socket.broadcast = function(data) {
     for (var i in this.clients) {
         if (this.clients[i].readyState == 1) {
@@ -64,7 +60,8 @@ var commands = [];
 var mode = -1;
 var heartbeat = 0;
 var last_heartbeat = 0;
-var check_status = setInterval(function(){
+
+var check_status = setInterval(function(){ //checks every 250ms if unix socket is still connected
     if(!development) {
         if(last_heartbeat === heartbeat) {
             unix_socket = false;
@@ -78,14 +75,10 @@ var check_status = setInterval(function(){
 function unix_socket_emit() {
     if(unix_socket) {
         if(!tcp_socket) {
-            ipc.server.emit(unix_socket,[-1,0]);
+            ipc.server.emit(unix_socket,[-1,0]); // send back -1 if the operator is not connected
         } else if(commands.length) {
-            console.log("sending: ",commands[0]);
-            ipc.server.emit(unix_socket,commands[0]);
-            commands.splice(0,1);
-        } else {
-            // idle mode or same as last command
-            ipc.server.emit(unix_socket,[0,0]);
+            console.log("sending: ", commands[0]);
+            ipc.server.emit(unix_socket,commands.shift()); // send first command in commands array (and pop command off array)
         }
     }
 }
@@ -103,7 +96,6 @@ ipc.serve(function() {
     });
     ipc.server.on('data', function(data,socket){
         to_send = data.toString('hex').split('');
-        console.log(data.toString('hex').split(''));
         heartbeat++;
         unix_socket_emit()
     });
@@ -113,7 +105,6 @@ ipc.server.start();
 /*
 *    VIDEO STREAMING
 */
-
 var STREAM_MAGIC_BYTES = 'jsmp'; // Must be 4 bytes
 var width = 640;
 var height = 480;

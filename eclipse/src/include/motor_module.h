@@ -25,7 +25,7 @@ double_reg float_to_PWM(float start) {
 class Motor_Module {
 uint8_t end_reg;
 public:
-
+    //constructors
     /**
         Initializes motor module port 1
         @param int port     decides which port to talk to
@@ -40,8 +40,13 @@ public:
         @param int port     decides which port to talk to
     */
     Motor_Module(int port) {
-        end_reg = 0x0C + (port - 1)*4;
+        end_reg = 0x08 + (port*4);
         printf("[ init ] Motor module initialized to port %d (register 0x%02x)\n", port, end_reg);
+    }
+
+    //destructor
+    ~Motor_Module() {
+        printf("[ dest ] Motor module deleted\n");
     }
 
     /**
@@ -58,9 +63,9 @@ public:
         result = i2c_send_signal(i2c_context, end_reg, signal);
         if(result != MRAA_SUCCESS)
         {
-            printf("[ !!!! ] Could NOT write to register 0x%02x\n", end_reg);
+//            printf("[ !!!! ] Could NOT write to register 0x%02x\n", end_reg);
         } else {
-            printf("[ send ] Write signal 0x%04x to register 0x%02x\n", signal.u_sixteen, end_reg);
+//            printf("[ send ] Write signal 0x%04x to register 0x%02x\n", signal.u_sixteen, end_reg);
         }
 
         return result;

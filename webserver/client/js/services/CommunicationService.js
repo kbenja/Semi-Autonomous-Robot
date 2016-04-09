@@ -15,21 +15,20 @@ angular.module('CommunicationService', []).factory('communication', [function($h
     ctx.fillText('Loading...', canvas.width / 2 - 30, canvas.height / 3);
 
     var player = new jsmpeg(stream_socket, { canvas: canvas });
-    var read_socket = function() {
 
-    }
     var test = "hello world";
 
     return {
         comm_socket: comm_socket,
+        send_data: function(data) {
+            comm_socket.send(JSON.stringify(data));
+        },
         read_data: function(callback) {
             comm_socket.onmessage = function(evt) {
-                console.log("evt!", evt);
                 callback(evt);
             };
         }
     }
-
 
     // helpful example : https://gist.github.com/ae6rt/7865161
 }]);
