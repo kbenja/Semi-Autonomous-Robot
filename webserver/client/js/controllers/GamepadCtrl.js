@@ -52,8 +52,19 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
                 }
                 keysDown[key] = true;
             }
+            if (key === "r2_button") {
+                if(!keysDown[key]) {
+                    $scope.command.code = 5;
+                }
+                keysDown[key] = true;
+            }
+            if (key === "l2_button") {
+                if(!keysDown[key]) {
+                    $scope.command.code = 6;
+                }
+                keysDown[key] = true;
+            }
             send_command($scope.command);
-            console.log($scope.command);
         }
     }
 
@@ -76,6 +87,14 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
                 $scope.command.code = 0;
             }
             if (key === "right" || key === 39) {
+                keysDown[key] = false;
+                $scope.command.code = 0;
+            }
+            if (key === "l2_button") {
+                keysDown[key] = false;
+                $scope.command.code = 0;
+            }
+            if (key === "r2_button") {
                 keysDown[key] = false;
                 $scope.command.code = 0;
             }
@@ -122,13 +141,13 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
                 var button = getButton(it);
                 if(number.pressed) {
                     if(last_state[it] === false && registeredButton(button)) {
+                        console.log(it);
                         keyPressed(button);
                     }
                     last_state[it] = true;
                     $("." + button).css("background-color","#CCCCCC");
                 } else {
                     if(last_state[it]) {
-                        console.log(number,it);
                         keyReleased(button);
                     }
                     last_state[it] = false;
@@ -144,7 +163,7 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
     }
 
     function registeredButton(btn) {
-        return (btn === "up" || btn === "left" || btn === "right" || btn === "down" || btn==="b_button") ? true : false;
+        return (btn === "up" || btn === "left" || btn === "right" || btn === "down" || btn==="b_button" || btn==="l2_button" || btn==="r2_button") ? true : false;
     }
 
     function getButton(btn) {

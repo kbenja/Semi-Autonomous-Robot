@@ -28,13 +28,10 @@ console.log('SOCKET client - server listening on PORT ' + comm_port);
 comm_socket.on('connection', function(socket) {
     tcp_socket = socket; // set global socket object
     console.log('New WebSocket Connection (' + comm_socket.clients.length + ' total)');
-    var counter = 0;
     socket.on("message", function(command) {
         console.log("command", command);
         command = JSON.parse(command);
         commands.push([command.mode, command.code]);
-        comm_socket.broadcast(JSON.stringify({count: to_send}));
-        console.log(JSON.stringify({count: counter}));
     })
     socket.on('close', function(code, message) {
         tcp_socket = false;
@@ -42,6 +39,7 @@ comm_socket.on('connection', function(socket) {
     });
 });
 
+        // comm_socket.broadcast(JSON.stringify({count: to_send}));
 comm_socket.broadcast = function(data) {
     for (var i in this.clients) {
         if (this.clients[i].readyState == 1) {
@@ -81,7 +79,7 @@ function unix_socket_emit() {
         } else if(commands.length) {
             console.log("sending: ",commands[0]);
             ipc.server.emit(unix_socket,commands[0]);
-            commands.splice(0,1);
+            commands.splice(0,1); //change this to commands.shift() on the edison
         } else {
             // idle mode or same as last command
             // ipc.server.emit(unix_socket,[0,0]);

@@ -33,7 +33,7 @@
                         <button type="button" ng-click="change_mode('INTAKE')" ng-class="mode === 'INTAKE' ? 'active' : ''" class="btn-lg btn-default" data-dismiss="modal">Intake breaker</button>
                         <button type="button" ng-click="change_mode('TESTING')" ng-class="mode === 'TESTING' ? 'active' : ''" class="btn-lg btn-default" data-dismiss="modal">Testing suite</button>
                         <div class="modal-footer">
-                        	<button type="button" ng-click="close('Cancel')" class="btn-lg btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" ng-click="close('Cancel')" class="btn-lg btn-danger" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -85,16 +85,25 @@
                 </div>
             </div>
             <div class="mode-container">
-                <div ng-show="mode === 'AUTO'" class="auto mode">
-                    <div>Hello this is auto alignment mode</div>
-                    <div class="alignment-mode-container">
-                        <div class="alignment-status"> Rotational Alignment</div>
+                <div ng-controller="InputCtrl">
+                    <div ng-show="mode === 'INTAKE'" class="auto mode">
+                        <button ng-click="intake_status()">TEST Intake mode</button>
                     </div>
-                    <div class="alignment-mode-container">
-                        <div class="alignment-status"> Distance Alignment</div>
+                    <div ng-show="mode === 'TESTING'" class="auto mode">
+                        <button ng-click="testing_status()"> TEST Testing mode</button>
                     </div>
-                    <div class="alignment-mode-container">
-                        <div class="alignment-status"> Fine Alignment</div>
+                    <div ng-show="mode === 'AUTO'" class="auto mode">
+                        <div>Hello this is auto alignment mode</div>
+                        <button ng-click="auto_status()"> TEST Testing mode</button>
+                        <div class="alignment-mode-container">
+                            <div class="alignment-status"> Rotational Alignment</div>
+                        </div>
+                        <div class="alignment-mode-container">
+                            <div class="alignment-status"> Distance Alignment</div>
+                        </div>
+                        <div class="alignment-mode-container">
+                            <div class="alignment-status"> Fine Alignment</div>
+                        </div>
                     </div>
                 </div>
                 <div ng-controller="GamepadCtrl" ng-show="mode === 'MANUAL'" class="manual mode">

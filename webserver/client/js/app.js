@@ -28,5 +28,29 @@ app.controller('ModeCtrl', function($scope, $rootScope, close, communication) {
         $rootScope.mode = mode;
         console.log("Toggling mode", $rootScope.mode);
     }
-
 });
+
+app.controller('InputCtrl', function($scope, $rootScope, communication) {
+    $scope.testing_status = function() {
+        console.log($rootScope.mode);
+        if($rootScope.mode === "TESTING") {
+            communication.send_data({mode: 4, code: 4});
+            console.log("sending", {mode: 4, code: 4});
+        }
+    }
+    $scope.auto_status = function() {
+        console.log($rootScope.mode);
+        if($rootScope.mode === "AUTO") {
+            communication.send_data({mode: 2, code: 2});
+            console.log("sending", {mode: 2, code: 2});
+        }
+    }
+    $scope.intake_status = function() {
+        console.log($rootScope.mode);
+        if($rootScope.mode === "INTAKE") {
+            communication.send_data({mode: 3, code: 3});
+            console.log("sending", {mode: 3, code: 3});
+        }
+    }
+});
+
