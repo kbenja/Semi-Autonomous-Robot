@@ -3,6 +3,7 @@
 
 $title-size: 1.5em;
 $module-background: rgba(215,215,215,0.13);
+$page-width: 1100px;
 
 body {
   font-size: 16px; //set 1em to be 16px
@@ -42,6 +43,7 @@ button {
 
 .header {
   width: 100%;
+  min-width: $page-width;
   height: 65px;
   line-height: 65px;
   border-bottom: 3px #333333 solid;
@@ -60,7 +62,7 @@ button {
 .wrapper {
   position: relative;
   width: 100%;
-  min-width: 1100px;
+  min-width: $page-width;
   text-align: center;
   margin: 0 auto;
   .panel {

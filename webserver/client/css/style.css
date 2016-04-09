@@ -5855,6 +5855,7 @@ button {
 
 .header {
   width: 100%;
+  min-width: 1100px;
   height: 65px;
   line-height: 65px;
   border-bottom: 3px #333333 solid;
