@@ -75,32 +75,43 @@ int main(int argc, char** argv) {
                         printf("CLIENT IS DISONNECTED\r");
                         break;
                     case 0:
-                        // printf("IDLE MODE, INPUT = %d\n", input);
+                        printf("IDLE MODE, INPUT = %d\n", input);
                         break;
                     case 1:
                         printf("MANUAL MODE, INPUT = %d\n", input);
                         switch(instructions[1]) {
-                            case BREAK:
+                            case 0:
+                                printf("Received BREAK command\n");
                                 break;
-                            case FORWARD:
+                            case 1:
+                                printf("Received FORWARD command\n");
                                 break;
-                            case LEFT:
+                            case 2:
+                                printf("Received LEFT command\n");
                                 break;
-                            case BACKWARD:
+                            case 3:
+                                printf("Received BACKWARDS command\n");
                                 break;
-                            case RIGHT:
+                            case 4:
+                                printf("Received RIGHT command\n");
+                                break;
+                            case 5:
+                                printf("Received CLOCKWISE command\n");
+                                break;
+                            case 6:
+                                printf("Received COUNTER CLOCKWISE command\n");
                                 break;
                             default:
                                 break;
                         }
                         break;
-                    case AUTO:
+                    case 2:
                         printf("AUTO MODE, INPUT = %d\n", input);
                         break;
-                    case INTAKE:
+                    case 3:
                         printf("INTAKE MODE, INPUT = %d\n", input);
                         break;
-                    case TESTING:
+                    case 4:
                         printf("TESTING MODE, INPUT = %d\n", input);
                         break;
                     default:

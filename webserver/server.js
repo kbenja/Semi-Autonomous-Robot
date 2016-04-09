@@ -1,4 +1,4 @@
-var development = true;
+var development = false;
 
 var express = require('express');
 var app = express();
@@ -60,7 +60,8 @@ var commands = [];
 var mode = -1;
 var heartbeat = 0;
 var last_heartbeat = 0;
-var check_status = setInterval(function(){
+
+var check_status = setInterval(function(){ //checks every 250ms if unix socket is still connected
     if(!development) {
         if(last_heartbeat === heartbeat) {
             unix_socket = false;
@@ -69,20 +70,15 @@ var check_status = setInterval(function(){
         heartbeat = heartbeat%1000;
         last_heartbeat = heartbeat;
     }
-}, 500);
+}, 250);
 
 function unix_socket_emit() {
     if(unix_socket) {
         if(!tcp_socket) {
-            // ipc.server.emit(unix_socket,[-1,0]);
-            console.log("Not writing back naha");
+            ipc.server.emit(unix_socket,[-1,0]); // send back -1 if the operator is not connected
         } else if(commands.length) {
-            console.log("sending: ",commands[0]);
-            ipc.server.emit(unix_socket,commands[0]);
-            commands.splice(0,1); //change this to commands.shift() on the edison
-        } else {
-            // idle mode or same as last command
-            // ipc.server.emit(unix_socket,[0,0]);
+            console.log("sending: ", commands[0]);
+            ipc.server.emit(unix_socket,commands.shift()); // send first command in commands array (and pop command off array)
         }
     }
 }
@@ -109,7 +105,6 @@ ipc.server.start();
 /*
 *    VIDEO STREAMING
 */
-
 var STREAM_MAGIC_BYTES = 'jsmp'; // Must be 4 bytes
 var width = 640;
 var height = 480;
@@ -149,7 +144,7 @@ http.createServer(function(req, res) {
     });
 }).listen(stream_port, function() {
     console.log('SOCKET listening for video stream on PORT ' + stream_port);
-    start_video();
+    //start_video();
 
 });
 
