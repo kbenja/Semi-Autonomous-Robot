@@ -27,6 +27,8 @@ public:
     bool rotating_ccw;
     bool rotating_cw;
 
+    bool ready = false;
+
     mraa_i2c_context i2c_context;   //i2c context for communication
 
     Motor_Module * steer_motor;         //steering motor
@@ -116,12 +118,16 @@ public:
             controller_result = rotate_position(axis);
             if (controller_result == 1) {
                 return 1; // still rotating
+                ready = false;
             } else if (controller_result == 0 && !proceed) {
+                ready = true;
                 return 0; // ready but other motors are not ready
             } else if (controller_result == 0 && proceed) {
                 controller_result = drive_motor(speed);
+                ready = true;
                 return 0; // all motors ready to drive
             } else if (controller_result == -1) {
+                ready = false;
                 return -1;
             }
         } else {

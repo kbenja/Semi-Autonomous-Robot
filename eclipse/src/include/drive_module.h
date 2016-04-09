@@ -12,8 +12,8 @@ public:
     bool BR_swerve_proceed;
     bool FL_swerve_proceed;
     bool BL_swerve_proceed;
-    int drive_proceed;
-    int swerve_controller_proceed;
+    bool drive_proceed; // waits for all 4 swerve modules to be ready
+    int swerve_controller_result;
 
     Swerve_Module * FR;
     Swerve_Module * BR;
@@ -28,7 +28,6 @@ public:
     }
 
     Drive_Module(mraa_i2c_context i2c) {
-
     	i2c_bus = i2c;
         //initialize Swerve_Modules
         FR = new Swerve_Module(i2c, 1, 1, 5, 1, 0, 2451, 1952, 2087);
@@ -42,12 +41,11 @@ public:
         FL_swerve_proceed = false;
         BR_swerve_proceed = false;
         drive_proceed = 1;
-        swerve_controller_proceed = 1;
+        swerve_controller_result = 1;
 
     }
 
     ~Drive_Module() {   //free memory
-
         delete FR;
         delete BR;
         delete FL;
@@ -55,153 +53,37 @@ public:
     }
 
     int drive(char axes, float speed){
-    	switch(axes) {          //desired swerve position based on desired axis translation
-    		case 'X':
-    	    case 'x':
-    	    	if (!(FR_swerve_proceed || BR_swerve_proceed || FL_swerve_proceed || BL_swerve_proceed))
-    	    	{
-    	    		swerve_controller_proceed = FR.swerve_controller('X', speed, false);
-    	    		if (swerve_controller_proceed == 0) // Success
-    	    		{
-    	    			FR_swerve_proceed = true;
-    	    		}
-    	    		swerve_controller_proceed = BR.swerve_controller('X', speed, false);
-    	    		if (swerve_controller_proceed == 0) // Success
-    	    		{
-    	    			BR_swerve_proceed = true;
-    	    		}
-    	    		swerve_controller_proceed = FL.swerve_controller('X', speed, false);
-    	    		if (swerve_controller_proceed == 0) // Success
-    	    		{
-    	    			FL_swerve_proceed = true;
-    	    		}
-    	    		swerve_controller_proceed = BL.swerve_controller('X', speed, false);
-    	    		if (swerve_controller_proceed == 0) // Success
-    	    		{
-    	    			BL_swerve_proceed = true;
-    	    		}
-    	    	}
-    	    	else if (!FR_swerve_proceed)
-    	    	{
-    	    		printf("FRONT RIGHT WHEEL STILL TURNING");
-    	    	}
-    	    	else if (!BR_swerve_proceed)
-    	    	{
-    	    		printf("BACK RIGHT WHEEL STILL TURNING");
-    	    	}
-    	    	else if (!FR_swerve_proceed)
-    	    	{
-    	    		printf("FRONT LEFT WHEEL STILL TURNING");
-    	    	}
-    	    	else if (!FR_swerve_proceed)
-    	    	{
-    	    		printf("BACK LEFT WHEEL STILL TURNING");
-    	    	}
-                else
-                {
-                	drive_proceed = 0;
-                }
-    	        break;
-    	    case 'Y':
-    	    case 'y':
-    	    	if (!(FR_swerve_proceed || BR_swerve_proceed || FL_swerve_proceed || BL_swerve_proceed))
-    	    	{
-    	    		swerve_controller_proceed = FR.swerve_controller('Y', speed, false);
-    	    		if (swerve_controller_proceed == 0) // Success
-    	    		{
-    	    			FR_swerve_proceed = true;
-    	    		}
-    	    		swerve_controller_proceed = BR.swerve_controller('Y', speed, false);
-    	    		if (swerve_controller_proceed == 0) // Success
-    	    		{
-    	    			BR_swerve_proceed = true;
-    	    		}
-    	    		swerve_controller_proceed = FL.swerve_controller('Y', speed, false);
-    	    		if (swerve_controller_proceed == 0) // Success
-    	    		{
-    	    			FL_swerve_proceed = true;
-    	    		}
-    	    		swerve_controller_proceed = BL.swerve_controller('Y', speed, false);
-    	    		if (swerve_controller_proceed == 0) // Success
-    	    		{
-    	    			BL_swerve_proceed = true;
-    	    		}
-    	    	}
-    	    	else if (!FR_swerve_proceed)
-    	    	{
-    	    		printf("FRONT RIGHT WHEEL STILL TURNING");
-    	    	}
-    	    	else if (!BR_swerve_proceed)
-    	    	{
-    	    		printf("BACK RIGHT WHEEL STILL TURNING");
-    	    	}
-    	    	else if (!FR_swerve_proceed)
-    	    	{
-    	    		printf("FRONT LEFT WHEEL STILL TURNING");
-    	    	}
-    	    	else if (!FR_swerve_proceed)
-    	    	{
-    	    		printf("BACK LEFT WHEEL STILL TURNING");
-    	    	}
-                else
-                {
-                	drive_proceed = 0;
-                }
-    	        break;
-    	    case 'Z':
-    	    case 'z':
-    	    	if (!(FR_swerve_proceed || BR_swerve_proceed || FL_swerve_proceed || BL_swerve_proceed))
-    	    	{
-    	    		swerve_controller_proceed = FR.swerve_controller('Z', speed, false);
-    	    		if (swerve_controller_proceed == 0) // Success
-    	    		{
-    	    			FR_swerve_proceed = true;
-    	    		}
-    	    		swerve_controller_proceed = BR.swerve_controller('Z', speed, false);
-    	    		if (swerve_controller_proceed == 0) // Success
-    	    		{
-    	    			BR_swerve_proceed = true;
-    	    		}
-    	    		swerve_controller_proceed = FL.swerve_controller('Z', speed, false);
-    	    		if (swerve_controller_proceed == 0) // Success
-    	    		{
-    	    			FL_swerve_proceed = true;
-    	    		}
-    	    		swerve_controller_proceed = BL.swerve_controller('Z', speed, false);
-    	    		if (swerve_controller_proceed == 0) // Success
-    	    		{
-    	    			BL_swerve_proceed = true;
-    	    		}
-    	    	}
-    	    	else if (!FR_swerve_proceed)
-    	    	{
-    	    		printf("FRONT RIGHT WHEEL STILL TURNING");
-    	    	}
-    	    	else if (!BR_swerve_proceed)
-    	    	{
-    	    		printf("BACK RIGHT WHEEL STILL TURNING");
-    	    	}
-    	    	else if (!FR_swerve_proceed)
-    	    	{
-    	    		printf("FRONT LEFT WHEEL STILL TURNING");
-    	    	}
-    	    	else if (!FR_swerve_proceed)
-    	    	{
-    	    		printf("BACK LEFT WHEEL STILL TURNING");
-    	    	}
-                else
-                {
-                	drive_proceed = 0;
-                }
-    	        break;
-    	    default:
-    	    	return MRAA_ERROR_INVALID_PARAMETER;
-    	}
-
+        // first check each of the results of the swerve_controller function to see if it is 0 or 1
+        // if all of the results are 0, then you can move forwards
+        // otherwise, continue with each of the swerve_controller functions while waiting for alignment
+        FR_swerve_proceed = FR.ready;
+        FL_swerve_proceed = FL.ready;
+        BR_swerve_proceed = BR.ready;
+        BL_swerve_proceed = BL.ready;
+        if(FR_swerve_proceed || FL_swerve_proceed || BR_swerve_proceed || BL_swerve_proceed) {
+            drive_proceed = true;
+            return 0;
+        } else {
+            drive_proceed = false;
+            swerve_controller_result = FR.swerve_controller(axes, speed, drive_proceed);
+            if(swerve_controller_result == -1) {
+                printf("FRONT RIGHT WHEEL STILL TURNING, AXIS = %c\n", axes);
+            }
+            swerve_controller_result = FL.swerve_controller(axes, speed, drive_proceed);
+            if(swerve_controller_result == -1) {
+                printf("FRONT LEFT WHEEL STILL TURNING, AXIS = %c\n", axes);
+            }
+            swerve_controller_result = BR.swerve_controller(axes, speed, drive_proceed);
+            if(swerve_controller_result == -1) {
+                printf("BACK RIGHT WHEEL STILL TURNING, AXIS = %c\n", axes);
+            }
+            swerve_controller_result = BL.swerve_controller(axes, speed, drive_proceed);
+            if(swerve_controller_result == -1) {
+                printf("BACK LEFT WHEEL STILL TURNING, AXIS = %c\n", axes);
+            }
+            return 1;
+        }
     }
-
-
-
 };
 
 #endif
