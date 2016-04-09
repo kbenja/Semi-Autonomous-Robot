@@ -89,8 +89,13 @@ public:
     /*
         Default destructor for swerve module.
     */
-    ~Swerve_Module() {
-        //printf("[ dest ] Swerve module %d deleted\n", id);
+    ~Swerve_Module() {  //free memory
+        delete steer_motor;
+        delete drive_motor;
+        delete dir_feedback;
+        //delete drive_feedback;
+
+        printf("[ dest ] Swerve module %d deleted\n", id);
     }
 
     /*
