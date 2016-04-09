@@ -23,8 +23,8 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool ipc_module = false;
-bool swerve_module = true;
+bool ipc_module = true;
+bool swerve_module = false;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
@@ -36,11 +36,11 @@ int input;
 int result;
 
 int main(int argc, char** argv) {
-    // float user_input = 0.0;                          // receive signal from argv or use default (stop)
-    // if (argc > 1) {
-    //     printf("***Using given value by user\n");
-    //     user_input = atof(argv[1]);
-    // }
+    float user_input = 0.0;                          // receive signal from argv or use default (stop)
+    if (argc > 1) {
+        printf("***Using given value by user\n");
+        user_input = atof(argv[1]);
+    }
 
     if (ipc_module) {
         // UNIX SOCKET INITIALIZATION
@@ -60,7 +60,12 @@ int main(int argc, char** argv) {
         mraa_i2c_context i2c = mraa_i2c_init(6);    // create original context for i2c (bus 6)
         i2c_init_board(i2c, address);               // initialize the board (our i2c library function)
 
-        //Swerve_Module s1 = Swerve_Module(i2c, 1, 1, 2, 1, 0); // ORIGINAL (i2c, id, direction_port, drive_port, pot_AI, optical_encoder_reg, SWERVE_position)
+        // ORIGINAL (i2c, id, direction_port, drive_port, pot_AI, optical_encoder_reg, SWERVE_position)
+        Swerve_Module s1 = Swerve_Module(i2c, 1, 5, 1, 1, 0, 2000, 2000, 2000);
+        Swerve_Module s2 = Swerve_Module(i2c, 1, 6, 2, 1, 0, 2000, 2000, 2000);
+        Swerve_Module s3 = Swerve_Module(i2c, 1, 7, 3, 2, 0, 2000, 2000, 2000);
+        Swerve_Module s4 = Swerve_Module(i2c, 1, 8, 4, 3, 0, 2000, 2000, 2000);
+
 
         while(1) {
             usleep(100000); // cycle time
@@ -78,19 +83,30 @@ int main(int argc, char** argv) {
                         printf("IDLE MODE, INPUT = %d\n", input);
                         break;
                     case 1:
-                        printf("MANUAL MODE, INPUT = %d\n", input);
                         switch(instructions[1]) {
                             case 0:
                                 printf("Received BREAK command\n");
+                                s1.stop_motors();
+                                s2.stop_motors();
+                                s3.stop_motors();
+                                s4.stop_motors();
                                 break;
                             case 1:
                                 printf("Received FORWARD command\n");
+                                s1.drive_forward(user_input);
+                                s2.drive_forward(user_input);
+                                s3.drive_forward(user_input);
+                                s4.drive_forward(user_input);
                                 break;
                             case 2:
                                 printf("Received LEFT command\n");
                                 break;
                             case 3:
                                 printf("Received BACKWARDS command\n");
+                                s1.drive_backward(user_input);
+                                s2.drive_backward(user_input);
+                                s3.drive_backward(user_input);
+                                s4.drive_backward(user_input);
                                 break;
                             case 4:
                                 printf("Received RIGHT command\n");
@@ -104,6 +120,8 @@ int main(int argc, char** argv) {
                             default:
                                 break;
                         }
+                        // wake up the board after sending an input
+                        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                         break;
                     case 2:
                         printf("AUTO MODE, INPUT = %d\n", input);

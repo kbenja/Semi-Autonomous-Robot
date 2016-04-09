@@ -175,7 +175,6 @@ public:
     */
     mraa_result_t drive_forward(float speed) {
         mraa_result_t result = drive_motor->send_signal(i2c_context, speed);
-        printf("Driving wheel FORWARDS");
         return result;
     }
 
@@ -183,8 +182,7 @@ public:
         Rotates drive wheel backwards
     */
     mraa_result_t drive_backward(float speed) {
-        mraa_result_t result  = drive_motor->send_signal(i2c_context, speed);
-        printf("Driving wheel BACKWARDS");
+        mraa_result_t result  = drive_motor->send_signal(i2c_context, -speed);
         return result;
     }
 

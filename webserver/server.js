@@ -1,4 +1,4 @@
-var development = true;
+var development = false;
 
 var express = require('express');
 var app = express();
@@ -70,7 +70,7 @@ var check_status = setInterval(function(){ //checks every 250ms if unix socket i
         heartbeat = heartbeat%1000;
         last_heartbeat = heartbeat;
     }
-}, 250);
+}, 500);
 
 function unix_socket_emit() {
     if(unix_socket) {
