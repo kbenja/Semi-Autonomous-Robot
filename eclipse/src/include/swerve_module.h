@@ -133,6 +133,7 @@ public:
             controller_result = stop_motors();
             return controller_result;
         }
+        return 0; // okay;
     }
 
     /*
@@ -160,7 +161,7 @@ public:
             return -1;
         }
         current_pos = dir_feedback->get_average_val();    //get starting position
-        if (desired_pos + 3 <= current_pos) {              //rotate CCW
+        if (desired_pos + 5 <= current_pos) {              //rotate CCW
             correct_pos = false;
             rotating_cw = false;
             if (!rotating_ccw) {
@@ -169,7 +170,7 @@ public:
                     rotating_ccw = true;
                 }
             }
-        } else if (desired_pos - 3 >= current_pos) {         //rotate CW
+        } else if (desired_pos - 5 >= current_pos) {         //rotate CW
             rotating_ccw = false;
             correct_pos = false;
             if (!rotating_cw) {
@@ -183,6 +184,7 @@ public:
             rotating_ccw = false;
             if(!correct_pos) {
                 rotation_result = stop_rotation(); // stop rotation
+                sleep(1);
                 if(rotation_result != -1) {
                     correct_pos = true;
                 }

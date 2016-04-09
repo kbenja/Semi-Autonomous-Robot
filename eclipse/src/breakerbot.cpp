@@ -26,8 +26,8 @@ enum directions {
 };
 
 bool ipc_module = false;
-bool swerve_module = false;
-bool pot_testing = true;
+bool swerve_module = true;
+bool pot_testing = false;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
@@ -150,20 +150,32 @@ int main(int argc, char** argv) {
     }
     if (swerve_module) {
         printf("Testing swerve module\n");
-    }
 
+
+        uint8_t address = 0x40;
+        mraa_i2c_context i2c = mraa_i2c_init(6);
+        mraa_result_t i2c_status = i2c_init_board(i2c, address);
+        if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
+
+        // dir port 1, drive port 2, Y, X
+        Swerve_Module s2 = Swerve_Module(i2c, 1, 1, 2, 1, 0, 2467, 1955, 2235);
+        while(1) {
+            usleep(50000); //sleep for 0.05s
+            s2.swerve_controller('X', 0.5, true); // try to rotate to the correct position
+            usleep(50);
+            mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
+        }
+    }
     if (pot_testing) {
-        int pot_testing = 0;                          // default value of pot is 0
+        int testing_port = 1;                          // default value of pot is 0
         if (argc > 1) {
             printf("***Using given value by user\n");
-            pot_testing = atoi(argv[1]);
+            testing_port = atoi(argv[1]);
         }
-        if (pot_testing < 6 && pot_testing > -1) {
-            Pot_Module pot = Pot_Module(pot_testing, 12);
-            while(1) {
-                usleep(500000); // sleep for 0.5s
-                printf("VALUE for port: %d equals %d\n", pot_testing, pot.get_average_val());
-            }
+        Pot_Module pot = Pot_Module(testing_port, 12);
+        while(1) {
+            usleep(500000); // sleep for 0.5s
+            printf("VALUE for port: %d equals %d\n", testing_port, pot.get_average_val());
         }
     }
 
