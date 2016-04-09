@@ -64,8 +64,7 @@ public:
         @returns:                                   Swerve_Module object
 
     */
-    Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int steer_port, int drive_port, int pot_adc, int encoder_port,
-                    uint16_t x_position, uint16_t y_position, uint16_t z_position) {
+    Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int steer_port, int drive_port, int pot_adc, int encoder_port, uint16_t x_position, uint16_t y_position, uint16_t z_position) {
         id = module_id;
         steer_motor = new Motor_Module(steer_port);
         drive_motor = new Motor_Module(drive_port);
@@ -90,7 +89,7 @@ public:
 
         // correct position = false to start
         correct_pos = false;
-        result = 1;
+        controller_result = 1;
 
         printf("[ init ] Created swerve module ID %d\n", id);
     }
@@ -142,7 +141,7 @@ public:
         @returns:   the result of the Y-translation positioning as a mraa_result_t value
     */
     int rotate_position(char position) {
-        mraa_result_t result = MRAA_SUCCESS;
+        int rotation_result;
         uint16_t desired_pos;
         switch(position) {          //desired swerve position based on desired axis translation
         case 'X':
@@ -165,8 +164,8 @@ public:
             correct_pos = false;
             rotating_cw = false;
             if (!rotating_ccw) {
-                result = rotate_ccw();
-                if(result != -1) {
+                rotation_result = rotate_ccw();
+                if(rotation_result != -1) {
                     rotating_ccw = true;
                 }
             }
@@ -174,8 +173,8 @@ public:
             rotating_ccw = false;
             correct_pos = false;
             if (!rotating_cw) {
-                result = rotate_cw();
-                if(result != -1) {
+                rotation_result = rotate_cw();
+                if(rotation_result != -1) {
                     rotating_cw = true;
                 }
             }
@@ -183,13 +182,13 @@ public:
             rotating_cw = false;
             rotating_ccw = false;
             if(!correct_pos) {
-                result = stop_rotation(); // stop rotation
-                if(result != -1) {
+                rotation_result = stop_rotation(); // stop rotation
+                if(rotation_result != -1) {
                     correct_pos = true;
                 }
             }
         }
-        if (result != MRAA_SUCCESS) {
+        if (rotation_result == -1) {
             return -1;
         } else {
             return (current_pos ? 0 : 1); // if correct position send (0 = working) else (1 = still rotating)
@@ -202,7 +201,7 @@ public:
     int drive_wheel(float speed) {
         printf("DRIVE module %d\n", id);
         mraa_result_t result = drive_motor->send_signal(i2c_context, speed);
-        return (result != MRAA_SUCCESS ? -1, 0);
+        return (result != MRAA_SUCCESS ? -1 : 0);
     }
 
     /*
@@ -211,7 +210,7 @@ public:
     int rotate_cw() {
         printf("ROTATE CW module %d\n", id);
         mraa_result_t result = steer_motor->send_signal(i2c_context, -0.45);
-        return (result != MRAA_SUCCESS ? -1, 0);
+        return (result != MRAA_SUCCESS ? -1 : 0);
 
     }
 
@@ -222,7 +221,7 @@ public:
         mraa_result_t result = MRAA_SUCCESS;
         printf("ROTATE CCW module %d\n", id);
         result = steer_motor->send_signal(i2c_context, 0.45);
-        return (result != MRAA_SUCCESS ? -1, 0);
+        return (result != MRAA_SUCCESS ? -1 : 0);
     }
 
     /*
@@ -231,7 +230,7 @@ public:
     int stop_rotation() {
         printf("STOP ROTATE on module %d\n", id);
         mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
-        return (result != MRAA_SUCCESS ? -1, 0);
+        return (result != MRAA_SUCCESS ? -1 : 0);
     }
     /*
         Stops all motors
@@ -240,28 +239,28 @@ public:
         printf("STOP ALL motors on module %d\n", id);
         mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
         result = drive_motor->send_signal(i2c_context, 0);
-        return (result != MRAA_SUCCESS ? -1, 0);
+        return (result != MRAA_SUCCESS ? -1 : 0);
     }
 
 
     /*
         Original working rotate function
     */
-    mraa_result_t rotate(uint16_t desired_pos) {
-        mraa_result_t result = MRAA_SUCCESS;
-        uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
-        if ((desired_pos - 3 >= current_pos) && (desired_pos < CW_LIMIT)) { //1926-2 = 1924
-            result = rotate_cw();     //rotate clockwise to position -> increases value
-        }
-        else if ((desired_pos + 3 <= current_pos) && (desired_pos > CCW_LIMIT)) { //1926+2 = 1928
-            result = rotate_ccw();    //rotate counterclockwise to position -> decreases value
-        }
-        else {
-            result = steer_motor->send_signal(i2c_context, 0); //Stop Signal to Motor
-            sleep(2);
-        }
-        return result;
-    }
+    // mraa_result_t rotate(uint16_t desired_pos) {
+    //     mraa_result_t result = MRAA_SUCCESS;
+    //     uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
+    //     if ((desired_pos - 3 >= current_pos) && (desired_pos < CW_LIMIT)) { //1926-2 = 1924
+    //         result = rotate_cw();     //rotate clockwise to position -> increases value
+    //     }
+    //     else if ((desired_pos + 3 <= current_pos) && (desired_pos > CCW_LIMIT)) { //1926+2 = 1928
+    //         result = rotate_ccw();    //rotate counterclockwise to position -> decreases value
+    //     }
+    //     else {
+    //         result = steer_motor->send_signal(i2c_context, 0); //Stop Signal to Motor
+    //         sleep(2);
+    //     }
+    //     return result;
+    // }
 };
 
 #endif

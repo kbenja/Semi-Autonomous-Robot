@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
         mraa_i2c_context i2c = mraa_i2c_init(6);    // create original context for i2c (bus 6)
         mraa_result_t i2c_status = i2c_init_board(i2c, address);               // initialize the board (our i2c library function)
         if (i2c_status != MRAA_SUCCESS) {
-            printf("[ !!! ] Can not initialize I2C Board.\n")
+            printf("[ !!! ] Can not initialize I2C Board.\n");
         }
 
         // ORIGINAL (i2c, id, direction_port, drive_port, pot_AI, optical_encoder_reg, SWERVE_position)
@@ -96,20 +96,20 @@ int main(int argc, char** argv) {
                                 break;
                             case 1:
                                 printf("Received FORWARD command\n");
-                                s1.drive_forward(user_input);
-                                s2.drive_forward(user_input);
-                                s3.drive_forward(user_input);
-                                s4.drive_forward(user_input);
+                                s1.drive_wheel(user_input);
+                                s2.drive_wheel(user_input);
+                                s3.drive_wheel(user_input);
+                                s4.drive_wheel(user_input);
                                 break;
                             case 2:
                                 printf("Received LEFT command\n");
                                 break;
                             case 3:
                                 printf("Received BACKWARDS command\n");
-                                s1.drive_backward(user_input);
-                                s2.drive_backward(user_input);
-                                s3.drive_backward(user_input);
-                                s4.drive_backward(user_input);
+                                s1.drive_wheel(-user_input);
+                                s2.drive_wheel(-user_input);
+                                s3.drive_wheel(-user_input);
+                                s4.drive_wheel(-user_input);
                                 break;
                             case 4:
                                 printf("Received RIGHT command\n");
