@@ -23,6 +23,10 @@ public:
     bool limit_cw;          //rotational limits
     bool limit_ccw;
 
+    bool correct_pos;
+    bool rotating_ccw;
+    bool rotating_cw;
+
     mraa_i2c_context i2c_context;   //i2c context for communication
 
     Motor_Module * steer_motor;         //steering motor
@@ -105,7 +109,7 @@ public:
 
         @returns:   the result of the Y-translation positioning as a mraa_result_t value
     */
-    mraa_result_t rotate_position(char position) {
+    int rotate_position(char position) {
         mraa_result_t result = MRAA_SUCCESS;
         uint16_t desired_pos;
         switch(position) {          //desired swerve position based on desired axis translation
@@ -124,27 +128,102 @@ public:
         default:
             return MRAA_ERROR_INVALID_PARAMETER;
         }
-        current_pos = dir_feedback->get_average_val();    //get starting position
-        if ((desired_pos + 3 < current_pos) || (desired_pos + 3 == current_pos)) {              //rotate CCW
-            result = rotate_ccw();
 
+        current_pos = dir_feedback->get_average_val();    //get starting position
+        if (desired_pos + 3 <= current_pos) {              //rotate CCW
+            correct_pos = false;
+            rotating_cw = false;
+            if (!rotating_ccw) {
+                result = rotate_ccw();
+                if(result != -1) {
+                    rotating_ccw = true;
+                }
+            }
         }
-        else if ((desired_pos - 3 > current_pos) || (desired_pos - 3 == current_pos)) {         //rotate CW
-            result = rotate_cw();
+        else if (desired_pos - 3 >= current_pos) {         //rotate CW
+            rotating_ccw = false;
+            correct_pos = false;
+            if (!rotating_cw) {
+                result = rotate_cw();
+                if(result != -1) {
+                    rotating_cw = true;
+                }
+            }
         }
-        else {                                          //close enough; stop steering
-            result = steer_motor->send_signal(i2c_context, 0);
-            sleep(10);
+        else {
+            rotating_cw = false;
+            rotating_ccw = false;
+            if(!correct_pos) {
+                result = steer_motor->send_signal(i2c_context, 0); // stop steering
+                if(result != -1) {
+                    correct_pos = true;
+                }
+            }
         }
-        return result;
+        if (result != MRAA_SUCCESS) {
+            return -1;
+        } else {
+            return (current_pos ? 0 : 1); // if correct position send (0 = working) else (1 = still rotating)
+        }
     }
 
     /*
-        Rotates swerve module to correct position for XYZ translation
+        Rotates drive wheel forwards
+    */
+    int drive_wheel(float speed) {
+        mraa_result_t result = drive_motor->send_signal(i2c_context, speed);
+        if (result != MRAA_SUCCESS) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
 
-        @param  char    position:       desired translation position (XYZ), case-insensitive
+    /*
+        Rotates wheel clockwise. Stops if limit is reached.
+    */
+    int rotate_cw() {
+        mraa_result_t result = steer_motor->send_signal(i2c_context, -0.45);
+        //printf("CW – Value: %d, Limit: %d\n", dir_feedback->get_val(), CW_LIMIT);
+        if (result != MRAA_SUCCESS) {
+            return -1;
+        } else {
+            return 0;
+        }
 
-        @returns:   the result of the Y-translation positioning as a mraa_result_t value
+    }
+
+    /*
+        Rotates wheel counter-clockwise. Stops if limit is reached.
+    */
+    int rotate_ccw() {
+        mraa_result_t result = MRAA_SUCCESS;
+        //printf("CCW – Value: %d, Limit: %d\n", dir_feedback->get_val(), CCW_LIMIT);
+        result = steer_motor->send_signal(i2c_context, 0.45);
+        if (result != MRAA_SUCCESS) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    /*
+        Rotates drive wheel backwards
+    */
+
+    /*
+        Stops all motors
+    */
+    mraa_result_t stop_motors() {
+        printf("Stopping all motors\n");
+        mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
+        result = drive_motor->send_signal(i2c_context, 0);
+        return result;
+    }
+
+
+    /*
+        Original working rotate function
     */
     mraa_result_t rotate(uint16_t desired_pos) {
         mraa_result_t result = MRAA_SUCCESS;
@@ -161,59 +240,6 @@ public:
         }
         return result;
     }
-
-    /*
-        Rotates wheel clockwise. Stops if limit is reached.
-    */
-    mraa_result_t rotate_cw() {
-        mraa_result_t result = steer_motor->send_signal(i2c_context, -0.45);
-        //printf("CW – Value: %d, Limit: %d\n", dir_feedback->get_val(), CW_LIMIT);
-        return result;
-        /*
-        limit_ccw = false;
-        if (dir_feedback->get_val() >= CW_LIMIT) { //if limit reached
-            limit_cw = true;//stop
-        }
-          */
-    }
-
-    /*
-        Rotates wheel counter-clockwise. Stops if limit is reached.
-    */
-    mraa_result_t rotate_ccw() {
-        mraa_result_t result = MRAA_SUCCESS;
-        //printf("CCW – Value: %d, Limit: %d\n", dir_feedback->get_val(), CCW_LIMIT);
-        result = steer_motor->send_signal(i2c_context, 0.45);
-        return result;
-    }
-
-    /*
-        Rotates drive wheel forwards
-    */
-    mraa_result_t drive_forward(float speed) {
-        mraa_result_t result = drive_motor->send_signal(i2c_context, speed);
-        return result;
-    }
-
-    /*
-        Rotates drive wheel backwards
-    */
-    mraa_result_t drive_backward(float speed) {
-        mraa_result_t result  = drive_motor->send_signal(i2c_context, -speed);
-        return result;
-    }
-
-    /*
-        Stops all motors
-    */
-    mraa_result_t stop_motors() {
-        printf("Stopping all motors\n");
-        mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
-        result = drive_motor->send_signal(i2c_context, 0);
-        return result;
-    }
-
-
 };
 
 #endif

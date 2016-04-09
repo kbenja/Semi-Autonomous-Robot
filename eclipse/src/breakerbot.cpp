@@ -58,7 +58,10 @@ int main(int argc, char** argv) {
 
         uint8_t address = 0x40;                     // i2c chip is @ i2c address 0x40
         mraa_i2c_context i2c = mraa_i2c_init(6);    // create original context for i2c (bus 6)
-        i2c_init_board(i2c, address);               // initialize the board (our i2c library function)
+        mraa_result_t i2c_status = i2c_init_board(i2c, address);               // initialize the board (our i2c library function)
+        if (i2c_status != MRAA_SUCCESS) {
+            printf("[ !!! ] Can not initialize I2C Board.\n")
+        }
 
         // ORIGINAL (i2c, id, direction_port, drive_port, pot_AI, optical_encoder_reg, SWERVE_position)
         Swerve_Module s1 = Swerve_Module(i2c, 1, 5, 1, 1, 0, 2000, 2000, 2000);
