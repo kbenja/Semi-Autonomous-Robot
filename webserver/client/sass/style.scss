@@ -34,13 +34,6 @@ button {
   box-sizing: border-box;
 }
 
-.dev-container {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  z-index: 999;
-}
-
 .header {
   width: 100%;
   min-width: $page-width;
@@ -78,24 +71,28 @@ button {
       height: 100%;
       .battery-container {
         img {
-          height: 25px;
+          height: 30px;
           width: auto;
+          margin: 10px;
         }
       }
       .position-container {
-
+        .compass {
+          width: 100%;
+          margin: 0 auto;
+          img {
+            margin: 10px;
+            width: 75px;
+            height: auto;
+          }
+        }
       }
       .status-container {
         .status {
-          display: inline-block;
-          text-align: center;
-          width: 100px;
-          height: 100px;
-          border-radius: 75px;
-          font-size: 10px;
-          color: #000;
-          line-height: 100px;
-          background: #00ff00;
+          height: 50px;
+          margin: 10px 5px;
+          line-height: 50px;
+          border: 2px dotted red;
         }
        }
       .alignment-positions{
@@ -232,6 +229,35 @@ button {
     }
     &.panel-right {
       max-width: 17.25%;
+      min-width: 210px;
+      .hardware-container {
+        width: 100%;
+        margin: 0 auto;
+        > div {
+          border: 2px red dotted;
+          width: 100px;
+          height: 40px;
+          padding: 10px 0;
+          display: inline-block;
+          vertical-align: center;
+
+        }
+      }
+      .event-container {
+        .events {
+          margin: 10px auto;
+          height: 300px;
+          width: 200px;
+          overflow: scroll;
+          p {
+            text-align: left;
+            font-size: 0.8em;
+            padding: 0;
+            margin: 0;
+
+          }
+        }
+      }
       .output-container {
         // changing this to relative (relative position by default)
         // position: absolute;

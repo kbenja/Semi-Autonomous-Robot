@@ -5847,12 +5847,6 @@ button {
   -moz-box-sizing: border-box;
   box-sizing: border-box; }
 
-.dev-container {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  z-index: 999; }
-
 .header {
   width: 100%;
   min-width: 1100px;
@@ -5886,18 +5880,21 @@ button {
       max-width: 17.25%;
       height: 100%; }
       .wrapper .panel.panel-left .battery-container img {
-        height: 25px;
-        width: auto; }
+        height: 30px;
+        width: auto;
+        margin: 10px; }
+      .wrapper .panel.panel-left .position-container .compass {
+        width: 100%;
+        margin: 0 auto; }
+        .wrapper .panel.panel-left .position-container .compass img {
+          margin: 10px;
+          width: 75px;
+          height: auto; }
       .wrapper .panel.panel-left .status-container .status {
-        display: inline-block;
-        text-align: center;
-        width: 100px;
-        height: 100px;
-        border-radius: 75px;
-        font-size: 10px;
-        color: #000;
-        line-height: 100px;
-        background: #00ff00; }
+        height: 50px;
+        margin: 10px 5px;
+        line-height: 50px;
+        border: 2px dotted red; }
       .wrapper .panel.panel-left .alignment-positions {
         display: inline-block;
         position: relative;
@@ -5999,7 +5996,28 @@ button {
               .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.left, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.right, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.x_button, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.b_button {
                 display: inline-block; }
     .wrapper .panel.panel-right {
-      max-width: 17.25%; }
+      max-width: 17.25%;
+      min-width: 210px; }
+      .wrapper .panel.panel-right .hardware-container {
+        width: 100%;
+        margin: 0 auto; }
+        .wrapper .panel.panel-right .hardware-container > div {
+          border: 2px red dotted;
+          width: 100px;
+          height: 40px;
+          padding: 10px 0;
+          display: inline-block;
+          vertical-align: center; }
+      .wrapper .panel.panel-right .event-container .events {
+        margin: 10px auto;
+        height: 300px;
+        width: 200px;
+        overflow: scroll; }
+        .wrapper .panel.panel-right .event-container .events p {
+          text-align: left;
+          font-size: 0.8em;
+          padding: 0;
+          margin: 0; }
       .wrapper .panel.panel-right .output-container {
         margin: 20px auto;
         padding: 20px; }

@@ -54,22 +54,25 @@
             <div class="battery-container">
                 <h4>BATTERY</h4>
                 <img src="images/battery_100.png">
-                <p>Last charge:</p>
-                <p>15 minutes ago.</p>
+                <p>Last charge:<br>15 minutes ago.</p>
             </div>
             <div ng-controller="DataCtrl" class="position-container">
-                <h4>Postion Stuff</h4>
+                <h4>POSITION</h4>
+                <div class="compass">
+                    <img ng-style="{'transform': 'rotate('+orientation+'deg)', '-webkit-transform': 'rotate('+orientation+'deg)', '-ms-transform': 'rotate('+orientation+'deg)'}"src="images/direction.png">
+                    <p>Orientation: {{ orientation }}&deg;</p>
+
+                </div>
                 <button ng-click="update()">Update</button>
-                <p>Test connection to backend: {{ data }}</p>
-                <p>Data from Intel Edison: {{ message }}</p>
+                <p>Data from Intel Edison: {{ data }}</p>
             </div>
             <div class="status-container">
                 <div class="status">Breaker Engagaged</div>
                 <div class="status">Robot Asleep</div>
             </div>
             <div class="alignment-positions">
-                <img id="cubicle" src="images/cubicle.png">
-                <img id="breakerbot" src="images/breakerbot_logo.png">
+                <!-- <img id="cubicle" src="images/cubicle.png"> -->
+                <!-- <img id="breakerbot" src="images/breakerbot_logo.png"> -->
             </div>
         </div>
         <div class="panel panel-middle">
@@ -135,39 +138,53 @@
             </div>
         </div>
         <div class="panel panel-right">
-            <div class="output-container">
-                <div class="top">
-                    <table>
-                        <tr>
-                            <th>Component</th>
-                            <th>Status</th>
-                        </tr>
-                        <tr>
-                            <td>Intel Edision</td>
-                            <td>ACTIVE</td>
-                        </tr>
-                        <tr>
-                            <td>LIDAR</td>
-                            <td>ACTIVE</td>
-                        </tr>
-                        <tr>
-                            <td>Buck Convertor</td>
-                            <td>ACTIVE</td>
-                        </tr>
-                    </table>
+            <div class="bottom">
+                <div class="hardware-container">
+                    <h4>HARDWARE STATUS</h4>
+                    <div>Left Lidar</div>
+                    <div>Left Lidar</div>
+                    <div>Motors</div>
+                    <div>NavX Sensor</div>
+                    <div>I2C board</div>
+                    <div>Gamepad</div>
                 </div>
-                <div class="bottom">
-                    <table>
-                        <tr>
-                            <th>This will be the output of the robot</th>
-                        </tr>
-                        <tr>
-                            <td>e.g. We'll have a stream of data, like, Robot Connected at 14:23, Robot Aligned at 14:59, etc.</td>
-                        </tr>
-                    </table>
-                    <button type="button" class="btn-lg btn-danger">Emergency Stop</button>
-                    <!-- <button id="stop">STOP</button> -->
+                <div class="event-container">
+                    <h4>EVENT LOG</h4>
+                    <div class="events">
+                        <p>11:43:55 Breakerbot powered on.</p>
+                        <p>11:44:12 Switched to manual mode.</p>
+                        <p>11:55:02 Controller connected.</p>
+                        <p>11:56:13 Forward command sent to robot.</p>
+                        <p>11:56:30 Received error from host.</p>
+                        <p>11:57:55 Breakerbot will self destruct in...</p>
+                        <p>11:57:56 3...</p>
+                        <p>11:57:57 2...</p>
+                        <p>11:57:58 1...</p>
+                        <p>11:57:59 Goodbye</p>
+                        <p>11:43:55 Breakerbot powered on.</p>
+                        <p>11:44:12 Switched to manual mode.</p>
+                        <p>11:55:02 Controller connected.</p>
+                        <p>11:56:13 Forward command sent to robot.</p>
+                        <p>11:56:30 Received error from host.</p>
+                        <p>11:57:55 Breakerbot will self destruct in...</p>
+                        <p>11:57:56 3...</p>
+                        <p>11:57:57 2...</p>
+                        <p>11:57:58 1...</p>
+                        <p>11:57:59 Goodbye</p>
+                        <p>11:43:55 Breakerbot powered on.</p>
+                        <p>11:44:12 Switched to manual mode.</p>
+                        <p>11:55:02 Controller connected.</p>
+                        <p>11:56:13 Forward command sent to robot.</p>
+                        <p>11:56:30 Received error from host.</p>
+                        <p>11:57:55 Breakerbot will self destruct in...</p>
+                        <p>11:57:56 3...</p>
+                        <p>11:57:57 2...</p>
+                        <p>11:57:58 1...</p>
+                        <p>11:57:59 Goodbye</p>
+                    </div>
                 </div>
+                <button type="button" class="btn-lg btn-danger">Emergency Stop</button>
+                <!-- <button id="stop">STOP</button> -->
             </div>
         </div>
         <!-- <script type="text/javascript" src="js/main.js"></script> -->
