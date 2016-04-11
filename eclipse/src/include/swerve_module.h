@@ -27,6 +27,8 @@ public:
     bool rotating_ccw;
     bool rotating_cw;
 
+    bool has_passed;
+
     bool ready;
 
     mraa_i2c_context i2c_context;   //i2c context for communication
@@ -78,7 +80,7 @@ public:
         z_pos = z_position;
 
         ready = false;
-
+        has_passed = false;
 
 
         printf("[ init ] Created swerve module ID %d\n", id);
@@ -151,30 +153,34 @@ public:
             return -1;
         }
         current_pos = dir_feedback->get_average_val();    //get starting position
-        if (desired_pos + 5 <= current_pos) {              //rotate CCW
+        printf("current_pos: %d, desired_pos: %d\n", current_pos, desired_pos);
+        // return 0;
+        if (desired_pos + 30 <= current_pos) {
+            // overshoot and then approach from CW side
             correct_pos = false;
             rotating_cw = false;
+            has_passed = true;
             if (!rotating_ccw) {
-                rotation_result = rotate_ccw(); // decrease pot value
+                rotation_result = rotate_ccw(); // increase pot value
                 if(rotation_result != -1) {
                     rotating_ccw = true;
                 }
             }
-        } else if (desired_pos - 5 >= current_pos) {         //rotate CW
+        } else if (desired_pos >= current_pos) {         //rotate CW
             correct_pos = false;
             rotating_ccw = false;
+            has_passed = false;
             if (!rotating_cw) {
-                rotation_result = rotate_cw(); // increase pot value
+                rotation_result = rotate_cw(); // decrease pot value
                 if(rotation_result != -1) {
                     rotating_cw = true;
                 }
             }
-        } else {
+        } else if (has_passed) {
             rotating_cw = false;
             rotating_ccw = false;
             if(!correct_pos) {
                 rotation_result = stop_rotation(); // stop rotation
-                sleep(1);
                 if(rotation_result != -1) {
                     correct_pos = true;
                 }
@@ -201,7 +207,7 @@ public:
     */
     int rotate_cw() {
         printf("ROTATE CW module %d\n", id);
-        mraa_result_t result = steer_motor->send_signal(i2c_context, -0.45);
+        mraa_result_t result = steer_motor->send_signal(i2c_context, -0.4);
         return (result != MRAA_SUCCESS ? -1 : 0);
 
     }
@@ -212,7 +218,7 @@ public:
     int rotate_ccw() {
         mraa_result_t result = MRAA_SUCCESS;
         printf("ROTATE CCW module %d\n", id);
-        result = steer_motor->send_signal(i2c_context, 0.45);
+        result = steer_motor->send_signal(i2c_context, 0.6);
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
 

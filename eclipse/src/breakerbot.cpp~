@@ -1,182 +1,184 @@
 #include <stdlib.h>
-#include "include/i2c_library.h"
 #include "include/ipc_module.h"
-#include "include/manual_control.h"
-#include "include/lidar_module.h"
-#include "include/motor_module.h"
-#include "include/encoder_module.h"
+#include "include/test_module.h"
+#include "include/steering_module.h"
+#include "include/swerve_module.h"
 #include "include/pot_module.h"
-#include "include/navx_module.h"
+#include "include/drive_module.h"
 
-bool lidar_module = false;
-bool motor_module = false;
-bool ipc_module = true;
-bool encoder_module = false;
-bool pot_module = false;
-bool navx_module = false;
-bool manual_control = false;
+enum modes {
+    DISCONNECTED = -1,
+    IDLE = 0,
+    MANUAL = 1,
+    AUTO = 2,
+    INTAKE = 3,
+    TESTING = 4
+};
 
-/*
-* Instructions = { MODE, INPUT1 }
-* MODE:
-* -1 = disconnected
-* 0 = idle mode
-* 1 = manual input
-*/
+enum directions {
+    BREAK = 0,
+    FORWARD = 1,
+    LEFT = 2,
+    BACKWARD = 3,
+    RIGHT = 4,
+    ROTATE_CW = 5,
+    ROTATE_CCW = 6
+};
+
+bool ipc_module = false;
+bool swerve_module = true;
+bool pot_testing = false;
+
 int16_t instructions[2] = {-1,0};
-int mode = -1;
 int16_t *p_instructions = instructions;
+int16_t sending[3] = {-1,-1,-2};
+int16_t *p_sending = sending;
+
+int mode;
+int input;
+int result;
 
 int main(int argc, char** argv) {
-    float user_input = 0.0;                          // receive signal from argv or use default (stop)
-    if (argc > 1) {
-        printf("***Using given value by user\n");
-        user_input = atof(argv[1]);
-    }
-
     if (ipc_module) {
-        /*
-         *  MOTOR MODULE INITIALIZATION
-         */
-        uint8_t address = 0x40;
-        mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
-        i2c_init_board(i2c, address);               // initialize the board
+        float user_input = 0.0;                          // receive signal from argv or use default (stop)
+        if (argc > 1) {
+            printf("***Using given value by user\n");
+            user_input = atof(argv[1]);
+        }
 
-        Motor_Module m1(1);                         // create motors to ports 1, 2, and 3
-        Motor_Module m2(2);
-
-        /*
-         * UNIX SOCKET INITIALIZATION
-         */
+        // UNIX SOCKET INITIALIZATION
         IPC_Module ipc("/tmp/breakerbot.socket");
         int status = ipc.unix_socket_initialize();
-        if (status < 0) {
-            printf("Cannot connect to socket\n");
-        }
-        // int heartbeat = 0; //make sure to communicate every 0.25 sec;
-        while(1) {
-            usleep(100000); // cycle time
-            ipc.unix_socket_write(); // check for status .. eventually send status of devices
-            ipc.unix_socket_read(p_instructions);
-            mode = instructions[0];
-            switch(mode) {
-                case -1: // No user connected to web server
-                    printf("CLIENT IS NOT CONNECTED\r");
-                    break;
-                case 0: // Idle mode, no recent commands
-                    break;
-                case 1:
-                    printf("MODE = MANUAL CONTROL, INPUT = %d\n", instructions[1]);
-                    if(instructions[1] == 1) {
-                        m1.send_signal(i2c, user_input);
-                        m2.send_signal(i2c, user_input);
-                    } else if (instructions[1] == 3) {
-                        m1.send_signal(i2c, -user_input);
-                        m2.send_signal(i2c, -user_input);
-                    } else if (instructions[1] == 2) {
-                        user_input += 0.1;
-                        printf("Speed = %f\n",user_input);
-                    } else if (instructions[1] == 4) {
-                        user_input -= 0.1;
-                        printf("Speed = %f\n",user_input);
-                    } else if (instructions[1] == 0) {
-                        m1.send_signal(i2c, 0);
-                        m2.send_signal(i2c, 0);
-                    }
-                    mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
-                    break;
-                default:
-                    printf("CAUGHT IN DEFAULT\n");
-                    break;
-            }
-        }
-    }
-
-    if (pot_module) {
-        printf("Pot module testing");
-        Pot_Module P0(0,12);
-        Pot_Module P1(1,12);
-
-        while(pot_module) {
-            printf("Pot 1: %d     Pot 2: %d\n",P0.get_val(),P1.get_val());
+        while(status < 0) {
+            status = ipc.unix_socket_initialize();
+            printf("Cannot connect to UNIX socket, retrying\n");
             usleep(500000);
         }
-    }
 
-    if (manual_control) {
-        printf("MANUAL CONTROL MODULE TESTING\n\n");
+        // INITIALIZE HARDWARE
+        NavX_Module x1; // initialize NavX
+        x1.set_zero(); // calibrate NavX
 
-        Manual_Control input;
-        while(1){
-            std::string instruction = input.getInstruction();
-            printf("instruction: %s\n", instruction.c_str());
+        uint8_t address = 0x40;                     // i2c chip is @ i2c address 0x40
+        mraa_i2c_context i2c = mraa_i2c_init(6);    // create original context for i2c (bus 6)
+        mraa_result_t i2c_status = i2c_init_board(i2c, address);               // initialize the board (our i2c library function)
+        if (i2c_status != MRAA_SUCCESS) {
+            printf("[ !!! ] Can not initialize I2C Board.\n");
         }
-    }
 
-    if (lidar_module) {
-        printf("LIDAR MODULE TESTING\n\n");
+        // ORIGINAL (i2c, id, direction_port, drive_port, pot_AI, optical_encoder_reg, SWERVE_position)
+        Swerve_Module s1 = Swerve_Module(i2c, 1, 5, 1, 1, 0, 2000, 2000, 2000);
+        Swerve_Module s2 = Swerve_Module(i2c, 1, 6, 2, 1, 0, 2000, 2000, 2000);
+        Swerve_Module s3 = Swerve_Module(i2c, 1, 7, 3, 2, 0, 2000, 2000, 2000);
+        Swerve_Module s4 = Swerve_Module(i2c, 1, 8, 4, 3, 0, 2000, 2000, 2000);
 
-        Lidar_Module l1(2);
+
         while(1) {
-            printf("%f\n",l1.get_distance_reading());
+            usleep(100000); // cycle time
+
+            ipc.unix_socket_write(sending); // send most recent data to socket
+            result = ipc.unix_socket_read(p_instructions); //result = 0 if empty socket, -1 if error, length if read
+            if(result > 0) {
+                mode = instructions[0];
+                input = instructions[1];
+                switch(mode) {
+                    case -1:
+                        printf("CLIENT IS DISONNECTED\r");
+                        break;
+                    case 0:
+                        printf("IDLE MODE, INPUT = %d\n", input);
+                        break;
+                    case 1:
+                        switch(instructions[1]) {
+                            case 0:
+                                printf("Received BREAK command\n");
+                                s1.stop_motors();
+                                s2.stop_motors();
+                                s3.stop_motors();
+                                s4.stop_motors();
+                                break;
+                            case 1:
+                                printf("Received FORWARD command\n");
+                                s1.drive_wheel(user_input);
+                                s2.drive_wheel(user_input);
+                                s3.drive_wheel(user_input);
+                                s4.drive_wheel(user_input);
+                                break;
+                            case 2:
+                                printf("Received LEFT command\n");
+                                break;
+                            case 3:
+                                printf("Received BACKWARDS command\n");
+                                s1.drive_wheel(-user_input);
+                                s2.drive_wheel(-user_input);
+                                s3.drive_wheel(-user_input);
+                                s4.drive_wheel(-user_input);
+                                break;
+                            case 4:
+                                printf("Received RIGHT command\n");
+                                break;
+                            case 5:
+                                printf("Received CLOCKWISE command\n");
+                                break;
+                            case 6:
+                                printf("Received COUNTER CLOCKWISE command\n");
+                                break;
+                            default:
+                                break;
+                        // wake up the board after sending an input
+                        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
+                        break;
+                    }
+                    case 2:
+                        printf("AUTO MODE, INPUT = %d\n", input);
+                        break;
+                    case 3:
+                        printf("INTAKE MODE, INPUT = %d\n", input);
+                        break;
+                    case 4:
+                        printf("TESTING MODE, INPUT = %d\n", input);
+                        break;
+                    default:
+                        printf("DEFAULT MODE\n");
+                        break;
+                }
+            }
+            sending[0] = mode;
+            sending[1] = input;
+            sending[2] = x1.get_yaw()/100;
         }
     }
-
-    if (motor_module) {
-        printf("MOTOR MODULE TESTING\n\n");
+    if (swerve_module) {
+        printf("Testing swerve module\n");
+        int swerve_result;
+        bool drive_proceed = false;
 
         uint8_t address = 0x40;
-        mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
-        i2c_init_board(i2c, address);               // initialize the board
-
-        Motor_Module m1(1);                         // create motors to ports 1, 2, and 3
-        Motor_Module m2(2);
-        Motor_Module m3(3);
-        Motor_Module m4(4);
-
-        m1.send_signal(i2c, user_input);                // send signal to boards
-        m2.send_signal(i2c, user_input);
-        m3.send_signal(i2c, user_input);
-        m4.send_signal(i2c, user_input);
-
-        printf("waking up the board\n");
-        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
-    }
-
-    if (encoder_module) {
-        sleep(1);
         mraa_i2c_context i2c = mraa_i2c_init(6);
-        mraa_result_t result = MRAA_SUCCESS;
-        result = mraa_i2c_address(i2c, 0x30);
-        if (result != MRAA_SUCCESS) {
-            printf("was not able to connect to address\n");
-        } else {
-            printf("Was able to write to the device\n");
-        }
-        Encoder_Module e1(1);
-        uint8_t higher_bits = mraa_i2c_read_byte_data(i2c, 0x44);
-        uint8_t lower_bits = mraa_i2c_read_byte_data(i2c, 0x45);
-        if (result != MRAA_SUCCESS) {
-            printf("Cannot read from byte\n");
-        } else {
-            printf("Reading 0x44 = 0x%02x  0x45 = 0x%02x\n", higher_bits, lower_bits);
+        mraa_result_t i2c_status = i2c_init_board(i2c, address);
+        if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
+
+        // dir port 1, drive port 2, Y, X
+        Swerve_Module s2 = Swerve_Module(i2c, 1, 1, 2, 1, 0, 2467, 1955, 2235);
+        while(1) {
+            usleep(50000); //sleep for 0.05s
+            swerve_result = s2.swerve_controller('X', 0.5, drive_proceed); // try to rotate to the correct position
+            if(swerve_result == 0) {
+                drive_proceed = true;
+            } else {
+                drive_proceed = false;
+            }
+            usleep(50);
+            mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
         }
     }
-
-    if (navx_module) {
-        int count = 0;
-        printf("Creating NavX module\n");
-        NavX_Module x1;
-        while(1) {
-            usleep(500000); //sleep for 1/2
-            printf("Getting NavX fused heading value\n");
-            printf("Value read = %d\n", x1.get_yaw()/100);
-            count++;
-            if (count%10 == 0) {
-                x1.set_zero();
-                printf("\n[ !!!! ] Setting zero on NavX\n");
-            }
+    if (pot_testing) {
+        int testing_port = 0;                          // default value of pot is 0
+        if (argc > 1) {
+            printf("***Using given value by user\n");
+            testing_port = atoi(argv[1]);
         }
+        test_pot_module(testing_port);
     }
 
     return 0;

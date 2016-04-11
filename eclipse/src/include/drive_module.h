@@ -40,9 +40,8 @@ public:
         BR_swerve_proceed = false;
         FL_swerve_proceed = false;
         BR_swerve_proceed = false;
-        drive_proceed = 1;
+        drive_proceed = false;
         swerve_controller_result = 1;
-
     }
 
     ~Drive_Module() {   //free memory

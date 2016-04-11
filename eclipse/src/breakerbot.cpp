@@ -153,17 +153,48 @@ int main(int argc, char** argv) {
         int swerve_result;
         bool drive_proceed = false;
 
+        int stop_point = 0;
+
         uint8_t address = 0x40;
         mraa_i2c_context i2c = mraa_i2c_init(6);
         mraa_result_t i2c_status = i2c_init_board(i2c, address);
         if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
 
-        // dir port 1, drive port 2, Y, X
-        Swerve_Module s2 = Swerve_Module(i2c, 1, 1, 2, 1, 0, 2467, 1955, 2235);
+
+        // dir port 1, drive port 2, Y, X, Z
+        // Swerve_Module s2 = Swerve_Module(i2c, 1, 1, 2, 0, 0, 1484, 1952, 1828); // BR calibration
+        // Swerve_Module s2 = Swerve_Module(i2c, 2, 1, 2, 1, 0, 2437, 1925, 2075); // FR calibration
+        // Swerve_Module s2 = Swerve_Module(i2c, 3, 1, 2, 2, 0, 1662, 2175, 1981); // FL calibration
+        Swerve_Module s2 = Swerve_Module(i2c, 4, 1, 2, 3, 0, 2506, 2006, 2173); // BL calibration
+
         while(1) {
             usleep(50000); //sleep for 0.05s
-            swerve_result = s2.swerve_controller('X', 0.5, drive_proceed); // try to rotate to the correct position
+            switch (stop_point) {
+                case 0:
+                    swerve_result = s2.swerve_controller('X', 0.3, drive_proceed); // try to rotate to the correct position
+                    break;
+                case 1:
+                    swerve_result = s2.swerve_controller('Y', 0.3, drive_proceed); // try to rotate to the correct position
+                    break;
+                case 2:
+                    swerve_result = s2.swerve_controller('Z', 0.3, drive_proceed); // try to rotate to the correct position
+                    break;
+                case 3:
+                    swerve_result = s2.swerve_controller('Y', 0.3, drive_proceed); // try to rotate to the correct position
+                    break;
+                case 4:
+                    swerve_result = s2.swerve_controller('X', 0.3, drive_proceed); // try to rotate to the correct position
+                    break;
+                default:
+                    printf("INCORRECT CASE\n");
+                    break;
+            }
+
             if(swerve_result == 0) {
+                stop_point++;
+                stop_point = stop_point%5;
+                printf("ALIGNED! moving to stopping point %d\n", stop_point);
+                usleep(500000);
                 drive_proceed = true;
             } else {
                 drive_proceed = false;
