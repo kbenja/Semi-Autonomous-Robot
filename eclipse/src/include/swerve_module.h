@@ -39,16 +39,6 @@ public:
     int controller_result;
 
     /*
-        Initializes swerve module with ID 0 and:
-            2x Motor_Modules both on port 0
-            1x Pot_Module on ADC 0
-            1x Encoder_Module on port 0
-    */
-    Swerve_Module() {
-        printf("[ !!!! ] Do not use default constructor\n");
-    }
-
-    /*
         Initializes swerve module with specified ID:
 
         @param const        mraa_i2c_context &i2c_in:   i2c context for communication
@@ -87,9 +77,9 @@ public:
         y_pos = y_position;
         z_pos = z_position;
 
-        // correct position = false to start
-        correct_pos = false;
-        controller_result = 1;
+        ready = false;
+
+
 
         printf("[ init ] Created swerve module ID %d\n", id);
     }
@@ -113,27 +103,27 @@ public:
         @returns:       1 if still rotating direction motor, 0 if ready to move, -1 if error has occured
     */
     int swerve_controller(char axis, float speed, bool proceed) {
-        if (speed != 0) { // if not braking
-            controller_result = rotate_position(axis);
-            if (controller_result == 1) {
-                return 1; // still rotating
-                ready = false;
-            } else if (controller_result == 0 && !proceed) {
-                ready = true;
-                return 0; // ready but other motors are not ready
-            } else if (controller_result == 0 && proceed) {
-                controller_result = drive_wheel(speed);
-                ready = true;
-                return 0; // all motors ready to drive
-            } else if (controller_result == -1) {
-                ready = false;
-                return -1;
-            }
-        } else {
+        if (speed == 0) {
             controller_result = stop_motors();
             return controller_result;
         }
-        return 0; // okay;
+        controller_result = rotate_position(axis);
+        if (controller_result == -1) {
+            ready = false;
+            return -1; // an error has occured
+        } else if (controller_result == 1) {
+            ready = false;
+            return 1; // still rotating
+        } else if (controller_result == 0) {
+            ready = true;
+            if (proceed) { // received proceed command from drive module
+                controller_result = drive_wheel(speed);
+                return controller_result; // returns 0 if good, -1 if error
+            } else {
+                return 0; // returns
+            }
+        }
+        return -1; // an error has occured in the logic
     }
 
     /*
@@ -165,16 +155,16 @@ public:
             correct_pos = false;
             rotating_cw = false;
             if (!rotating_ccw) {
-                rotation_result = rotate_ccw();
+                rotation_result = rotate_ccw(); // decrease pot value
                 if(rotation_result != -1) {
                     rotating_ccw = true;
                 }
             }
         } else if (desired_pos - 5 >= current_pos) {         //rotate CW
-            rotating_ccw = false;
             correct_pos = false;
+            rotating_ccw = false;
             if (!rotating_cw) {
-                rotation_result = rotate_cw();
+                rotation_result = rotate_cw(); // increase pot value
                 if(rotation_result != -1) {
                     rotating_cw = true;
                 }
@@ -193,7 +183,7 @@ public:
         if (rotation_result == -1) {
             return -1;
         } else {
-            return (current_pos ? 0 : 1); // if correct position send (0 = working) else (1 = still rotating)
+            return (correct_pos ? 0 : 1); // if correct position send (0 = correct position) else (1 = still rotating)
         }
     }
 

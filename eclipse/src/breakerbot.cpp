@@ -125,10 +125,10 @@ int main(int argc, char** argv) {
                                 break;
                             default:
                                 break;
-                        }
                         // wake up the board after sending an input
                         mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                         break;
+                    }
                     case 2:
                         printf("AUTO MODE, INPUT = %d\n", input);
                         break;
@@ -150,7 +150,8 @@ int main(int argc, char** argv) {
     }
     if (swerve_module) {
         printf("Testing swerve module\n");
-
+        int swerve_result;
+        bool drive_proceed = false;
 
         uint8_t address = 0x40;
         mraa_i2c_context i2c = mraa_i2c_init(6);
@@ -161,22 +162,23 @@ int main(int argc, char** argv) {
         Swerve_Module s2 = Swerve_Module(i2c, 1, 1, 2, 1, 0, 2467, 1955, 2235);
         while(1) {
             usleep(50000); //sleep for 0.05s
-            s2.swerve_controller('X', 0.5, true); // try to rotate to the correct position
+            swerve_result = s2.swerve_controller('X', 0.5, drive_proceed); // try to rotate to the correct position
+            if(swerve_result == 0) {
+                drive_proceed = true;
+            } else {
+                drive_proceed = false;
+            }
             usleep(50);
             mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
         }
     }
     if (pot_testing) {
-        int testing_port = 1;                          // default value of pot is 0
+        int testing_port = 0;                          // default value of pot is 0
         if (argc > 1) {
             printf("***Using given value by user\n");
             testing_port = atoi(argv[1]);
         }
-        Pot_Module pot = Pot_Module(testing_port, 12);
-        while(1) {
-            usleep(500000); // sleep for 0.5s
-            printf("VALUE for port: %d equals %d\n", testing_port, pot.get_average_val());
-        }
+        test_pot_module(testing_port);
     }
 
     return 0;

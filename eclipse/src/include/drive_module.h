@@ -53,9 +53,6 @@ public:
     }
 
     int drive(char axes, float speed){
-        // first check each of the results of the swerve_controller function to see if it is 0 or 1
-        // if all of the results are 0, then you can move forwards
-        // otherwise, continue with each of the swerve_controller functions while waiting for alignment
         FR_swerve_proceed = FR->ready;
         FL_swerve_proceed = FL->ready;
         BR_swerve_proceed = BR->ready;
