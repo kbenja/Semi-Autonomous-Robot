@@ -40,15 +40,15 @@ public:
         return (connect(fd, (struct sockaddr*)&addr, sizeof(addr))); // connect to socket
     }
     int unix_socket_write(int16_t sending[]) {
-        return write(fd, sending, sizeof(sending));
+        return write(fd, sending, 4);
     }
-    int unix_socket_read(int16_t * instructions) {
+    int unix_socket_read(int16_t instructions[]) {
         read(fd,buffer,4);
         // should be "Resource temporarily unavailable" b/c of non blocking
         // printf("ERROR: %s\n", strerror(errno));
         if(errno != EAGAIN) {
-            *(instructions) = buffer[0];
-            *(instructions+1) = buffer[1];
+            instructions[0] = buffer[0];
+            instructions[1] = buffer[1];
             return 1;
         }
         return -1;

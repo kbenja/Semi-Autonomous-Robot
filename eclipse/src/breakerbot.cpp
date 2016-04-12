@@ -26,17 +26,15 @@ enum directions {
 };
 
 bool ipc_module = false;
-bool swerve_module = false;
 bool pot_testing = false;
 bool stop_motors = false;
 bool motor_testing = false;
 bool navx_testing = false;
+bool swerve_module = false;
 bool drive_module = true;
 
 int16_t instructions[2] = {-1,0};
-int16_t *p_instructions = instructions;
 int16_t sending[3] = {-1,-1,-2};
-int16_t *p_sending = sending;
 
 int mode;
 int input;
@@ -71,11 +69,11 @@ int main(int argc, char** argv) {
         if (i2c_status != MRAA_SUCCESS) {
             printf("[ !!! ] Can not initialize I2C Board.\n");
         }
-
+        int count = 0;
         while(1) {
             usleep(100000); // cycle time
             ipc.unix_socket_write(sending); // send most recent data to socket
-            result = ipc.unix_socket_read(p_instructions); //result = 0 if empty socket, -1 if error, length if read
+            result = ipc.unix_socket_read(instructions); //result = 0 if empty socket, -1 if error, length if read
             if(result > 0) {
                 mode = instructions[0];
                 input = instructions[1];
@@ -129,14 +127,30 @@ int main(int argc, char** argv) {
                         break;
                 }
             }
-            // sending[0] = mode;
-            sending[1] = input;
-            sending[0] = x1.get_yaw()/100;
+            sending[0] = count++;
+            sending[1] = count++;
+            // sending[0] = x1.get_yaw()/100;
         }
     }
 
     if (drive_module) {
         printf("Testing drive module\n");
+        // int direction = 0;                          // default value of pot is 0
+        // if (argc > 1) {
+        //     printf("***Using given value by user\n");
+        //     testing_port = atoi(argv[1]);
+        // }
+        uint8_t address = 0x40;
+        mraa_i2c_context i2c = mraa_i2c_init(6);
+        mraa_result_t i2c_status = i2c_init_board(i2c, address);
+        if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
+        Drive_Module d1 = Drive_Module(i2c);
+        while(1) {
+            usleep(50000);
+            d1.drive('X', 0.7);
+            mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
+            // usleep(500);
+        }
     }
 
     if (swerve_module) {
@@ -154,9 +168,9 @@ int main(int argc, char** argv) {
 
         // ID, dir port, drive port, AOIN, Encoder, Y, X, Z
         // FR swerve M7
-        // Swerve_Module s1 = Swerve_Module(i2c, 1, 6, 7, 0, 0, 2437, 1925, 2075);
+        Swerve_Module s1 = Swerve_Module(i2c, 1, 6, 7, 0, 0, 2437, 1925, 2075);
         // BR swerve M5
-        Swerve_Module s1 = Swerve_Module(i2c, 2, 4, 5, 1, 0, 1484, 1952, 1828);
+        // Swerve_Module s1 = Swerve_Module(i2c, 2, 4, 5, 1, 0, 1484, 1952, 1828);
         // BL swerve M1
         // Swerve_Module s3 = Swerve_Module(i2c, 3, 0, 1, 2, 0, 2506, 2006, 2173);
         // FL swerve M3

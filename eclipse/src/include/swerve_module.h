@@ -27,6 +27,7 @@ public:
     bool rotating_ccw;
     bool rotating_cw;
     bool waiting;
+    bool driving;
 
     bool has_passed;
 
@@ -83,6 +84,7 @@ public:
         ready = false;
         has_passed = false;
         waiting = false;
+        driving = false;
 
         printf("[ init ] Created swerve module ID %d\n", id);
     }
@@ -122,17 +124,24 @@ public:
                 return 1; // still rotating
             } else if (controller_result == 0) {
                 ready = true;
-                if (proceed) { // received proceed command from drive module
-                    controller_result = drive_wheel(speed);
-                    return controller_result; // returns 0 if good, -1 if error
-                } else {
-                    return 0; // returns
-                }
+                return 0; // ready
             }
             return -1; // an error has occured in the logic
         } else {
-            waiting = true;
-            stop_rotation();
+            if(!waiting) {
+                waiting = true;
+                stop_rotation();
+            }
+            if (proceed) { // received proceed command from drive module
+                if (!driving) {
+                    controller_result = drive_wheel(speed);
+                    printf("Driving wheel %d", id);
+                    driving = true;
+                    return controller_result; // returns 0 if good, -1 if error
+                }
+            } else {
+                return 0; // returns
+            }
         }
         return 0;
     }
