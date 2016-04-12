@@ -26,6 +26,7 @@ public:
     bool correct_pos;
     bool rotating_ccw;
     bool rotating_cw;
+    bool waiting;
 
     bool has_passed;
 
@@ -81,7 +82,7 @@ public:
 
         ready = false;
         has_passed = false;
-
+        waiting = false;
 
         printf("[ init ] Created swerve module ID %d\n", id);
     }
@@ -106,29 +107,34 @@ public:
     */
     int swerve_controller(char axis, float speed, bool proceed, bool wait) {
         controller_result = 0; // assume function is good from the start
-        if (speed == 0) {
-            controller_result = stop_motors();
-            return controller_result;
-        }
         if (!wait) {
+            waiting = false;
             controller_result = rotate_position(axis);
-        }
-        if (controller_result == -1) {
-            ready = false;
-            return -1; // an error has occured
-        } else if (controller_result == 1) {
-            ready = false;
-            return 1; // still rotating
-        } else if (controller_result == 0) {
-            ready = true;
-            if (proceed) { // received proceed command from drive module
-                controller_result = drive_wheel(speed);
-                return controller_result; // returns 0 if good, -1 if error
-            } else {
-                return 0; // returns
+            if (speed == 0) {
+                controller_result = stop_motors();
+                return controller_result;
             }
+            if (controller_result == -1) {
+                ready = false;
+                return -1; // an error has occured
+            } else if (controller_result == 1) {
+                ready = false;
+                return 1; // still rotating
+            } else if (controller_result == 0) {
+                ready = true;
+                if (proceed) { // received proceed command from drive module
+                    controller_result = drive_wheel(speed);
+                    return controller_result; // returns 0 if good, -1 if error
+                } else {
+                    return 0; // returns
+                }
+            }
+            return -1; // an error has occured in the logic
+        } else {
+            waiting = true;
+            stop_rotation();
         }
-        return -1; // an error has occured in the logic
+        return 0;
     }
 
     /*
@@ -242,26 +248,6 @@ public:
         result = drive_motor->send_signal(i2c_context, 0);
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
-
-
-    /*
-        Original working rotate function
-    */
-    // mraa_result_t rotate(uint16_t desired_pos) {
-    //     mraa_result_t result = MRAA_SUCCESS;
-    //     uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
-    //     if ((desired_pos - 3 >= current_pos) && (desired_pos < CW_LIMIT)) { //1926-2 = 1924
-    //         result = rotate_cw();     //rotate clockwise to position -> increases value
-    //     }
-    //     else if ((desired_pos + 3 <= current_pos) && (desired_pos > CCW_LIMIT)) { //1926+2 = 1928
-    //         result = rotate_ccw();    //rotate counterclockwise to position -> decreases value
-    //     }
-    //     else {
-    //         result = steer_motor->send_signal(i2c_context, 0); //Stop Signal to Motor
-    //         sleep(2);
-    //     }
-    //     return result;
-    // }
 };
 
 #endif

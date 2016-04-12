@@ -5,39 +5,35 @@
 #ifndef DRIVE_MODULE_H
 #define DRIVE_MODULE_H
 
-/*
 class Drive_Module {
 public:
     mraa_i2c_context i2c_bus;
-    bool FR_swerve_proceed;
-    bool BR_swerve_proceed;
-    bool FL_swerve_proceed;
-    bool BL_swerve_proceed;
+    bool FR_ready;
+    bool BR_ready;
+    // bool FL_ready;
+    // bool BL_ready;
     bool drive_proceed; // waits for all 4 swerve modules to be ready
     int swerve_controller_result;
 
     Swerve_Module * FR;
     Swerve_Module * BR;
-    Swerve_Module * FL;
-    Swerve_Module * BL;
-
-    Drive_Module() {
-        printf("[ !!!! ] Do not use default constructor of steering module\n");
-    }
+    // Swerve_Module * FL;
+    // Swerve_Module * BL;
 
     Drive_Module(mraa_i2c_context i2c) {
     	i2c_bus = i2c;
-        //initialize Swerve_Modules
-        FR = new Swerve_Module(i2c, 1, 1, 5, 1, 0, 2451, 1952, 2087);
-        BR  = new Swerve_Module(i2c, 2, 2, 6, 2, 0, 1392, 1877, 1733);
-        FL	= new Swerve_Module(i2c, 3, 3, 7, 3, 0, 1533, 2002, 1725);
-        BL   = new Swerve_Module(i2c, 4, 4, 8, 4, 0, 2488, 1994, 2139);
+        //initialize Swerve_Modules (ID, dir port, drive port, AOIN, Encoder, Y, X, Z)
+
+        FR = new Swerve_Module(i2c, 1, 6, 7, 0, 0, 2437, 1925, 2075); // FR swerve M7
+        BR = new Swerve_Module(i2c, 2, 4, 5, 1, 0, 1484, 1952, 1828); // BR swerve M5
+        // BL = new Swerve_Module(i2c, 3, 0, 1, 2, 0, 2506, 2006, 2173); // BL swerve M1
+        // FL = new Swerve_Module(i2c, 4, 3, 2, 3, 0, 1662, 2175, 1981); // FL swerve M3
 
         //initialize proceed flags
-        FR_swerve_proceed = false;
-        BR_swerve_proceed = false;
-        FL_swerve_proceed = false;
-        BR_swerve_proceed = false;
+        FR_ready = false;
+        BR_ready = false;
+        // FL_ready = false;
+        BR_ready = false;
         drive_proceed = false;
         swerve_controller_result = 1;
     }
@@ -45,40 +41,27 @@ public:
     ~Drive_Module() {   //free memory
         delete FR;
         delete BR;
-        delete FL;
-        delete BL;
+        // delete FL;
+        // delete BL;
     }
 
     int drive(char axes, float speed){
-        FR_swerve_proceed = FR->ready;
-        FL_swerve_proceed = FL->ready;
-        BR_swerve_proceed = BR->ready;
-        BL_swerve_proceed = BL->ready;
-        if(FR_swerve_proceed || FL_swerve_proceed || BR_swerve_proceed || BL_swerve_proceed) {
+        FR_ready = FR->ready;
+        // FL_ready = FL->ready;
+        BR_ready = BR->ready;
+        // BL_ready = BL->ready;
+        // if(FR_ready || FL_ready || BR_ready || BL_ready) {
+        if(FR_ready || BR_ready) {
             drive_proceed = true;
-            return 0;
-        } else {
+        else {
             drive_proceed = false;
-            swerve_controller_result = FR->swerve_controller(axes, speed, drive_proceed);
-            if(swerve_controller_result == -1) {
-                printf("FRONT RIGHT WHEEL STILL TURNING, AXIS = %c\n", axes);
-            }
-            swerve_controller_result = FL->swerve_controller(axes, speed, drive_proceed);
-            if(swerve_controller_result == -1) {
-                printf("FRONT LEFT WHEEL STILL TURNING, AXIS = %c\n", axes);
-            }
-            swerve_controller_result = BR->swerve_controller(axes, speed, drive_proceed);
-            if(swerve_controller_result == -1) {
-                printf("BACK RIGHT WHEEL STILL TURNING, AXIS = %c\n", axes);
-            }
-            swerve_controller_result = BL->swerve_controller(axes, speed, drive_proceed);
-            if(swerve_controller_result == -1) {
-                printf("BACK LEFT WHEEL STILL TURNING, AXIS = %c\n", axes);
-            }
-            return 1;
         }
+        swerve_controller_result = FR->swerve_controller(axes, speed, drive_proceed, FR_ready);
+        // swerve_controller_result = FL->swerve_controller(axes, speed, drive_proceed, FL_ready);
+        swerve_controller_result = BR->swerve_controller(axes, speed, drive_proceed, BR_ready);
+        // swerve_controller_result = BL->swerve_controller(axes, speed, drive_proceed, BL_ready);
+        return 1;
     }
 };
-*/
 
 #endif

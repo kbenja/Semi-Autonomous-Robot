@@ -29,7 +29,7 @@ public:
 
 
     /*FUNCTIONS*/
-    //Averaging 10 values
+    //Averaging 5 values
     uint16_t get_average_val() {
         adc_value = mraa_aio_read(adc_port);        //read port
         usleep(50);
@@ -41,18 +41,7 @@ public:
         usleep(50);
         adc_value += mraa_aio_read(adc_port);
         usleep(50);
-        adc_value += mraa_aio_read(adc_port);
-        usleep(50);
-        adc_value += mraa_aio_read(adc_port);
-        usleep(50);
-        adc_value += mraa_aio_read(adc_port);
-        usleep(50);
-        adc_value += mraa_aio_read(adc_port);
-        usleep(50);
-        adc_value += mraa_aio_read(adc_port);
-
-        return adc_value/10;
-
+        return adc_value/5;
     }
 
     /*

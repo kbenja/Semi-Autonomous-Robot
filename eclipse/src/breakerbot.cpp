@@ -4,7 +4,7 @@
 #include "include/steering_module.h"
 #include "include/swerve_module.h"
 #include "include/pot_module.h"
-// #include "include/drive_module.h"
+#include "include/drive_module.h"
 
 enum modes {
     DISCONNECTED = -1,
@@ -25,12 +25,13 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool ipc_module = true;
+bool ipc_module = false;
 bool swerve_module = false;
 bool pot_testing = false;
 bool stop_motors = false;
 bool motor_testing = false;
 bool navx_testing = false;
+bool drive_module = true;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
@@ -71,16 +72,8 @@ int main(int argc, char** argv) {
             printf("[ !!! ] Can not initialize I2C Board.\n");
         }
 
-        // ORIGINAL (i2c, id, direction_port, drive_port, pot_AI, optical_encoder_reg, SWERVE_position)
-        // Swerve_Module s1 = Swerve_Module(i2c, 1, 5, 1, 1, 0, 2000, 2000, 2000);
-        // Swerve_Module s2 = Swerve_Module(i2c, 1, 6, 2, 1, 0, 2000, 2000, 2000);
-        // Swerve_Module s3 = Swerve_Module(i2c, 1, 7, 3, 2, 0, 2000, 2000, 2000);
-        // Swerve_Module s4 = Swerve_Module(i2c, 1, 8, 4, 3, 0, 2000, 2000, 2000);
-
-
         while(1) {
             usleep(100000); // cycle time
-
             ipc.unix_socket_write(sending); // send most recent data to socket
             result = ipc.unix_socket_read(p_instructions); //result = 0 if empty socket, -1 if error, length if read
             if(result > 0) {
@@ -97,27 +90,15 @@ int main(int argc, char** argv) {
                         switch(instructions[1]) {
                             case 0:
                                 printf("Received BREAK command\n");
-                                // s1.stop_motors();
-                                // s2.stop_motors();
-                                // s3.stop_motors();
-                                // s4.stop_motors();
                                 break;
                             case 1:
                                 printf("Received FORWARD command\n");
-                                // s1.drive_wheel(user_input);
-                                // s2.drive_wheel(user_input);
-                                // s3.drive_wheel(user_input);
-                                // s4.drive_wheel(user_input);
                                 break;
                             case 2:
                                 printf("Received LEFT command\n");
                                 break;
                             case 3:
                                 printf("Received BACKWARDS command\n");
-                                // s1.drive_wheel(-user_input);
-                                // s2.drive_wheel(-user_input);
-                                // s3.drive_wheel(-user_input);
-                                // s4.drive_wheel(-user_input);
                                 break;
                             case 4:
                                 printf("Received RIGHT command\n");
@@ -153,13 +134,14 @@ int main(int argc, char** argv) {
             sending[0] = x1.get_yaw()/100;
         }
     }
+
+    if (drive_module) {
+        printf("Testing drive module\n");
+    }
+
     if (swerve_module) {
         printf("Testing swerve module\n");
         int swerve_result1;
-        // int swerve_result2;
-         // swerve_result3, swerve_result4;
-        bool wait1 = false;
-        // bool wait2 = false;
         bool drive_proceed = false;
 
         int stop_point = 0;
@@ -186,51 +168,31 @@ int main(int argc, char** argv) {
             switch (stop_point) {
                 case 0:
                     swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, wait1);
-                    // swerve_result2 = s2.swerve_controller('X', 0.6, drive_proceed, wait2);
-                    // swerve_result = s3.swerve_controller('X', 0.6, drive_proceed);
                     break;
                 case 1:
                     swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, wait1);
-                    // swerve_result2 = s2.swerve_controller('Y', 0.6, drive_proceed, wait2);
-                    // swerve_result = s3.swerve_controller('Y', 0.6, drive_proceed);
                     break;
                 case 2:
                     swerve_result1 = s1.swerve_controller('Z', 0.6, drive_proceed, wait1);
-                    // swerve_result2 = s2.swerve_controller('Z', 0.6, drive_proceed, wait2);
-                    // swerve_result = s3.swerve_controller('Z', 0.6, drive_proceed, wait1);
                     break;
                 case 3:
                     swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, wait1);
-                    // swerve_result2 = s2.swerve_controller('Y', 0.6, drive_proceed, wait2);
-                    // swerve_result = s3.swerve_controller('Y', 0.6, drive_proceed, wait1);
                     break;
                 case 4:
                     swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, wait1);
-                    // swerve_result2 = s2.swerve_controller('Y', 0.6, drive_proceed, wait2);
-                    // swerve_result = s3.swerve_controller('Y', 0.6, drive_proceed, wait1);
                     break;
                 case 5:
                     swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, wait1);
-                    // swerve_result2 = s2.swerve_controller('X', 0.6, drive_proceed, wait2);
-                    // swerve_result = s3.swerve_controller('X', 0.6, drive_proceed, wait1);
                     break;
                 default:
                     printf("INCORRECT CASE\n");
                     break;
             }
 
-            if(swerve_result1 == 0) {
-                wait1 = true;
-            }
-            // if(swerve_result2 == 0) {
-                // wait2 = true;
-            // }
             drive_proceed = false;
             if(swerve_result1 == 0) {
                 stop_point++;
-                stop_point = stop_point%2;
-                wait1 = false;
-                // wait2 = false;
+                stop_point = stop_point%5;
                 printf("ALIGNED! moving to stopping point %d\n", stop_point);
                 drive_proceed = true;
                 usleep(1000000);
