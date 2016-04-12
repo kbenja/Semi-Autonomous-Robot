@@ -47,6 +47,7 @@ public:
         // should be "Resource temporarily unavailable" b/c of non blocking
         // printf("ERROR: %s\n", strerror(errno));
         if(errno != EAGAIN) {
+            printf("Received %d, %d\n", buffer[0], buffer[1]);
             instructions[0] = buffer[0];
             instructions[1] = buffer[1];
             return 1;

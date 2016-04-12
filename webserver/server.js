@@ -1,4 +1,4 @@
-var development = true;
+var development = false;
 
 var express = require('express');
 var app = express();
@@ -32,15 +32,16 @@ comm_socket.on('connection', function(socket) {
         console.log("command", command);
         command = JSON.parse(command);
         commands.push([command.mode, command.code]);
+        console.log(commands.length);
     })
     socket.on('close', function(code, message) {
         tcp_socket = false;
         console.log('Disconnected WebSocket (' + comm_socket.clients.length + ' total)');
     });
-    setInterval(function(){
-        comm_socket.broadcast(JSON.stringify({data: to_send}));
-        console.log("Sending ", to_send);
-    }, 100);
+    // setInterval(function(){
+    //     comm_socket.broadcast(JSON.stringify({data: to_send}));
+    //     console.log("Sending ", to_send);
+    // }, 250);
 });
 
         // comm_socket.broadcast(JSON.stringify({count: to_send}));
@@ -100,7 +101,7 @@ ipc.serve(function() {
     });
     ipc.server.on('data', function(data,socket){
         to_send = data.toString('hex').split('');
-        console.log(to_send);
+        // console.log(to_send);
         heartbeat++;
         unix_socket_emit()
     });
