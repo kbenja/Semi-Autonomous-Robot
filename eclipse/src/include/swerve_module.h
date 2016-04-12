@@ -33,6 +33,8 @@ public:
 
     bool ready;
 
+    // int aligned_count = 0;
+
     mraa_i2c_context i2c_context;   //i2c context for communication
 
     Motor_Module * steer_motor;         //steering motor
@@ -108,10 +110,33 @@ public:
         @returns:       1 if still rotating direction motor, 0 if ready to move, -1 if error has occured
     */
     int swerve_controller(char axis, float speed, bool proceed, bool wait) {
+        uint16_t desired_pos;
+        switch(axis) {          //desired swerve position based on desired axis translation
+        case 'X':
+        case 'x':
+            desired_pos = x_pos;
+            if (this->id == 1 || this->id == 3) {
+                speed *= -1;
+            }
+            break;
+        case 'Y':
+        case 'y':
+            desired_pos = y_pos;
+            if (this->id == 3 || this->id == 4) {
+                speed *= -1;
+            }
+            break;
+        case 'Z':
+        case 'z':
+            desired_pos = z_pos;
+            break;
+        default:
+            return -1;
+        }
         controller_result = 0; // assume function is good from the start
         if (!wait) {
             waiting = false;
-            controller_result = rotate_position(axis);
+            controller_result = rotate_position(axis, desired_pos);
             if (speed == 0) {
                 controller_result = stop_motors();
                 return controller_result;
@@ -151,27 +176,10 @@ public:
         @param  char    position:       desired translation position (XYZ), case-insensitive
         @returns:   the result of the Y-translation positioning as a mraa_result_t value
     */
-    int rotate_position(char position) {
+    int rotate_position(char position, uint16_t desired_pos) {
         int rotation_result;
-        uint16_t desired_pos;
-        switch(position) {          //desired swerve position based on desired axis translation
-        case 'X':
-        case 'x':
-            desired_pos = x_pos;
-            break;
-        case 'Y':
-        case 'y':
-            desired_pos = y_pos;
-            break;
-        case 'Z':
-        case 'z':
-            desired_pos = z_pos;
-            break;
-        default:
-            return -1;
-        }
         current_pos = dir_feedback->get_average_val();    //get starting position
-        printf("current_pos: %d, desired_pos: %d\n", current_pos, desired_pos);
+        // printf("current_pos: %d, desired_pos: %d\n", current_pos, desired_pos);
         // return 0;
         if (desired_pos + 30 <= current_pos) {
             // overshoot and then approach from CW side
@@ -199,6 +207,7 @@ public:
             rotating_ccw = false;
             if(!correct_pos) {
                 rotation_result = stop_rotation(); // stop rotation
+                printf("Module %d Aligned!\n", id);
                 if(rotation_result != -1) {
                     correct_pos = true;
                 }

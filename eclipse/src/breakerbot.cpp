@@ -135,11 +135,17 @@ int main(int argc, char** argv) {
 
     if (drive_module) {
         printf("Testing drive module\n");
-        // int direction = 0;                          // default value of pot is 0
-        // if (argc > 1) {
-        //     printf("***Using given value by user\n");
-        //     testing_port = atoi(argv[1]);
-        // }
+        int direction = 0;
+        char axis = 'X';
+        if (argc > 1) {
+            printf("***Using given value by user\n");
+            direction = atoi(argv[1]);
+        }
+        if (direction == 1) {
+            axis = 'Y';
+        } else if (direction == 2) {
+            axis = 'Z';
+        }
         uint8_t address = 0x40;
         mraa_i2c_context i2c = mraa_i2c_init(6);
         mraa_result_t i2c_status = i2c_init_board(i2c, address);
@@ -147,9 +153,11 @@ int main(int argc, char** argv) {
         Drive_Module d1 = Drive_Module(i2c);
         while(1) {
             usleep(50000);
-            d1.drive('X', 0.7);
+            d1.drive(axis, 0.7);
             mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
-            // usleep(500);
+            // sleep(2);
+            // d1.stop();
+            // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
         }
     }
 
@@ -168,13 +176,13 @@ int main(int argc, char** argv) {
 
         // ID, dir port, drive port, AOIN, Encoder, Y, X, Z
         // FR swerve M7
-        Swerve_Module s1 = Swerve_Module(i2c, 1, 6, 7, 0, 0, 2437, 1925, 2075);
+        // Swerve_Module s1 = Swerve_Module(i2c, 1, 6, 7, 0, 0, 2437, 1925, 2075);
         // BR swerve M5
         // Swerve_Module s1 = Swerve_Module(i2c, 2, 4, 5, 1, 0, 1484, 1952, 1828);
         // BL swerve M1
-        // Swerve_Module s3 = Swerve_Module(i2c, 3, 0, 1, 2, 0, 2506, 2006, 2173);
+        // Swerve_Module s1 = Swerve_Module(i2c, 3, 0, 1, 2, 0, 2506, 2006, 2173);
         // FL swerve M3
-        // Swerve_Module s4 = Swerve_Module(i2c, 4, 3, 2, 3, 0, 1662, 2175, 1981);
+        Swerve_Module s1 = Swerve_Module(i2c, 4, 2, 3, 3, 0, 1662, 2175, 1981);
 
 
         while(1) {
@@ -213,6 +221,7 @@ int main(int argc, char** argv) {
             }
             usleep(50);
             mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
+
         }
     }
     if (pot_testing) {

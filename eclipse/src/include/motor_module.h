@@ -17,6 +17,9 @@ double_reg float_to_PWM(float start) {
     }
     double_reg final;
     final.u_sixteen = ((uint16_t) 2816-(start*768.0));
+    if (start == 0) {
+        final.u_sixteen = ((uint16_t) 500);
+    }
     // printf("\nSTART %f becomes 0x%04x \n", start, final.u_sixteen);
     return final;
 }
