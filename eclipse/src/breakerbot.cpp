@@ -4,7 +4,7 @@
 #include "include/steering_module.h"
 #include "include/swerve_module.h"
 #include "include/pot_module.h"
-#include "include/drive_module.h"
+// #include "include/drive_module.h"
 
 enum modes {
     DISCONNECTED = -1,
@@ -25,9 +25,12 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool ipc_module = false;
-bool swerve_module = true;
+bool ipc_module = true;
+bool swerve_module = false;
 bool pot_testing = false;
+bool stop_motors = false;
+bool motor_testing = false;
+bool navx_testing = false;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
@@ -39,13 +42,15 @@ int input;
 int result;
 
 int main(int argc, char** argv) {
-    if (ipc_module) {
+    if (motor_testing) {
         float user_input = 0.0;                          // receive signal from argv or use default (stop)
         if (argc > 1) {
             printf("***Using given value by user\n");
             user_input = atof(argv[1]);
         }
-
+        test_motor_module(user_input);
+    }
+    if (ipc_module) {
         // UNIX SOCKET INITIALIZATION
         IPC_Module ipc("/tmp/breakerbot.socket");
         int status = ipc.unix_socket_initialize();
@@ -67,10 +72,10 @@ int main(int argc, char** argv) {
         }
 
         // ORIGINAL (i2c, id, direction_port, drive_port, pot_AI, optical_encoder_reg, SWERVE_position)
-        Swerve_Module s1 = Swerve_Module(i2c, 1, 5, 1, 1, 0, 2000, 2000, 2000);
-        Swerve_Module s2 = Swerve_Module(i2c, 1, 6, 2, 1, 0, 2000, 2000, 2000);
-        Swerve_Module s3 = Swerve_Module(i2c, 1, 7, 3, 2, 0, 2000, 2000, 2000);
-        Swerve_Module s4 = Swerve_Module(i2c, 1, 8, 4, 3, 0, 2000, 2000, 2000);
+        // Swerve_Module s1 = Swerve_Module(i2c, 1, 5, 1, 1, 0, 2000, 2000, 2000);
+        // Swerve_Module s2 = Swerve_Module(i2c, 1, 6, 2, 1, 0, 2000, 2000, 2000);
+        // Swerve_Module s3 = Swerve_Module(i2c, 1, 7, 3, 2, 0, 2000, 2000, 2000);
+        // Swerve_Module s4 = Swerve_Module(i2c, 1, 8, 4, 3, 0, 2000, 2000, 2000);
 
 
         while(1) {
@@ -92,27 +97,27 @@ int main(int argc, char** argv) {
                         switch(instructions[1]) {
                             case 0:
                                 printf("Received BREAK command\n");
-                                s1.stop_motors();
-                                s2.stop_motors();
-                                s3.stop_motors();
-                                s4.stop_motors();
+                                // s1.stop_motors();
+                                // s2.stop_motors();
+                                // s3.stop_motors();
+                                // s4.stop_motors();
                                 break;
                             case 1:
                                 printf("Received FORWARD command\n");
-                                s1.drive_wheel(user_input);
-                                s2.drive_wheel(user_input);
-                                s3.drive_wheel(user_input);
-                                s4.drive_wheel(user_input);
+                                // s1.drive_wheel(user_input);
+                                // s2.drive_wheel(user_input);
+                                // s3.drive_wheel(user_input);
+                                // s4.drive_wheel(user_input);
                                 break;
                             case 2:
                                 printf("Received LEFT command\n");
                                 break;
                             case 3:
                                 printf("Received BACKWARDS command\n");
-                                s1.drive_wheel(-user_input);
-                                s2.drive_wheel(-user_input);
-                                s3.drive_wheel(-user_input);
-                                s4.drive_wheel(-user_input);
+                                // s1.drive_wheel(-user_input);
+                                // s2.drive_wheel(-user_input);
+                                // s3.drive_wheel(-user_input);
+                                // s4.drive_wheel(-user_input);
                                 break;
                             case 4:
                                 printf("Received RIGHT command\n");
@@ -143,14 +148,18 @@ int main(int argc, char** argv) {
                         break;
                 }
             }
-            sending[0] = mode;
+            // sending[0] = mode;
             sending[1] = input;
-            sending[2] = x1.get_yaw()/100;
+            sending[0] = x1.get_yaw()/100;
         }
     }
     if (swerve_module) {
         printf("Testing swerve module\n");
-        int swerve_result;
+        int swerve_result1;
+        // int swerve_result2;
+         // swerve_result3, swerve_result4;
+        bool wait1 = false;
+        // bool wait2 = false;
         bool drive_proceed = false;
 
         int stop_point = 0;
@@ -161,43 +170,70 @@ int main(int argc, char** argv) {
         if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
 
 
-        // dir port 1, drive port 2, Y, X, Z
-        // Swerve_Module s2 = Swerve_Module(i2c, 1, 1, 2, 0, 0, 1484, 1952, 1828); // BR calibration
-        // Swerve_Module s2 = Swerve_Module(i2c, 2, 1, 2, 1, 0, 2437, 1925, 2075); // FR calibration
-        // Swerve_Module s2 = Swerve_Module(i2c, 3, 1, 2, 2, 0, 1662, 2175, 1981); // FL calibration
-        Swerve_Module s2 = Swerve_Module(i2c, 4, 1, 2, 3, 0, 2506, 2006, 2173); // BL calibration
+        // ID, dir port, drive port, AOIN, Encoder, Y, X, Z
+        // FR swerve M7
+        // Swerve_Module s1 = Swerve_Module(i2c, 1, 6, 7, 0, 0, 2437, 1925, 2075);
+        // BR swerve M5
+        Swerve_Module s1 = Swerve_Module(i2c, 2, 4, 5, 1, 0, 1484, 1952, 1828);
+        // BL swerve M1
+        // Swerve_Module s3 = Swerve_Module(i2c, 3, 0, 1, 2, 0, 2506, 2006, 2173);
+        // FL swerve M3
+        // Swerve_Module s4 = Swerve_Module(i2c, 4, 3, 2, 3, 0, 1662, 2175, 1981);
+
 
         while(1) {
             usleep(50000); //sleep for 0.05s
             switch (stop_point) {
                 case 0:
-                    swerve_result = s2.swerve_controller('X', 0.3, drive_proceed); // try to rotate to the correct position
+                    swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, wait1);
+                    // swerve_result2 = s2.swerve_controller('X', 0.6, drive_proceed, wait2);
+                    // swerve_result = s3.swerve_controller('X', 0.6, drive_proceed);
                     break;
                 case 1:
-                    swerve_result = s2.swerve_controller('Y', 0.3, drive_proceed); // try to rotate to the correct position
+                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, wait1);
+                    // swerve_result2 = s2.swerve_controller('Y', 0.6, drive_proceed, wait2);
+                    // swerve_result = s3.swerve_controller('Y', 0.6, drive_proceed);
                     break;
                 case 2:
-                    swerve_result = s2.swerve_controller('Z', 0.3, drive_proceed); // try to rotate to the correct position
+                    swerve_result1 = s1.swerve_controller('Z', 0.6, drive_proceed, wait1);
+                    // swerve_result2 = s2.swerve_controller('Z', 0.6, drive_proceed, wait2);
+                    // swerve_result = s3.swerve_controller('Z', 0.6, drive_proceed, wait1);
                     break;
                 case 3:
-                    swerve_result = s2.swerve_controller('Y', 0.3, drive_proceed); // try to rotate to the correct position
+                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, wait1);
+                    // swerve_result2 = s2.swerve_controller('Y', 0.6, drive_proceed, wait2);
+                    // swerve_result = s3.swerve_controller('Y', 0.6, drive_proceed, wait1);
                     break;
                 case 4:
-                    swerve_result = s2.swerve_controller('X', 0.3, drive_proceed); // try to rotate to the correct position
+                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, wait1);
+                    // swerve_result2 = s2.swerve_controller('Y', 0.6, drive_proceed, wait2);
+                    // swerve_result = s3.swerve_controller('Y', 0.6, drive_proceed, wait1);
+                    break;
+                case 5:
+                    swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, wait1);
+                    // swerve_result2 = s2.swerve_controller('X', 0.6, drive_proceed, wait2);
+                    // swerve_result = s3.swerve_controller('X', 0.6, drive_proceed, wait1);
                     break;
                 default:
                     printf("INCORRECT CASE\n");
                     break;
             }
 
-            if(swerve_result == 0) {
+            if(swerve_result1 == 0) {
+                wait1 = true;
+            }
+            // if(swerve_result2 == 0) {
+                // wait2 = true;
+            // }
+            drive_proceed = false;
+            if(swerve_result1 == 0) {
                 stop_point++;
-                stop_point = stop_point%5;
+                stop_point = stop_point%2;
+                wait1 = false;
+                // wait2 = false;
                 printf("ALIGNED! moving to stopping point %d\n", stop_point);
-                usleep(500000);
                 drive_proceed = true;
-            } else {
-                drive_proceed = false;
+                usleep(1000000);
             }
             usleep(50);
             mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
@@ -210,6 +246,35 @@ int main(int argc, char** argv) {
             testing_port = atoi(argv[1]);
         }
         test_pot_module(testing_port);
+    }
+
+    if (navx_testing) {
+        while(1) {
+            usleep(250000);
+            test_navx_module();
+        }
+    }
+
+    if (stop_motors) {
+        uint8_t address = 0x40;
+        mraa_i2c_context i2c = mraa_i2c_init(6);
+        mraa_result_t i2c_status = i2c_init_board(i2c, address);
+        if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
+        // FR swerve M7
+        Swerve_Module s1 = Swerve_Module(i2c, 1, 7, 6, 0, 0, 2437, 1925, 2075);
+        // BR swerve M5
+        Swerve_Module s2 = Swerve_Module(i2c, 2, 5, 4, 1, 0, 1484, 1952, 1828);
+        // BL swerve M1
+        Swerve_Module s3 = Swerve_Module(i2c, 3, 1, 0, 2, 0, 2506, 2006, 2173);
+        // FL swerve M3
+        Swerve_Module s4 = Swerve_Module(i2c, 4, 3, 2, 3, 0, 1662, 2175, 1981);
+        printf("Stopping all motors\n");
+        s1.stop_motors();
+        s2.stop_motors();
+        s3.stop_motors();
+        s4.stop_motors();
+        sleep(1);
+        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
     }
 
     return 0;

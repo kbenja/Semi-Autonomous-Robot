@@ -37,8 +37,8 @@ void test_motor_module(float user_input) {
 
     Motor_Module m1(1);                         // create motors to ports 1, 2, and 3
     Motor_Module m2(2);
-    Motor_Module m3(3);
-    Motor_Module m4(4);
+    Motor_Module m3(5);
+    Motor_Module m4(7);
 
     m1.send_signal(i2c, user_input);                // send signal to boards
     m2.send_signal(i2c, user_input);

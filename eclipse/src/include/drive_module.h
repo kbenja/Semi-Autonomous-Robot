@@ -5,6 +5,7 @@
 #ifndef DRIVE_MODULE_H
 #define DRIVE_MODULE_H
 
+/*
 class Drive_Module {
 public:
     mraa_i2c_context i2c_bus;
@@ -20,9 +21,6 @@ public:
     Swerve_Module * FL;
     Swerve_Module * BL;
 
-    /*
-      Default constructor for Swerve_Module. DO NOT CALL
-    */
     Drive_Module() {
         printf("[ !!!! ] Do not use default constructor of steering module\n");
     }
@@ -81,5 +79,6 @@ public:
         }
     }
 };
+*/
 
 #endif

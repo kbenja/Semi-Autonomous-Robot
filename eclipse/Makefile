@@ -6,5 +6,8 @@ main:
 pots:
 	${GCC} ${FLAGS} src/breakerbot.cpp -o pots -lmraa
 
+stop:
+	${GCC} ${FLAGS} src/breakerbot.cpp -o stop -lmraa
+
 clean:
 	rm bin/*

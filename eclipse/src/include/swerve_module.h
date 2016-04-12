@@ -104,12 +104,15 @@ public:
         @param  bool    proceed:    the OK signal received which means all 4 swerve modules are ready to continue
         @returns:       1 if still rotating direction motor, 0 if ready to move, -1 if error has occured
     */
-    int swerve_controller(char axis, float speed, bool proceed) {
+    int swerve_controller(char axis, float speed, bool proceed, bool wait) {
+        controller_result = 0; // assume function is good from the start
         if (speed == 0) {
             controller_result = stop_motors();
             return controller_result;
         }
-        controller_result = rotate_position(axis);
+        if (!wait) {
+            controller_result = rotate_position(axis);
+        }
         if (controller_result == -1) {
             ready = false;
             return -1; // an error has occured

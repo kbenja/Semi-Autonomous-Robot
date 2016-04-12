@@ -37,6 +37,10 @@ comm_socket.on('connection', function(socket) {
         tcp_socket = false;
         console.log('Disconnected WebSocket (' + comm_socket.clients.length + ' total)');
     });
+    setInterval(function(){
+        comm_socket.broadcast(JSON.stringify({data: to_send}));
+        console.log("Sending ", to_send);
+    }, 100);
 });
 
         // comm_socket.broadcast(JSON.stringify({count: to_send}));
@@ -96,6 +100,7 @@ ipc.serve(function() {
     });
     ipc.server.on('data', function(data,socket){
         to_send = data.toString('hex').split('');
+        console.log(to_send);
         heartbeat++;
         unix_socket_emit()
     });
