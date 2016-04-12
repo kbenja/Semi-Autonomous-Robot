@@ -7,9 +7,12 @@ angular.module('Data', ['CommunicationService']).controller('DataCtrl', function
     $scope.read_data = function() {
         communication.read_data(function(evt) {
             $scope.$apply(function() {
-                var hex = JSON.parse(evt.data);
-                console.log(hex);
-                $scope.orientation = parseInt(hex.count[2] + hex.count[3] + hex.count[0] + hex.count[1], 16);
+                var object = JSON.parse(evt.data);
+                if(object.data) {
+                    console.log("Hex", object.data);
+                    $scope.orientation = parseInt(object.data[2] + object.data[3] + object.data[0] + object.data[1], 16);
+                }
+                // console.log("received", evt.data);
             });
         });
     }
