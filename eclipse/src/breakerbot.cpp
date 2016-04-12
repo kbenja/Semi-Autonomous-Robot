@@ -167,34 +167,34 @@ int main(int argc, char** argv) {
             usleep(50000); //sleep for 0.05s
             switch (stop_point) {
                 case 0:
-                    swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, wait1);
+                    swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, false);
                     break;
                 case 1:
-                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, wait1);
+                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, false);
                     break;
                 case 2:
-                    swerve_result1 = s1.swerve_controller('Z', 0.6, drive_proceed, wait1);
+                    swerve_result1 = s1.swerve_controller('Z', 0.6, drive_proceed, false);
                     break;
                 case 3:
-                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, wait1);
+                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, false);
                     break;
                 case 4:
-                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, wait1);
+                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, false);
                     break;
                 case 5:
-                    swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, wait1);
+                    swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, false);
                     break;
                 default:
                     printf("INCORRECT CASE\n");
                     break;
             }
-
             drive_proceed = false;
             if(swerve_result1 == 0) {
                 stop_point++;
                 stop_point = stop_point%5;
                 printf("ALIGNED! moving to stopping point %d\n", stop_point);
                 drive_proceed = true;
+                swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, true);
                 usleep(1000000);
             }
             usleep(50);

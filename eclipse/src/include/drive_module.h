@@ -53,7 +53,7 @@ public:
         // if(FR_ready || FL_ready || BR_ready || BL_ready) {
         if(FR_ready || BR_ready) {
             drive_proceed = true;
-        else {
+        } else {
             drive_proceed = false;
         }
         swerve_controller_result = FR->swerve_controller(axes, speed, drive_proceed, FR_ready);
