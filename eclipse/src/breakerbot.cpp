@@ -25,13 +25,13 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool ipc_module = true;
+bool ipc_module = false;
 bool pot_testing = false;
 bool stop_motors = false;
 bool motor_testing = false;
 bool navx_testing = false;
 bool swerve_module = false;
-bool drive_module = false;
+bool drive_module = true;
 
 int16_t instructions[2] = {-1,0};
 int16_t sending[3] = {-1,-1,-2};
