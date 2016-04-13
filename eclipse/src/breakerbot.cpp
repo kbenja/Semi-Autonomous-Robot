@@ -25,14 +25,14 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool ipc_module = false;
-bool swerve_module = true;
+bool ipc_module = true;
+bool swerve_module = false;
 bool pot_testing = false;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
 int16_t sending[3] = {-1,-1,-2};
-int16_t *p_sending = sending;
+// int16_t *p_sending = sending;
 
 int mode;
 int input;
@@ -40,11 +40,11 @@ int result;
 
 int main(int argc, char** argv) {
     if (ipc_module) {
-        float user_input = 0.0;                          // receive signal from argv or use default (stop)
-        if (argc > 1) {
-            printf("***Using given value by user\n");
-            user_input = atof(argv[1]);
-        }
+        // float user_input = 0.0;                          // receive signal from argv or use default (stop)
+        // if (argc > 1) {
+        //     printf("***Using given value by user\n");
+        //     user_input = atof(argv[1]);
+        // }
 
         // UNIX SOCKET INITIALIZATION
         IPC_Module ipc("/tmp/breakerbot.socket");
@@ -92,27 +92,27 @@ int main(int argc, char** argv) {
                         switch(instructions[1]) {
                             case 0:
                                 printf("Received BREAK command\n");
-                                s1.stop_motors();
-                                s2.stop_motors();
-                                s3.stop_motors();
-                                s4.stop_motors();
+                                // s1.stop_motors();
+                                // s2.stop_motors();
+                                // s3.stop_motors();
+                                // s4.stop_motors();
                                 break;
                             case 1:
                                 printf("Received FORWARD command\n");
-                                s1.drive_wheel(user_input);
-                                s2.drive_wheel(user_input);
-                                s3.drive_wheel(user_input);
-                                s4.drive_wheel(user_input);
+                                // s1.drive_wheel(user_input);
+                                // s2.drive_wheel(user_input);
+                                // s3.drive_wheel(user_input);
+                                // s4.drive_wheel(user_input);
                                 break;
                             case 2:
                                 printf("Received LEFT command\n");
                                 break;
                             case 3:
                                 printf("Received BACKWARDS command\n");
-                                s1.drive_wheel(-user_input);
-                                s2.drive_wheel(-user_input);
-                                s3.drive_wheel(-user_input);
-                                s4.drive_wheel(-user_input);
+                                // s1.drive_wheel(-user_input);
+                                // s2.drive_wheel(-user_input);
+                                // s3.drive_wheel(-user_input);
+                                // s4.drive_wheel(-user_input);
                                 break;
                             case 4:
                                 printf("Received RIGHT command\n");
@@ -126,7 +126,7 @@ int main(int argc, char** argv) {
                             default:
                                 break;
                         // wake up the board after sending an input
-                        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
+                        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                         break;
                     }
                     case 2:
