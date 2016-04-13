@@ -68,6 +68,7 @@ public:
         swerve_controller_result = FL->stop_motors();
         swerve_controller_result = BR->stop_motors();
         swerve_controller_result = BL->stop_motors();
+        drive_proceed = false;
         return swerve_controller_result;
     }
 };

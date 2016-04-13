@@ -44,11 +44,11 @@ int result;
 
 int main(int argc, char** argv) {
     if (ipc_module) {
-        // float user_input = 0.0;                          // receive signal from argv or use default (stop)
-        // if (argc > 1) {
-        //     printf("***Using given value by user\n");
-        //     user_input = atof(argv[1]);
-        // }
+        float user_input = 0.0;                          // receive signal from argv or use default (stop)
+        if (argc > 1) {
+            printf("***Using given value by user\n");
+            user_input = atof(argv[1]);
+        }
 
         // UNIX SOCKET INITIALIZATION
         IPC_Module ipc("/tmp/breakerbot.socket");
@@ -63,63 +63,76 @@ int main(int argc, char** argv) {
         NavX_Module x1; // initialize NavX
         x1.set_zero(); // calibrate NavX
 
-        while(1) {
-            usleep(100000); // cycle time
+        uint8_t address = 0x40;
+        mraa_i2c_context i2c = mraa_i2c_init(6);
+        mraa_result_t i2c_status = i2c_init_board(i2c, address); // initialize i2c board
+        if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
 
+        Drive_Module d1 = Drive_Module(i2c); // initialize drive module
+
+        while(1) {
+            usleep(50000); // cycle time
             ipc.unix_socket_write(sending); // send most recent data to socket
             result = ipc.unix_socket_read(p_instructions); //result = 0 if empty socket, -1 if error, length if read
             if(result > 0) {
                 mode = instructions[0];
                 input = instructions[1];
-                switch(mode) {
-                    case -1:
-                        printf("CLIENT IS DISONNECTED\r");
-                        break;
-                    case 0:
-                        printf("IDLE MODE, INPUT = %d\n", input);
-                        break;
-                    case 1:
-                        switch(instructions[1]) {
-                            case 0:
-                                printf("Received BREAK command\n");
-                                break;
-                            case 1:
-                                printf("Received FORWARD command\n");
-                                break;
-                            case 2:
-                                printf("Received LEFT command\n");
-                                break;
-                            case 3:
-                                printf("Received BACKWARDS command\n");
-                                break;
-                            case 4:
-                                printf("Received RIGHT command\n");
-                                break;
-                            case 5:
-                                printf("Received CLOCKWISE command\n");
-                                break;
-                            case 6:
-                                printf("Received COUNTER CLOCKWISE command\n");
-                                break;
-                            default:
-                                break;
-                        // wake up the board after sending an input
-                        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
-                        }
-                        break;
-                    case 2:
-                        printf("AUTO MODE, INPUT = %d\n", input);
-                        break;
-                    case 3:
-                        printf("INTAKE MODE, INPUT = %d\n", input);
-                        break;
-                    case 4:
-                        printf("TESTING MODE, INPUT = %d\n", input);
-                        break;
-                    default:
-                        printf("DEFAULT MODE\n");
-                        break;
-                }
+            }
+            switch(mode) {
+                case -1:
+                    printf("CLIENT IS DISONNECTED\r");
+                    break;
+                case 0:
+                    printf("IDLE MODE, INPUT = %d\n", input);
+                    break;
+                case 1:
+                    switch(input) {
+                        case 0:
+                            printf("Received BREAK command\n");
+                            d1.stop();
+                            break;
+                        case 1:
+                            printf("Received FORWARD command\n");
+                            d1.drive('Y', user_input);
+                            // printf("User input: %f\n", user_input);
+                            break;
+                        case 2:
+                            printf("Received LEFT command\n");
+                            d1.drive('X', -user_input);
+                            break;
+                        case 3:
+                            printf("Received BACKWARDS command\n");
+                            d1.drive('Y', -user_input);
+                            break;
+                        case 4:
+                            printf("Received RIGHT command\n");
+                            d1.drive('X', user_input);
+                            break;
+                        case 5:
+                            printf("Received CLOCKWISE command\n");
+                            d1.drive('Z', user_input);
+                            break;
+                        case 6:
+                            printf("Received COUNTER CLOCKWISE command\n");
+                            d1.drive('Z', -user_input);
+                            break;
+                        default:
+                            break;
+                    }
+                    mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
+                    break;
+                case 2:
+                    printf("AUTO MODE, INPUT = %d\n", input);
+                    break;
+                case 3:
+                    printf("INTAKE MODE, INPUT = %d\n", input);
+                    break;
+                case 4:
+                    printf("TESTING MODE, INPUT = %d\n", input);
+                    break;
+                default:
+                    printf("DEFAULT MODE\n");
+                    break;
             }
             sending[0] = x1.get_yaw()/100;
             sending[1] = mode;

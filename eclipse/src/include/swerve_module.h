@@ -264,6 +264,8 @@ public:
         printf("STOP ALL motors on module %d\n", id);
         mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
         result = drive_motor->send_signal(i2c_context, 0);
+        this->ready = false;
+        this->driving = false;
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
 };
