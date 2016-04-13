@@ -25,31 +25,31 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool ipc_module = false;
+bool ipc_module = true;
 bool pot_testing = false;
 bool stop_motors = false;
 bool motor_testing = false;
 bool navx_testing = false;
 bool swerve_module = false;
-bool drive_module = true;
+bool drive_module = false;
 
 int16_t instructions[2] = {-1,0};
+int16_t *p_instructions = instructions;
 int16_t sending[3] = {-1,-1,-2};
+// int16_t *p_sending = sending;
 
 int mode;
 int input;
 int result;
 
 int main(int argc, char** argv) {
-    if (motor_testing) {
-        float user_input = 0.0;                          // receive signal from argv or use default (stop)
-        if (argc > 1) {
-            printf("***Using given value by user\n");
-            user_input = atof(argv[1]);
-        }
-        test_motor_module(user_input);
-    }
     if (ipc_module) {
+        // float user_input = 0.0;                          // receive signal from argv or use default (stop)
+        // if (argc > 1) {
+        //     printf("***Using given value by user\n");
+        //     user_input = atof(argv[1]);
+        // }
+
         // UNIX SOCKET INITIALIZATION
         IPC_Module ipc("/tmp/breakerbot.socket");
         int status = ipc.unix_socket_initialize();
@@ -63,17 +63,11 @@ int main(int argc, char** argv) {
         NavX_Module x1; // initialize NavX
         x1.set_zero(); // calibrate NavX
 
-        uint8_t address = 0x40;                     // i2c chip is @ i2c address 0x40
-        mraa_i2c_context i2c = mraa_i2c_init(6);    // create original context for i2c (bus 6)
-        mraa_result_t i2c_status = i2c_init_board(i2c, address);               // initialize the board (our i2c library function)
-        if (i2c_status != MRAA_SUCCESS) {
-            printf("[ !!! ] Can not initialize I2C Board.\n");
-        }
-        int count = 0;
         while(1) {
             usleep(100000); // cycle time
+
             ipc.unix_socket_write(sending); // send most recent data to socket
-            result = ipc.unix_socket_read(instructions); //result = 0 if empty socket, -1 if error, length if read
+            result = ipc.unix_socket_read(p_instructions); //result = 0 if empty socket, -1 if error, length if read
             if(result > 0) {
                 mode = instructions[0];
                 input = instructions[1];
@@ -110,9 +104,9 @@ int main(int argc, char** argv) {
                             default:
                                 break;
                         // wake up the board after sending an input
-                        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
+                        // mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
+                        }
                         break;
-                    }
                     case 2:
                         printf("AUTO MODE, INPUT = %d\n", input);
                         break;
@@ -127,9 +121,9 @@ int main(int argc, char** argv) {
                         break;
                 }
             }
-            sending[0] = count++;
-            sending[1] = count++;
-            // sending[0] = x1.get_yaw()/100;
+            sending[0] = x1.get_yaw()/100;
+            sending[1] = mode;
+            sending[2] = input;
         }
     }
 
