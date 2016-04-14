@@ -25,22 +25,22 @@ public:
         //initialize Swerve_Modules (ID, dir port, drive port, AOIN, Encoder, X, Y, Z)
 
         // recorded 2 days after calibrated
-        FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2437, 1925, 2075); // FR swerve S4
-        BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1484, 1952, 1828); // BR swerve S3
-        BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2506, 2006, 2173); // BL swerve S1
-        FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1662, 2175, 1981); // FL swerve S2
+        // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2437, 1925, 2075); // FR swerve S4
+        // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1484, 1952, 1828); // BR swerve S3
+        // BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2506, 2006, 2173); // BL swerve S1
+        // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1662, 2175, 1981); // FL swerve S2
 
         // // recorded 4/13 about 1 week after caibration
-        // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2860, 2282, 2443); // FR swerve S4
-        // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1635, 2200, 2062); // BR swerve S3
-        // BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2881, 2290, 2442); // BL swerve S1
-        // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1974, 2542, 2362); // FL swerve S2
+        FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2508, 1992, 2127); // FR swerve S4
+        BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1480, 1921, 1810); // BR swerve S3
+        BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2540, 2040, 2190); // BL swerve S1
+        FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1753, 2266, 2089); // FL swerve S2
+
 
         // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2490, 2124, 1981); // FR swerve S4
         // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1727, 2224, 2083); // BR swerve S3
         // BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2881, 2290, 2442); // BL swerve S1
         // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1974, 2542, 2362); // FL swerve S2
-
         //initialize proceed flags
         FR_ready = false;
         BR_ready = false;

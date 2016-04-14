@@ -183,13 +183,13 @@ int main(int argc, char** argv) {
 
         // ID, dir port, drive port, AOIN, Encoder, Y, X, Z
         // FR swerve M7
-        // Swerve_Module s1 = Swerve_Module(i2c, 1, 6, 7, 0, 0, 2437, 1925, 2075);
+        // Swerve_Module s1 = Swerve_Module(i2c, 1, 6, 7, 0, 0, 2508, 1992, 2127);
         // BR swerve M5
-        // Swerve_Module s1 = Swerve_Module(i2c, 2, 4, 5, 1, 0, 1484, 1952, 1828);
+        // Swerve_Module s1 = Swerve_Module(i2c, 2, 4, 5, 1, 0, 1480, 1921, 1810);
         // BL swerve M1
-        // Swerve_Module s1 = Swerve_Module(i2c, 3, 0, 1, 2, 0, 2506, 2006, 2173);
+        Swerve_Module s1 = Swerve_Module(i2c, 3, 0, 1, 2, 0, 2540, 2040, 2190);
         // FL swerve M3
-        Swerve_Module s1 = Swerve_Module(i2c, 4, 2, 3, 3, 0, 1662, 2175, 1981);
+        // Swerve_Module s1 = Swerve_Module(i2c, 4, 2, 3, 3, 0, 1753, 2266, 2089);
 
 
         while(1) {
