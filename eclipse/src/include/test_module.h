@@ -8,32 +8,22 @@
 #include "pot_module.h"
 #include "navx_module.h"
 #include "swerve_module.h"
+#include "drive_module.h"
 
-void test_pot_module() {
-    printf("Pot module testing");
-    Pot_Module P1(1,12);
-
-    while(true) {
-        printf("Pot: %d\n",P1.get_average_val());
-        usleep(500000);
-    }
-}
-
-void test_manual_control() {
-    printf("MANUAL CONTROL MODULE TESTING\n\n");
-
-    Manual_Control input;
-    while(1){
-        std::string instruction = input.getInstruction();
-        printf("instruction: %s\n", instruction.c_str());
-    }
-}
-
-void test_lidar_module() {
-    printf("LIDAR MODULE TESTING\n\n");
-
-    Lidar_Module l1(2);
+void test_pot_module(int testing_port) {
+    printf("TESTING pot module\n");
+    Pot_Module pot = Pot_Module(testing_port, 12);
     while(1) {
+        usleep(500000); // sleep for 0.5s
+        printf("VALUE for port: %d equals %d\n", testing_port, pot.get_average_val());
+    }
+}
+
+void test_lidar_module(int testing_port) {
+    printf("LIDAR MODULE TESTING\n\n");
+    Lidar_Module l1(testing_port);
+    while(1) {
+        usleep(25000);
         printf("%f\n",l1.get_distance_reading());
     }
 }
@@ -47,8 +37,8 @@ void test_motor_module(float user_input) {
 
     Motor_Module m1(1);                         // create motors to ports 1, 2, and 3
     Motor_Module m2(2);
-    Motor_Module m3(3);
-    Motor_Module m4(4);
+    Motor_Module m3(5);
+    Motor_Module m4(7);
 
     m1.send_signal(i2c, user_input);                // send signal to boards
     m2.send_signal(i2c, user_input);
@@ -84,7 +74,7 @@ void test_navx_module() {
     printf("Creating NavX module\n");
     NavX_Module x1;
     while(1) {
-        usleep(500000); //sleep for 1/2
+        usleep(500000); //sleep for 0.5s
         printf("Getting NavX fused heading value\n");
         printf("Value read = %d\n", x1.get_yaw()/100);
         count++;

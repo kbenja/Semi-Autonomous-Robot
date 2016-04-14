@@ -13,7 +13,7 @@
 class Swerve_Module {
 public:
 	int id;                 //module unique ID
-    uint16_t current_pos;     //swerve orientation
+    uint16_t current_pos;   //swerve orientation
     uint16_t speed;         //swerve speed
 
     uint16_t x_pos;
@@ -23,6 +23,18 @@ public:
     bool limit_cw;          //rotational limits
     bool limit_ccw;
 
+    bool correct_pos;
+    bool rotating_ccw;
+    bool rotating_cw;
+    bool waiting;
+    bool driving;
+
+    bool has_passed;
+
+    bool ready;
+
+    // int aligned_count = 0;
+
     mraa_i2c_context i2c_context;   //i2c context for communication
 
     Motor_Module * steer_motor;         //steering motor
@@ -30,31 +42,25 @@ public:
     Pot_Module * dir_feedback;        //potentiometer for angular reference
     // Encoder_Module drive_feedback;  //optical encoder for drive
 
-
-
-    /*
-        Initializes swerve module with ID 0 and:
-            2x Motor_Modules both on port 0
-            1x Pot_Module on ADC 0
-            1x Encoder_Module on port 0
-    */
-    Swerve_Module() {
-        printf("[ !!!! ] Do not use default constructor\n");
-    }
+    int controller_result;
 
     /*
-        Initializes swerve module with specified ID and:
-            2x Motor_Modules with specified ports
-            1x Pot_Module on specified ADC
-            1x Encoder_Module on specified port
+        Initializes swerve module with specified ID:
 
-        @param int module_id:   ID of the swerve module
-        @param steer_port:        ptr to motor controlling swerve direction
-        @param drive_port:      ptr to motor controlling swerve movement
+        @param const        mraa_i2c_context &i2c_in:   i2c context for communication
+        @param int          module_id:                  ID of the swerve module
+        @param int          steer_port:                 ptr to motor controlling swerve direction
+        @param int          drive_port:                 ptr to motor controlling swerve movement
+        @param int          pot_adc:                    potentiometer ADC port
+        @param int          encoder_port:               encoder port/I2C address
+        @param unint16_t    x_position:                 swerve position for x translation
+        @param unint16_t    y_position:                 swerve position for y translation
+        @param unint16_t    z_position:                 swerve position for z translation
+
+        @returns:                                   Swerve_Module object
 
     */
-    Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int steer_port, int drive_port, int pot_adc, int encoder_port,
-                    uint16_t x_position, uint16_t y_position, uint16_t z_position) {
+    Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int steer_port, int drive_port, int pot_adc, int encoder_port, uint16_t x_position, uint16_t y_position, uint16_t z_position) {
         id = module_id;
         steer_motor = new Motor_Module(steer_port);
         drive_motor = new Motor_Module(drive_port);
@@ -77,126 +83,191 @@ public:
         y_pos = y_position;
         z_pos = z_position;
 
+        ready = false;
+        has_passed = false;
+        waiting = false;
+        driving = false;
 
-        //printf("[ init ] Swerve module initialized with ID %d\n", module_id);
+        printf("[ init ] Created swerve module ID %d\n", id);
     }
 
     /*
         Default destructor for swerve module.
     */
-    ~Swerve_Module() {
-        //printf("[ dest ] Swerve module %d deleted\n", id);
+    ~Swerve_Module() {  //free memory
+        delete steer_motor;
+        delete drive_motor;
+        delete dir_feedback;
+        //delete drive_feedback;
+        printf("[ dest ] Swerve module %d deleted\n", id);
     }
 
     /*
-        Rotates swerve module to correct position for Y translation. Position given as a @param in
-            constructor of Swerve_Module().
-
-        @returns:   the result of the Y-translation positioning as a mraa_result_t value
+        Decides when to rotate or drive the swerve module. Waits for Driving module's OK to continue
+        @param  char    axis:       desired translation position (XYZ), case-insensitive
+        @param  float   speed:      desired speed for the drive wheel to turn when ready
+        @param  bool    proceed:    the OK signal received which means all 4 swerve modules are ready to continue
+        @returns:       1 if still rotating direction motor, 0 if ready to move, -1 if error has occured
     */
-    mraa_result_t rotate_position(char position) {
-        mraa_result_t result = MRAA_SUCCESS;
+    int swerve_controller(char axis, float speed, bool proceed, bool wait) {
         uint16_t desired_pos;
-        switch(position) {
+        switch(axis) {          //desired swerve position based on desired axis translation
         case 'X':
         case 'x':
             desired_pos = x_pos;
+            if (this->id == 1 || this->id == 3) {
+                speed *= -1;
+            }
             break;
         case 'Y':
         case 'y':
             desired_pos = y_pos;
+            if (this->id == 3 || this->id == 4) {
+                speed *= -1;
+            }
             break;
         case 'Z':
         case 'z':
             desired_pos = z_pos;
             break;
         default:
-            return MRAA_ERROR_INVALID_PARAMETER;
+            return -1;
         }
+        controller_result = 0; // assume function is good from the start
+        if (!wait) {
+            waiting = false;
+            controller_result = rotate_position(axis, desired_pos);
+            if (speed == 0) {
+                controller_result = stop_motors();
+                return controller_result;
+            }
+            if (controller_result == -1) {
+                ready = false;
+                return -1; // an error has occured
+            } else if (controller_result == 1) {
+                ready = false;
+                return 1; // still rotating
+            } else if (controller_result == 0) {
+                ready = true;
+                return 0; // ready
+            }
+            return -1; // an error has occured in the logic
+        } else {
+            if(!waiting) {
+                waiting = true;
+                stop_rotation();
+            }
+            if (proceed) { // received proceed command from drive module
+                if (!driving) {
+                    controller_result = drive_wheel(speed);
+                    printf("Driving wheel %d", id);
+                    driving = true;
+                    return controller_result; // returns 0 if good, -1 if error
+                }
+            } else {
+                return 0; // returns
+            }
+        }
+        return 0;
+    }
+
+    /*
+        Rotates swerve module to correct position for XYZ translation
+        @param  char    position:       desired translation position (XYZ), case-insensitive
+        @returns:   the result of the Y-translation positioning as a mraa_result_t value
+    */
+    int rotate_position(char position, uint16_t desired_pos) {
+        int rotation_result;
         current_pos = dir_feedback->get_average_val();    //get starting position
-        if ((desired_pos + 3 < current_pos) || (desired_pos + 3 == current_pos)) {              //rotate CCW
-            result = rotate_ccw();
-
+        // printf("current_pos: %d, desired_pos: %d\n", current_pos, desired_pos);
+        // return 0;
+        if (desired_pos + 30 <= current_pos) {
+            // overshoot and then approach from CW side
+            correct_pos = false;
+            rotating_cw = false;
+            has_passed = true;
+            if (!rotating_ccw) {
+                rotation_result = rotate_ccw(); // increase pot value
+                if(rotation_result != -1) {
+                    rotating_ccw = true;
+                }
+            }
+        } else if (desired_pos >= current_pos) {         //rotate CW
+            correct_pos = false;
+            rotating_ccw = false;
+            has_passed = false;
+            if (!rotating_cw) {
+                rotation_result = rotate_cw(); // decrease pot value
+                if(rotation_result != -1) {
+                    rotating_cw = true;
+                }
+            }
+        } else if (has_passed) {
+            rotating_cw = false;
+            rotating_ccw = false;
+            if(!correct_pos) {
+                rotation_result = stop_rotation(); // stop rotation
+                printf("Module %d Aligned!\n", id);
+                if(rotation_result != -1) {
+                    correct_pos = true;
+                }
+            }
         }
-        else if ((desired_pos - 3 > current_pos) || (desired_pos - 3 == current_pos)) {         //rotate CW
-            result = rotate_cw();
+        if (rotation_result == -1) {
+            return -1;
+        } else {
+            return (correct_pos ? 0 : 1); // if correct position send (0 = correct position) else (1 = still rotating)
         }
-        else {                                          //close enough; stop steering
-            result = steer_motor->send_signal(i2c_context, 0);
-            sleep(10);
-        }
-        return result;
-    }
-
-
-    mraa_result_t rotate(uint16_t desired_pos) {
-        mraa_result_t result = MRAA_SUCCESS;
-        uint16_t current_pos = dir_feedback->get_average_val();  //initial starting position
-        if ((desired_pos - 3 >= current_pos) && (desired_pos < CW_LIMIT)) { //1926-2 = 1924
-            result = rotate_cw();     //rotate clockwise to position -> increases value
-        }
-        else if ((desired_pos + 3 <= current_pos) && (desired_pos > CCW_LIMIT)) { //1926+2 = 1928
-            result = rotate_ccw();    //rotate counterclockwise to position -> decreases value
-        }
-        else {
-            result = steer_motor->send_signal(i2c_context, 0); //Stop Signal to Motor
-            sleep(2);
-        }
-        return result;
-    }
-
-    /*
-        Rotates wheel clockwise. Stops if limit is reached.
-    */
-    mraa_result_t rotate_cw() {
-        mraa_result_t result = steer_motor->send_signal(i2c_context, -0.45);
-        //printf("CW – Value: %d, Limit: %d\n", dir_feedback->get_val(), CW_LIMIT);
-        return result;
-        /*
-        limit_ccw = false;
-        if (dir_feedback->get_val() >= CW_LIMIT) { //if limit reached
-            limit_cw = true;//stop
-        }
-          */
-    }
-
-    /*
-        Rotates wheel counter-clockwise. Stops if limit is reached.
-    */
-    mraa_result_t rotate_ccw() {
-        mraa_result_t result = MRAA_SUCCESS;
-        //printf("CCW – Value: %d, Limit: %d\n", dir_feedback->get_val(), CCW_LIMIT);
-        result = steer_motor->send_signal(i2c_context, 0.45);
-        return result;
     }
 
     /*
         Rotates drive wheel forwards
     */
-    mraa_result_t drive_forward(float speed) {
+    int drive_wheel(float speed) {
+        printf("DRIVE module %d\n", id);
         mraa_result_t result = drive_motor->send_signal(i2c_context, speed);
-        return result;
+        return (result != MRAA_SUCCESS ? -1 : 0);
     }
 
     /*
-        Rotates drive wheel backwards
+        Rotates wheel clockwise. Stops if limit is reached.
     */
-    mraa_result_t drive_backward(float speed) {
-        mraa_result_t result  = drive_motor->send_signal(i2c_context, -speed);
-        return result;
+    int rotate_cw() {
+        printf("ROTATE CW module %d\n", id);
+        mraa_result_t result = steer_motor->send_signal(i2c_context, -0.4);
+        return (result != MRAA_SUCCESS ? -1 : 0);
+
     }
 
+    /*
+        Rotates wheel counter-clockwise. Stops if limit is reached.
+    */
+    int rotate_ccw() {
+        mraa_result_t result = MRAA_SUCCESS;
+        printf("ROTATE CCW module %d\n", id);
+        result = steer_motor->send_signal(i2c_context, 0.6);
+        return (result != MRAA_SUCCESS ? -1 : 0);
+    }
+
+    /*
+        Stop rotating
+    */
+    int stop_rotation() {
+        printf("STOP ROTATE on module %d\n", id);
+        mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
+        return (result != MRAA_SUCCESS ? -1 : 0);
+    }
     /*
         Stops all motors
     */
-    mraa_result_t stop_motors() {
-        printf("Stopping all motors\n");
+    int stop_motors() {
+        printf("STOP ALL motors on module %d\n", id);
         mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
         result = drive_motor->send_signal(i2c_context, 0);
-        return result;
+        this->ready = false;
+        this->driving = false;
+        return (result != MRAA_SUCCESS ? -1 : 0);
     }
-
-
 };
 
 #endif

@@ -17,6 +17,9 @@ double_reg float_to_PWM(float start) {
     }
     double_reg final;
     final.u_sixteen = ((uint16_t) 2816-(start*768.0));
+    if (start == 0) {
+        final.u_sixteen = ((uint16_t) 500);
+    }
     // printf("\nSTART %f becomes 0x%04x \n", start, final.u_sixteen);
     return final;
 }
@@ -58,15 +61,8 @@ public:
     */
     mraa_result_t send_signal(const mraa_i2c_context & i2c_context, float speed) {
         double_reg signal = float_to_PWM(speed);
-
         mraa_result_t result = MRAA_SUCCESS;
         result = i2c_send_signal(i2c_context, end_reg, signal);
-        if(result != MRAA_SUCCESS)
-        {
-//            printf("[ !!!! ] Could NOT write to register 0x%02x\n", end_reg);
-        } else {
-//            printf("[ send ] Write signal 0x%04x to register 0x%02x\n", signal.u_sixteen, end_reg);
-        }
 
         return result;
     }
