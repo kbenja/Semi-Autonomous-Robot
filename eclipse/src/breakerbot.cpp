@@ -6,6 +6,9 @@
 #include "include/pot_module.h"
 #include "include/drive_module.h"
 
+#include "lidar_module.h"
+#include "alignment_module.h"
+
 enum modes {
     DISCONNECTED = -1,
     IDLE = 0,
@@ -25,13 +28,16 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool ipc_module = true;
+bool ipc_module = false;
 bool pot_testing = false;
 bool stop_motors = false;
 bool motor_testing = false;
 bool navx_testing = false;
 bool swerve_module = false;
 bool drive_module = false;
+
+bool lidar_module = true;
+bool alignment_module = false;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
@@ -43,6 +49,46 @@ int input;
 int result;
 
 int main(int argc, char** argv) {
+
+    if(lidar_module) {
+
+        printf("LIDAR MODULE TESTING\n\n");
+
+        //INITIALIZATION
+        Lidar_Module lidar(4); //ANALOG PIN #4
+        //Lidar_Module l2(2);
+        while(1) {
+            usleep(500000); //sleep every .5 sec
+
+            printf("LIDAR:%d\n",lidar.get_distance_reading_int());
+            //printf("LIDAR:%f\n",lidar.get_distance_reading());
+
+            //printf("LIDAR_AVERAGE:%f\n\n",lidar.get_average_distance_reading());
+
+            //printf("LIDAR#1:%X - %d\n",l1.get_distance_reading());
+            //printf("LIDAR#2:%X - %d\n\n",l2.get_distance_reading());
+        }
+    }
+
+    if(alignment_module) {
+
+        printf("ALIGNMENT MODULE TESTING\n\n");
+
+        Alignment_Module(); 
+
+        while(1) {
+            usleep(500000); //sleep every .5 sec
+
+            //LIDAR
+            lidar_alignment();
+
+            //CAMERA
+            camera_alignment();
+
+        }
+    }
+
+
     if (ipc_module) {
         float user_input = 0.0;                          // receive signal from argv or use default (stop)
         if (argc > 1) {
@@ -123,6 +169,13 @@ int main(int argc, char** argv) {
                     break;
                 case 2:
                     printf("AUTO MODE, INPUT = %d\n", input);
+
+                    //LIDAR
+                    lidar_alignment();
+
+                    //CAMERA
+                    camera_alignment();
+
                     break;
                 case 3:
                     printf("INTAKE MODE, INPUT = %d\n", input);
