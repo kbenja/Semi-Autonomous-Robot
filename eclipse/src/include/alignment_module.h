@@ -16,37 +16,54 @@ public:
     NavX_Module * navx;
     Lidar_Module * lidar;
 
+    uint16_t current_distance;
+    uint16_t desired_distance_cabinet;
+    uint16_t desired_distance_edge;
+    uint16_t desired_distance_breaker;
+
+    bool lidar_stage1_success;
+    bool lidar_stage2_success;
+    bool lidar_alignment_complete;
+
     Alignment_Module() {
         printf("[ init ] Created Alignment Module\n");
         navx = new NavX_Module();
-        lidar = new Lidar_Module(0);
+        lidar = new Lidar_Module(3);
+
+    	//INITIALIZATION
+    	current_distance = 0;
+    	desired_distance_cabinet = 120; //SET THIS ~ 0.10
+    	desired_distance_edge = 400; //SET THIS ~ 0.30
+    	desired_distance_breaker = 350; //SET THIS ~ 0.15
+
+    	lidar_stage1_success = false;
+    	lidar_stage2_success = false;
+    	lidar_alignment_complete = false;
     }
 
     // function aligns using the lidar data
     void lidar_alignment() {
 
-    	//INITIALIZATION
-    	float current_distance;
-    	float desired_distance_cabinet = 10; //SET THIS ~ 0.10
-    	float desired_distance_edge = 10; //SET THIS ~ 0.30
-    	float desired_distance_breaker = 10; //SET THIS ~ 0.15
-
-    	bool lidar_stage1_success = false;
-    	bool lidar_stage2_success = false;
-    	// bool lidar_alignment_complete = false;
-
-    	Lidar_Module lidar(4);
+    	current_distance = lidar->get_average_distance_reading_int();
 
     	//STAGE 1 LIDAR ALIGNMENT - DISTANCE AWAY FROM THE CABINET
     	if (!lidar_stage1_success){
 
-    		if (current_distance > desired_distance_cabinet){
+    		//printf("WORKING ON STAGE 1 LIDAR ALIGNMENT\n");
+
+    		if (current_distance > desired_distance_cabinet+25){
+    			printf("MOVE FORWARD\n");
     			//MOVE FORWARD Y-DIRECTION
     			//d1.drive('Y', user_input);
     		}
+    		else if (current_distance < desired_distance_cabinet-25){
+    			printf("MOVE BACKWARD\n");
+    			//MOVE BACKWARD Y-DIRECTION
+    			//d1.drive('Y', -user_input);
+    		}
+    		else if ((current_distance <= desired_distance_cabinet+25)&&(current_distance >= desired_distance_cabinet-25)){ //WITH SOME ERROR MARGIN
 
-    		else if (current_distance == desired_distance_cabinet){ //WITH SOME ERROR MARGIN
-
+    			printf("DESIRED DISTANCE!!!\n");
     			// d1.stop(); //CALL DRIVE TO STOP DRIVING
     			//if success, proceed to stage 2
     			printf("STAGE 1 LIDAR ALIGNMENT COMPLETE\n");
