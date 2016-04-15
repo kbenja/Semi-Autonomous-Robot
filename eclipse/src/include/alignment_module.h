@@ -30,6 +30,12 @@ public:
     bool lidar_stage2_success;
     bool lidar_alignment_complete;
 
+    // this code will be replaced soon
+	uint8_t address;
+	mraa_i2c_context i2c;
+	mraa_result_t i2c_status;
+    Drive_Module * d1;
+
     Alignment_Module() {
         printf("[ init ] Created Alignment Module\n");
         navx = new NavX_Module();
@@ -49,6 +55,16 @@ public:
     	lidar_stage1_success = false;
     	lidar_stage2_success = false;
     	lidar_alignment_complete = false;
+
+    	//MOTOR INITIALIZATION
+    	address = 0x40;
+		i2c = mraa_i2c_init(6);
+		i2c_status = i2c_init_board(i2c, address); // initialize i2c board
+		if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Cannot initialize I2C Board.\n");
+
+//        Intake_Module i1 = Intake_Module(i2c, 8); // setup intake module on port 8
+
+		d1 = new Drive_Module(i2c); // initialize drive module
     }
 
     // function aligns using the lidar data
@@ -64,17 +80,17 @@ public:
     		if (current_distance > desired_distance_cabinet+25){
     			printf("MOVE FORWARD\n");
     			//MOVE FORWARD Y-DIRECTION
-    			//d1.drive('Y', user_input);
+    			d1->drive('Y', 0.5);
     		}
     		else if (current_distance < desired_distance_cabinet-25){
     			printf("MOVE BACKWARD\n");
     			//MOVE BACKWARD Y-DIRECTION
-    			//d1.drive('Y', -user_input);
+    			d1->drive('Y', -0.5);
     		}
     		else if ((current_distance <= desired_distance_cabinet+25)&&(current_distance >= desired_distance_cabinet-25)){ //WITH SOME ERROR MARGIN
 
     			printf("DESIRED DISTANCE!!!\n");
-    			// d1.stop(); //CALL DRIVE TO STOP DRIVING
+    			d1->stop(); //CALL DRIVE TO STOP DRIVING
     			//if success, proceed to stage 2
     			printf("STAGE 1 LIDAR ALIGNMENT COMPLETE\n");
     			lidar_stage1_success = true;
@@ -87,13 +103,13 @@ public:
     		if((current_distance <= desired_distance_cabinet+10)&&(current_distance >= desired_distance_cabinet-10)){
     			//MOVE RIGHT
     			printf("DRIVING RIGHT\n");
-    			//d1.drive('X', user_input);
+    			d1->drive('X', 0.5);
     		}
 
     		else if ((current_distance <= desired_distance_breaker+10)&&(current_distance >= desired_distance_breaker-10)){
     			//MOVE LEFT
     			printf("DRIVING LEFT\n");
-    			//d1.drive('X', -user_input);
+    			d1->drive('X', -0.5);
     		}
 
     		else if ((current_distance <= desired_distance_edge+10)&&(current_distance >= desired_distance_edge-10)){
@@ -105,7 +121,7 @@ public:
     				printf("EDGE DETECTED\n");
     				printf("MOTOR STOP!!!\n");
     				//STOP
-    				//d1.stop();
+    				d1->stop();
 
     				//if success, LIDAR alignment if complete
     				printf("STAGE 2 LIDAR ALIGNMENT COMPLETE\n");
@@ -116,7 +132,7 @@ public:
 
     	if (lidar_stage1_success && lidar_stage2_success){
     		printf("ENTIRE LIDAR ALIGNMENT COMPLETE\n");
-    		printf("PROGRAM EXIT!!!!!\n")
+    		printf("PROGRAM EXIT!!!!!\n");
     		
     		// lidar_alignment_complete = true; //eventually should return TRUE upon exit
     	}

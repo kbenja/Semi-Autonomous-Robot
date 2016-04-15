@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
         mraa_result_t i2c_status = i2c_init_board(i2c, address); // initialize i2c board
         if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
 
-        Intake_Module i1 = Intake_Module(i2c, 8); // setup intake module on port 8
+//        Intake_Module i1 = Intake_Module(i2c, 8); // setup intake module on port 8
 
         Drive_Module d1 = Drive_Module(i2c); // initialize drive module
 
@@ -188,7 +188,7 @@ int main(int argc, char** argv) {
                         printf("pull in\n");
                         i1.drive_intake(-0.9);
                     } else if (input == 0) {
-                        i1.stop_intake();
+//                        i1.stop_intake();
                         printf("stop everything\n");
                     }
                     break;
