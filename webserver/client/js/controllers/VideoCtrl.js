@@ -7,12 +7,11 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
       }
       return false;
     });
-    var tracker = new tracking.ColorTracker(['yellow','red']);
+    var tracker = new tracking.ColorTracker(['yellow']);
     tracker.on('track', function(event) {
         $scope.rects = event.data;
-        $scope.rects.forEach(function(rect) {
-
-            // console.log(rect);
+        $scope.rects.forEach(function(rect, num) {
+            // console.log("RECT: " + num + " CENTER: (" + rect.x , rect.y + rect.height/2 + ")");
         });
     });
     setInterval(function() {

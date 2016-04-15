@@ -84,6 +84,8 @@ function unix_socket_emit() {
         } else if(commands.length) {
             console.log("sending: ", commands[0]);
             ipc.server.emit(unix_socket,commands.shift()); // send first command in commands array (and pop command off array)
+        } else {
+            ipc.server.emit(unix_socket, [-2,-2]); // send back idle command
         }
     }
 }

@@ -3,7 +3,7 @@
 #include "mraa.h"
 #include "lidar_module.h"
 #include "navx_module.h"
-#include "drive.h"
+#include "drive_module.h"
 
 #ifndef ALIGNMENT_MODULE_H
 #define ALIGNMENT_MODULE_H
@@ -33,7 +33,7 @@ public:
 
     	bool lidar_stage1_success = false;
     	bool lidar_stage2_success = false;
-    	bool lidar_alignment_complete = false;
+    	// bool lidar_alignment_complete = false;
 
     	Lidar_Module lidar(4);
 
@@ -47,7 +47,7 @@ public:
 
     		else if (current_distance == desired_distance_cabinet){ //WITH SOME ERROR MARGIN
 
-    			d1.stop(); //CALL DRIVE TO STOP DRIVING
+    			// d1.stop(); //CALL DRIVE TO STOP DRIVING
     			//if success, proceed to stage 2
     			printf("STAGE 1 LIDAR ALIGNMENT COMPLETE\n");
     			lidar_stage1_success = true;
@@ -83,9 +83,9 @@ public:
 
     	if (lidar_stage1_success && lidar_stage2_success){
     		printf("ENTIRE LIDAR ALIGNMENT COMPLETE\n");
-    		lidar_alignment_complete = true; //eventually should return TRUE upon exit
+    		// lidar_alignment_complete = true; //eventually should return TRUE upon exit
     	}
-    	
+
     }
 
     // function aligns using image processing data
@@ -95,12 +95,12 @@ public:
 
     // function to return navx rotation value
     int get_rotation() {
-        return navx.get_yaw();
+        return navx->get_yaw();
     }
 
     // reorients navx
     void set_zero() {
-        navx.set_zero();
+        navx->set_zero();
     }
 
 

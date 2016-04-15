@@ -21,7 +21,7 @@ public:
     {
         analog_input = port;
         adc_input = mraa_aio_init(analog_input);
-        mraa_aio_set_bit(port, 12);//add
+        mraa_aio_set_bit(adc_input, 12);//add
         printf("initialized lidar module to on AI%d\n", analog_input);
     }
 

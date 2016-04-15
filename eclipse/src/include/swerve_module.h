@@ -138,7 +138,7 @@ public:
             waiting = false;
             if(last_position == axis) { // save last position
                 ready = true;
-                return 0
+                return 0;
             }
             controller_result = rotate_position(axis, desired_pos);
             if (speed == 0) {
