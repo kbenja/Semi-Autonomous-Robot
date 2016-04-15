@@ -59,6 +59,7 @@ app.controller('EStopCtrl', function($scope, communication) {
     $scope.emergency_stop = function() {
         stop_count++;
         console.log("STOPPING");
+        alert("Stopping robot!");
         communication.send_data({"mode": 1, "code": 0}); // tell motors to stop in program
         if(stop_count > 1) {
             communication.send_data({"mode": -1, "code": 0}); // run stop command

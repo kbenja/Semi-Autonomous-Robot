@@ -5827,17 +5827,24 @@ button.close {
 body {
   font-size: 16px;
   color: #ffffff;
-  background-color: #000000;
+  background-color: #212021;
   font-family: 'DIN-Medium'; }
 
 button {
   color: #000000; }
 
 .modal {
+  margin-top: 130;
   color: #000000;
   text-align: center; }
+  .modal .modal-body {
+    background-color: #212021; }
   .modal .modal-title {
+    padding: 20px 0;
+    color: #ffffff;
     font-size: 1.5em; }
+  .modal .modal-footer {
+    border: 0; }
   .modal button {
     margin: 10px auto;
     display: block; }
@@ -5853,7 +5860,7 @@ button {
   height: 65px;
   line-height: 65px;
   border-bottom: 3px #333333 solid;
-  background-color: rgba(215, 215, 215, 0.13); }
+  background-color: rgba(215, 215, 215, 0.05); }
   .header div {
     margin: 0 10px;
     display: inline-block;
@@ -5869,7 +5876,7 @@ button {
   text-align: center;
   margin: 0 auto; }
   .wrapper .panel {
-    background-color: rgba(215, 215, 215, 0.13);
+    background-color: rgba(215, 215, 215, 0.05);
     position: relative;
     display: inline-block;
     min-height: 100%;
@@ -5877,7 +5884,8 @@ button {
     padding: 0;
     vertical-align: middle; }
     .wrapper .panel.panel-left {
-      max-width: 17.25%;
+      padding: 10px 10px;
+      width: 17.25%;
       height: 100%; }
       .wrapper .panel.panel-left .battery-container img {
         height: 30px;
@@ -5930,7 +5938,7 @@ button {
           font-size: 1.5em;
           background-color: rgba(65, 163, 62, 0.36); }
         .wrapper .panel.panel-middle .video-container #canvas-video {
-          background-color: #dddddd;
+          background-color: #555555;
           width: 100%;
           height: auto; }
       .wrapper .panel.panel-middle .mode-container .mode {
@@ -5996,8 +6004,12 @@ button {
               .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.left, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.right, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.x_button, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.b_button {
                 display: inline-block; }
     .wrapper .panel.panel-right {
-      max-width: 17.25%;
-      min-width: 210px; }
+      width: 17.25%;
+      padding: 10px 10px; }
+      .wrapper .panel.panel-right .e-stop {
+        height: 440px;
+        font-size: 3em;
+        width: 100%; }
       .wrapper .panel.panel-right .hardware-container {
         width: 100%;
         margin: 0 auto; }
