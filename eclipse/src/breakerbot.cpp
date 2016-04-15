@@ -108,7 +108,6 @@ int main(int argc, char** argv) {
         // INITIALIZE HARDWARE
         NavX_Module x1; // initialize NavX
         x1.set_zero(); // calibrate NavX
-
         uint8_t address = 0x40;
         mraa_i2c_context i2c = mraa_i2c_init(6);
         mraa_result_t i2c_status = i2c_init_board(i2c, address); // initialize i2c board

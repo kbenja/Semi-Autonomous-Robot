@@ -43,7 +43,7 @@ comm_socket.on('connection', function(socket) {
         console.log('Disconnected WebSocket (' + comm_socket.clients.length + ' total)');
     });
     setInterval(function(){
-        console.log("Sending ", to_send);
+        // console.log("Sending ", to_send);
         if(unix_socket) {
             comm_socket.broadcast(JSON.stringify({data: to_send}));
         } else {
@@ -83,12 +83,12 @@ var check_status = setInterval(function(){ //checks every 250ms if unix socket i
         heartbeat = heartbeat%1000;
         last_heartbeat = heartbeat;
     }
-}, 500);
+}, 900);
 
 function unix_socket_emit() {
     if(unix_socket) {
         if(!tcp_socket) {
-            ipc.server.emit(unix_socket,[-1,0]); // send back -1 if the operator is not connected
+            ipc.server.emit(unix_socket, [-1,0]); // send back -1 if the operator is not connected
         } else if(commands.length) {
             console.log("sending: ", commands[0]);
             ipc.server.emit(unix_socket,commands.shift()); // send first command in commands array (and pop command off array)
@@ -111,8 +111,8 @@ ipc.serve(function() {
     });
     ipc.server.on('data', function(data,socket){
         to_send = data.toString('hex').split('');
+        unix_socket_emit();
         heartbeat++;
-        unix_socket_emit()
     });
 });
 ipc.server.start();

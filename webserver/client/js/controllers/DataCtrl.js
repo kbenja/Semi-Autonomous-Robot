@@ -1,4 +1,9 @@
 angular.module('Data', ['CommunicationService']).controller('DataCtrl', function($scope, $rootScope, communication) {
+
+    function transform_data(starting_word) {
+        console.log("WIP read bytes properly");
+    }
+
     $rootScope.connected = false;
     $scope.orientation = "?";
     $scope.last_communication = 0;
