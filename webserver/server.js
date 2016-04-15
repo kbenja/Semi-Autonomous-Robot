@@ -1,4 +1,4 @@
-var development = false;
+var development = true;
 
 var express = require('express');
 var app = express();
@@ -41,6 +41,8 @@ comm_socket.on('connection', function(socket) {
     socket.on('close', function(code, message) {
         tcp_socket = false;
         console.log('Disconnected WebSocket (' + comm_socket.clients.length + ' total)');
+        console.log("STOPPING ALL MOTORS");
+        var stop = childProcess.exec('.././eclipse/stop');
     });
     setInterval(function(){
         // console.log("Sending ", to_send);

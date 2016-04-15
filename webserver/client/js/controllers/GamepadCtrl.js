@@ -11,20 +11,23 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
 
     var keysDown = {};
     var last_state = {};
+    var modes = {
+        "IDLE": 0,
+        "MANUAL": 1,
+        "AUTO": 2,
+        "INTAKE": 3,
+        "TESTING": 4
+    }
 
     function send_command(data) {
-        if($rootScope.mode === "MANUAL") {
-            communication.send_data(data);
-        } else {
-            console.log("not in manual mode");
-        }
+        communication.send_data({mode: modes[$rootScope.mode], code: data});
     }
 
     function keyPressed(key) {
         if (key === "b_button" || key === 32 && !$scope.breaking) {
             $scope.breaking = true;
             $scope.command.code = 0;
-            send_command($scope.command);
+            send_command($scope.command.code);
         }
         if(!$scope.breaking) {
             // put $scope only on game pad connection
@@ -64,7 +67,7 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
                 }
                 keysDown[key] = true;
             }
-            send_command($scope.command);
+            send_command($scope.command.code);
         }
     }
 
@@ -98,7 +101,7 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
                 keysDown[key] = false;
                 $scope.command.code = 0;
             }
-            send_command($scope.command);
+            send_command($scope.command.code);
         }
     }
 
@@ -117,10 +120,8 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
             $scope.gamepad_connected = true;
             $scope.gamepad = navigator.getGamepads()[0];
             $scope.command.mode = 1;
-            send_command($scope.command);
+            send_command($scope.command.code);
             console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.", $scope.gamepad.index, $scope.gamepad.id, $scope.gamepad.buttons.length, $scope.gamepad.axes.length);
-            $(".controls").css("opacity","1");
-            $(".connect").css("display","none");
         }, false);
 
         addEventListener("gamepaddisconnected", function(e) {
@@ -128,9 +129,7 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
             $scope.gamepad = {};
             console.log("Gamepad disconnected");
             $scope.command.mode = 0;
-            send_command($scope.command);
-            $(".controls").css("opacity","0.2");
-            $(".connect").css("display","block");
+            send_command($scope.command.code);
         }, false);
     }
 
@@ -139,19 +138,22 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
             $scope.gamepad = navigator.getGamepads()[0];
             $scope.gamepad.buttons.forEach(function(number, it){
                 var button = getButton(it);
-                if(number.pressed) {
-                    if(last_state[it] === false && registeredButton(button)) {
-                        console.log(it);
-                        keyPressed(button);
+                if(check_mode(button)) {
+                    if(number.pressed) {
+                        if(last_state[it] === false) {
+                            console.log(it);
+                            keyPressed(button);
+                        }
+                        last_state[it] = true;
+                        $("." + button).css("background-color","#EEEEEE");
+                    } else {
+
+                        if(last_state[it]) {
+                            keyReleased(button);
+                        }
+                        last_state[it] = false;
+                        $("." + button).css("background-color","#AAAAAA");
                     }
-                    last_state[it] = true;
-                    $("." + button).css("background-color","#CCCCCC");
-                } else {
-                    if(last_state[it]) {
-                        keyReleased(button);
-                    }
-                    last_state[it] = false;
-                    $("." + button).css("background-color","#AAAAAA");
                 }
             })
             // control joystick GUI
@@ -162,10 +164,22 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
         }
     }
 
+    function check_mode(btn) {
+        if($rootScope.mode === "MANUAL") {
+            return registeredButton(btn);
+        } else if ($rootScope.mode === "INTAKE") {
+            return registeredIntakeButton(btn);
+        } else {
+            return false;
+        }
+    }
     function registeredButton(btn) {
         return (btn === "up" || btn === "left" || btn === "right" || btn === "down" || btn==="b_button" || btn==="l2_button" || btn==="r2_button") ? true : false;
     }
 
+    function registeredIntakeButton(btn) {
+        return (btn === "up" || btn === "down") ? true : false;
+    }
     function getButton(btn) {
         switch(btn) {
             case 0:
