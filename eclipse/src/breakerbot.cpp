@@ -7,6 +7,7 @@
 #include "include/drive_module.h"
 #include "include/lidar_module.h"
 #include "include/alignment_module.h"
+#include "include/intake_module.h"
 
 enum modes {
     DISCONNECTED = -1,
@@ -27,7 +28,7 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool main_program = false;
+bool main_program = true;
 bool pot_testing = false;
 bool stop_motors = false;
 bool motor_testing = false;
@@ -36,7 +37,7 @@ bool swerve_module = false;
 bool drive_module = false;
 
 bool lidar_module = false;
-bool alignment_module = true;
+bool alignment_module = false;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;

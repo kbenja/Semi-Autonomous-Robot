@@ -6,7 +6,7 @@ class Intake_Module {
 public:
     mraa_i2c_context i2c_context;
     Motor_Module * intake_motor;
-    int intake_port
+    int intake_port;
 
     /*
         Create Intake Module
@@ -14,7 +14,7 @@ public:
         @param  int              port:  port to set motor module at
      */
     Intake_Module(const mraa_i2c_context & i2c, int port) {
-        printf("[ init ] initialized intake motor on port %d\n", port)
+        printf("[ init ] initialized intake motor on port %d\n", port);
         intake_port = port;
         intake_motor = new Motor_Module(intake_port);
         i2c_context = i2c;
