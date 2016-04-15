@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
         if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
 
         Drive_Module d1 = Drive_Module(i2c); // initialize drive module
-
+        bool stopping = false;
         while(1) {
             usleep(50000); // cycle time
             ipc.unix_socket_write(sending); // send most recent data to socket
@@ -136,10 +136,16 @@ int main(int argc, char** argv) {
                     }
                     break;
                 case 1:
+                    if (input != 0) {
+                        stopping = false;
+                    }
                     switch(input) {
                         case 0:
                             printf("Received BREAK command\n");
-                            d1.stop();
+                            if(!stopping) {
+                                d1.stop();
+                                stopping = true;
+                            }
                             break;
                         case 1:
                             printf("Received FORWARD command\n");
@@ -291,10 +297,7 @@ int main(int argc, char** argv) {
     }
 
     if (navx_testing) {
-        while(1) {
-            usleep(250000);
-            test_navx_module();
-        }
+        test_navx_module();
     }
 
     if (stop_motors) {

@@ -12,7 +12,6 @@ angular.module('Data', ['CommunicationService']).controller('DataCtrl', function
                     console.log("Hex", object.data);
                     $scope.orientation = parseInt(object.data[2] + object.data[3] + object.data[0] + object.data[1], 16);
                 }
-                // console.log("received", evt.data);
             });
         });
     }

@@ -75,7 +75,7 @@ void test_navx_module() {
     NavX_Module x1;
     while(1) {
         usleep(500000); //sleep for 0.5s
-        printf("Getting NavX fused heading value\n");
+        printf("Getting NavX yaw value\n");
         printf("Value read = %d\n", x1.get_yaw()/100);
         count++;
         if (count%10 == 0) {
