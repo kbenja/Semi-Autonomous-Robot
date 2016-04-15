@@ -50,21 +50,21 @@
         </div>
     </div>
     <div class="wrapper">
-        <div class="panel panel-left">
+        <div class="panel panel-left" ng-controller="DataCtrl">
             <div class="battery-container">
                 <h4>BATTERY</h4>
                 <img src="images/battery_100.png">
-                <p>Last charge:<br>15 minutes ago.</p>
+                <p>Last charge:<br>{{ last_charge }} {{ last_charge === 1 ? "minute" : "minutes" }} ago</p>
+                <button ng-click="update_battery()">Reset battery</button>
             </div>
-            <div ng-controller="DataCtrl" class="position-container">
+            <div class="position-container">
                 <h4>POSITION</h4>
                 <div class="compass">
                     <img ng-style="{'transform': 'rotate('+orientation+'deg)', '-webkit-transform': 'rotate('+orientation+'deg)', '-ms-transform': 'rotate('+orientation+'deg)'}"src="images/direction.png">
                     <p>Orientation: {{ orientation }}&deg;</p>
 
                 </div>
-                <button ng-click="update()">Update</button>
-                <p>Data from Intel Edison: {{ data }}</p>
+                <p>Last update<br>{{ last_communication }} {{ last_communication === 1 ? "second" : "seconds" }} ago</p>
             </div>
             <div class="status-container">
                 <div class="status">Breaker Engagaged</div>
@@ -137,7 +137,7 @@
                 </div>
             </div>
         </div>
-        <div class="panel panel-right">
+        <div ng-controller="EStopCtrl" class="panel panel-right">
             <div class="bottom">
                 <div class="hardware-container">
                     <h4>HARDWARE STATUS</h4>
@@ -183,7 +183,7 @@
                         <p>11:57:59 Goodbye</p>
                     </div>
                 </div>
-                <button type="button" class="btn-lg btn-danger">Emergency Stop</button>
+                <button type="button" ng-click="emergency_stop()" class="btn-lg btn-danger">Emergency Stop</button>
                 <!-- <button id="stop">STOP</button> -->
             </div>
         </div>

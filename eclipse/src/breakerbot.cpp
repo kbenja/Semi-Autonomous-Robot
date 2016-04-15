@@ -28,7 +28,7 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool ipc_module = true;
+bool main_program = true;
 bool pot_testing = false;
 bool stop_motors = false;
 bool motor_testing = false;
@@ -44,9 +44,9 @@ int16_t *p_instructions = instructions;
 int16_t sending[3] = {-1,-1,-2};
 // int16_t *p_sending = sending;
 
-int mode;
+int mode; // used to decide how to use robot
 int input = -1;
-int result;
+int result; // used for error handling
 
 int main(int argc, char** argv) {
 
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
     // }
 
 
-    if (ipc_module) {
+    if (main_program) {
         float user_input = 0.0;                          // receive signal from argv or use default (stop)
         if (argc > 1) {
             printf("***Using given value by user\n");
@@ -127,7 +127,8 @@ int main(int argc, char** argv) {
             }
             switch(mode) {
                 case -1:
-                    printf("CLIENT IS DISONNECTED\r");
+                    printf("CLIENT DISCONNECT STOPPING ALL MOTORS\n");
+                    d1.stop(); // stop all motors
                     break;
                 case 0:
                     if(instructions[1] != 0) {
@@ -305,20 +306,8 @@ int main(int argc, char** argv) {
         mraa_i2c_context i2c = mraa_i2c_init(6);
         mraa_result_t i2c_status = i2c_init_board(i2c, address);
         if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
-        // FR swerve M7
-        Swerve_Module s1 = Swerve_Module(i2c, 1, 7, 6, 0, 0, 2437, 1925, 2075);
-        // BR swerve M5
-        Swerve_Module s2 = Swerve_Module(i2c, 2, 5, 4, 1, 0, 1484, 1952, 1828);
-        // BL swerve M1
-        Swerve_Module s3 = Swerve_Module(i2c, 3, 1, 0, 2, 0, 2506, 2006, 2173);
-        // FL swerve M3
-        Swerve_Module s4 = Swerve_Module(i2c, 4, 3, 2, 3, 0, 1662, 2175, 1981);
-        printf("Stopping all motors\n");
-        s1.stop_motors();
-        s2.stop_motors();
-        s3.stop_motors();
-        s4.stop_motors();
-        sleep(1);
+        Drive_Module d1 = Drive_Module(i2c);
+        d1.stop();
         mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
     }
 

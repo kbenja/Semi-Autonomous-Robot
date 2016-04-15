@@ -54,3 +54,15 @@ app.controller('InputCtrl', function($scope, $rootScope, communication) {
     }
 });
 
+app.controller('EStopCtrl', function($scope, communication) {
+    var stop_count = 0;
+    $scope.emergency_stop = function() {
+        stop_count++;
+        console.log("STOPPING");
+        communication.send_data({"mode": 1, "code": 0}); // tell motors to stop in program
+        if(stop_count > 1) {
+            communication.send_data({"mode": -1, "code": 0}); // run stop command
+        }
+        alert("STOPPING ROBOT");
+    }
+});

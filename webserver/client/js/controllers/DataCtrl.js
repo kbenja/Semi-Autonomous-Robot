@@ -1,9 +1,24 @@
-angular.module('Data', ['CommunicationService']).controller('DataCtrl', function($scope, communication) {
-    $scope.data = 123456;
-    $scope.update = function() {
-        $scope.data += 1;
+angular.module('Data', ['CommunicationService']).controller('DataCtrl', function($scope, $rootScope, communication) {
+    $rootScope.connected = false;
+    $scope.orientation = "?";
+    $scope.last_communication = 0;
+
+    $scope.last_charge= "?";
+
+    $scope.update_battery = function() {
+        start_charge();
+        console.log("hello", $scope.last_charge);
     }
-    $scope.orientation = 45;
+    function start_charge() {
+        $scope.last_charge = 0;
+        setInterval(function() {
+            $scope.last_charge += 1;
+        }, 1000*60);
+    }
+
+    setInterval(function() {
+        $scope.last_communication += 1;
+    }, 1000);
     $scope.read_data = function() {
         communication.read_data(function(evt) {
             $scope.$apply(function() {
@@ -11,6 +26,10 @@ angular.module('Data', ['CommunicationService']).controller('DataCtrl', function
                 if(object.data) {
                     console.log("Hex", object.data);
                     $scope.orientation = parseInt(object.data[2] + object.data[3] + object.data[0] + object.data[1], 16);
+                    $scope.last_communication = 0;
+                    $rootScope.connected = true;
+                } else {
+                    $rootScope.connected = false;
                 }
             });
         });

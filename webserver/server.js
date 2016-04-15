@@ -30,8 +30,12 @@ comm_socket.on('connection', function(socket) {
     console.log('New WebSocket Connection (' + comm_socket.clients.length + ' total)');
     socket.on("message", function(command) {
         console.log("command", command);
-        command = JSON.parse(command);
-        commands.push([command.mode, command.code]);
+        obj = JSON.parse(command);
+        if(obj.mode == -1) {
+            console.log("STOPPING ALL MOTORS");
+            var stop = childProcess.exec('.././eclipse/stop');
+        }
+        commands.push([obj.mode, obj.code]);
         console.log(commands.length);
     })
     socket.on('close', function(code, message) {
@@ -39,8 +43,12 @@ comm_socket.on('connection', function(socket) {
         console.log('Disconnected WebSocket (' + comm_socket.clients.length + ' total)');
     });
     setInterval(function(){
-        comm_socket.broadcast(JSON.stringify({data: to_send}));
         console.log("Sending ", to_send);
+        if(unix_socket) {
+            comm_socket.broadcast(JSON.stringify({data: to_send}));
+        } else {
+            comm_socket.broadcast(JSON.stringify({data: false}));
+        }
     }, 250);
 });
 
@@ -103,7 +111,6 @@ ipc.serve(function() {
     });
     ipc.server.on('data', function(data,socket){
         to_send = data.toString('hex').split('');
-        console.log(to_send);
         heartbeat++;
         unix_socket_emit()
     });
