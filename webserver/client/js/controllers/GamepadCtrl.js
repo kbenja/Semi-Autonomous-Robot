@@ -161,6 +161,10 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
             $(".left_joystick").css("top",$scope.gamepad.axes[1]*15);
             $(".right_joystick").css("left",$scope.gamepad.axes[2]*15);
             $(".right_joystick").css("top",$scope.gamepad.axes[3]*15);
+            // $scope.left_left = $scope.gamepad.axes[0]*15;
+            // $scope.left_top = $scope.gamepad.axes[1]*15;
+            // $scope.right_left = $scope.gamepad.axes[2]*15;
+            // $scope.right_top = $scope.gamepad.axes[3]*15;
         }
     }
 
