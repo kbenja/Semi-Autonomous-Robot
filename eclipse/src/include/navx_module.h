@@ -43,7 +43,8 @@ public:
             final = 36000 + combined.sixteen;
         }
         actual = final; // set reference to actual orientation (used in set_zero)
-        return (final + offset)%36000;
+        // return (final + offset)%36000;
+        return final/100;
     }
 
     void set_zero() {

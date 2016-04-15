@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <cmath>
 #include "include/ipc_module.h"
 #include "include/test_module.h"
 #include "include/steering_module.h"
@@ -142,8 +143,8 @@ int main(int argc, char** argv) {
                     }
                     switch(input) {
                         case 0:
-                            printf("Received BREAK command\n");
                             if(!stopping) {
+                                printf("Received BREAK command\n");
                                 d1.stop();
                                 stopping = true;
                             }
@@ -198,10 +199,9 @@ int main(int argc, char** argv) {
                     printf("TESTING MODE, INPUT = %d\n", input);
                     break;
                 default:
-                    printf("DEFAULT MODE\n");
                     break;
             }
-            sending[0] = x1.get_yaw()/100;
+            sending[0] = x1.get_yaw();
             sending[1] = mode;
             sending[2] = input;
         }

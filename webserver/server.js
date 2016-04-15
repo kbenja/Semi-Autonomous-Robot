@@ -59,7 +59,7 @@ comm_socket.broadcast = function(data) {
     for (var i in this.clients) {
         if (this.clients[i].readyState == 1) {
             this.clients[i].send(data);
-            console.log("data being sent: ", data);
+            // console.log("data being sent: ", data);
         } else {
             console.log('Error: Client (' + i + ') not connected.');
         }
