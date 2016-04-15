@@ -5,7 +5,6 @@
 #include "include/swerve_module.h"
 #include "include/pot_module.h"
 #include "include/drive_module.h"
-
 #include "include/lidar_module.h"
 #include "include/alignment_module.h"
 
@@ -28,7 +27,7 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool main_program = true;
+bool main_program = false;
 bool pot_testing = false;
 bool stop_motors = false;
 bool motor_testing = false;
@@ -36,8 +35,8 @@ bool navx_testing = false;
 bool swerve_module = false;
 bool drive_module = false;
 
-// bool lidar_module = false;
-// bool alignment_module = false;
+bool lidar_module = false;
+bool alignment_module = true;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
@@ -50,43 +49,42 @@ int result; // used for error handling
 
 int main(int argc, char** argv) {
 
-    // if(lidar_module) {
+    if(lidar_module) {
 
-    //     printf("LIDAR MODULE TESTING\n\n");
+    	printf("LIDAR MODULE TESTING\n\n");
 
-    //     //INITIALIZATION
-    //     Lidar_Module lidar(4); //ANALOG PIN #4
-    //     //Lidar_Module l2(2);
-    //     while(1) {
-    //         usleep(500000); //sleep every .5 sec
+        //INITIALIZATION
+        Lidar_Module lidar(3); //ANALOG PIN #3
+        while(1) {
+            usleep(500000); //sleep every .5 sec
+            printf("LIDAR:%d\n",lidar.get_average_distance_reading_int());
+            //printf("LIDAR:%d\n",lidar.get_distance_reading_int());
+            //printf("LIDAR:%f\n",lidar.get_distance_reading());
 
-    //         printf("LIDAR:%d\n",lidar.get_distance_reading_int());
-    //         //printf("LIDAR:%f\n",lidar.get_distance_reading());
+            //printf("LIDAR_AVERAGE:%f\n\n",lidar.get_average_distance_reading());
 
-    //         //printf("LIDAR_AVERAGE:%f\n\n",lidar.get_average_distance_reading());
+            //printf("LIDAR#1:%X - %d\n",l1.get_distance_reading());
+            //printf("LIDAR#2:%X - %d\n\n",l2.get_distance_reading());
+        }
+    }
 
-    //         //printf("LIDAR#1:%X - %d\n",l1.get_distance_reading());
-    //         //printf("LIDAR#2:%X - %d\n\n",l2.get_distance_reading());
-    //     }
-    // }
+    if(alignment_module) {
 
-    // if(alignment_module) {
+        printf("ALIGNMENT MODULE TESTING\n\n");
 
-    //     printf("ALIGNMENT MODULE TESTING\n\n");
+        Alignment_Module lidar = Alignment_Module();
 
-    //     Alignment_Module();
+        while(1) {
+            usleep(50000); //sleep every .5 sec
 
-    //     while(1) {
-    //         usleep(500000); //sleep every .5 sec
+            //LIDAR
+            lidar.lidar_alignment();
 
-    //         //LIDAR
-    //         lidar_alignment();
+            //CAMERA
+            //camera_alignment();
 
-    //         //CAMERA
-    //         camera_alignment();
-
-    //     }
-    // }
+        }
+    }
 
 
     if (main_program) {
