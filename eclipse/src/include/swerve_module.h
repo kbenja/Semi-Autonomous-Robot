@@ -33,7 +33,7 @@ public:
 
     bool ready;
 
-    // int aligned_count = 0;
+    char last_position;
 
     mraa_i2c_context i2c_context;   //i2c context for communication
 
@@ -136,6 +136,10 @@ public:
         controller_result = 0; // assume function is good from the start
         if (!wait) {
             waiting = false;
+            if(last_position == axis) { // save last position
+                ready = true;
+                return 0
+            }
             controller_result = rotate_position(axis, desired_pos);
             if (speed == 0) {
                 controller_result = stop_motors();
@@ -155,6 +159,7 @@ public:
         } else {
             if(!waiting) {
                 waiting = true;
+                last_position = axis;
                 stop_rotation();
             }
             if (proceed) { // received proceed command from drive module
