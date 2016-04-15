@@ -17,9 +17,14 @@ public:
     Lidar_Module * lidar;
 
     uint16_t current_distance;
+    uint16_t last_distance;
+    uint16_t delta;
     uint16_t desired_distance_cabinet;
     uint16_t desired_distance_edge;
     uint16_t desired_distance_breaker;
+
+    int count;
+    bool edge_detected;
 
     bool lidar_stage1_success;
     bool lidar_stage2_success;
@@ -32,9 +37,14 @@ public:
 
     	//INITIALIZATION
     	current_distance = 0;
+    	last_distance = 0;
+    	delta = 0;
     	desired_distance_cabinet = 120; //SET THIS ~ 0.10
     	desired_distance_edge = 400; //SET THIS ~ 0.30
     	desired_distance_breaker = 350; //SET THIS ~ 0.15
+
+    	count = 0;
+    	edge_detected = false;
 
     	lidar_stage1_success = false;
     	lidar_stage2_success = false;
@@ -73,37 +83,74 @@ public:
 
     	//LIDAR STAGE 2 ALIGNMENT - LEFT TO RIGHT ALIGNMENT X-DIRECTIONS
     	if (lidar_stage1_success){
-    		if(current_distance == desired_distance_cabinet){
+
+    		if((current_distance <= desired_distance_cabinet+10)&&(current_distance >= desired_distance_cabinet-10)){
     			//MOVE RIGHT
     			printf("DRIVING RIGHT\n");
     			//d1.drive('X', user_input);
     		}
 
-    		else if (current_distance == desired_distance_breaker){
+    		else if ((current_distance <= desired_distance_breaker+10)&&(current_distance >= desired_distance_breaker-10)){
     			//MOVE LEFT
     			printf("DRIVING LEFT\n");
     			//d1.drive('X', -user_input);
     		}
 
-    		else if (current_distance == desired_distance_edge){
+    		else if ((current_distance <= desired_distance_edge+10)&&(current_distance >= desired_distance_edge-10)){
 
-    			//EDGE DETECTED
-    			printf("EDGE DETECTED\n");
-    			//STOP
-    			//d1.stop();
+    			count ++;
+    			if (count == 3)
+    			{
+    				//EDGE DETECTED
+    				printf("EDGE DETECTED\n");
+    				printf("MOTOR STOP!!!\n");
+    				//STOP
+    				//d1.stop();
 
-    			//if success, LIDAR alignment if complete
-    			printf("STAGE 2 LIDAR ALIGNMENT COMPLETE\n");
-    			lidar_stage2_success = true;
+    				//if success, LIDAR alignment if complete
+    				printf("STAGE 2 LIDAR ALIGNMENT COMPLETE\n");
+    				lidar_stage2_success = true;
+    			}
     		}
     	}
 
     	if (lidar_stage1_success && lidar_stage2_success){
     		printf("ENTIRE LIDAR ALIGNMENT COMPLETE\n");
+    		printf("PROGRAM EXIT!!!!!\n")
+    		
     		// lidar_alignment_complete = true; //eventually should return TRUE upon exit
     	}
 
     }
+/*
+    bool edge_detect() {
+
+    	//Calculate the difference in Distance (delta)
+  		if (current_distance < last_distance)
+  		{
+    		//This ensures that delta is always Positive
+    		delta = last_distance - current_distance;
+  		}
+  		else 
+  		{
+    		delta = current_distance - last_distance;
+  		}
+  
+  		//If delta is greater than X meters, EDGE is detected
+  		if (delta != current_distance)
+  		{
+    		if(delta >= deltaDesired)
+    		{
+      			edge_detected = true;
+    		}
+  		}  
+  		else
+  		{
+    		edge_detected = false;
+  		}
+
+    }
+ */
 
     // function aligns using image processing data
     void camera_alignment(int16_t instructions[]) {
