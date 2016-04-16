@@ -24,16 +24,16 @@ public:
     bool limit_ccw;
 
     // swerve_controller state variables
-    bool correct_pos;
-    bool is_rotating_ccw;
-    bool is_rotating_cw;
-    bool waiting;
-    bool is_driving;
-    bool has_passed;
-    char last_position;
+    bool correct_pos; // used by drive module to know when each swerve module is in the correct position
+    bool waiting; // true when swerve module is rotated to the correct position, but is waiting for proceed value
+    bool has_passed; // used in rotate_position for overshoot logic
+    bool is_rotating_ccw; // used in rotate_position to reduce signals sent to i2c chip
+    bool is_rotating_cw; // used in rotate_position to reduce signals sent to i2c chip
+    bool is_driving; // used in rotate_position to reduce signals sent to i2c chip
+    char last_position; // used to store last direction state to reduce amount of calibration needed
 
     // stopping state variables
-    bool is_stopping;
+    bool is_stopping;   // use to reduce signals sent to i2c chip
 
     mraa_i2c_context i2c_context;   //i2c context for communication
 
@@ -252,6 +252,7 @@ public:
     */
     int stop_motors() {
         mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
+        // stop if module isn't already stopped
         if (!is_stopping) {
             result = drive_motor->send_signal(i2c_context, 0);
             printf("STOP ALL motors on module %d\n", id);
@@ -262,6 +263,7 @@ public:
         if (!this->correct_pos) { // if the last calibration didn't finish calibrating
             this->last_position = 'Q'; // resets last_position to not be X, Y, or Z
         }
+        // reset all variables to false for next turn
         this->is_driving = false;
         this->is_rotating_ccw = false;
         this->is_rotating_cw = false;
