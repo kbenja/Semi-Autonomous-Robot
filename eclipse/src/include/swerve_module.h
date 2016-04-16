@@ -23,22 +23,22 @@ public:
     bool limit_cw;          //rotational limits
     bool limit_ccw;
 
+    // swerve_controller state variables
     bool correct_pos;
-    bool rotating_ccw;
-    bool rotating_cw;
+    bool is_rotating_ccw;
+    bool is_rotating_cw;
     bool waiting;
-    bool driving;
-
+    bool is_driving;
     bool has_passed;
-
-    bool ready;
-
     char last_position;
+
+    // stopping state variables
+    bool is_stopping;
 
     mraa_i2c_context i2c_context;   //i2c context for communication
 
     Motor_Module * steer_motor;         //steering motor
-    Motor_Module * drive_motor;       //driving motor
+    Motor_Module * drive_motor;       //is_driving motor
     Pot_Module * dir_feedback;        //potentiometer for angular reference
     // Encoder_Module drive_feedback;  //optical encoder for drive
 
@@ -83,10 +83,9 @@ public:
         y_pos = y_position;
         z_pos = z_position;
 
-        ready = false;
         has_passed = false;
         waiting = false;
-        driving = false;
+        is_driving = false;
 
         printf("[ init ] Created swerve module ID %d\n", id);
     }
@@ -110,18 +109,19 @@ public:
         @returns:       1 if still rotating direction motor, 0 if ready to move, -1 if error has occured
     */
     int swerve_controller(char axis, float speed, bool proceed, bool wait) {
+        is_stopping = false;
         uint16_t desired_pos;
         switch(axis) {          //desired swerve position based on desired axis translation
         case 'X':
         case 'x':
-            desired_pos = x_pos; // handle BL and BR motors when driving in X direction
+            desired_pos = x_pos; // handle BL and BR motors when is_driving in X direction
             if (this->id == 1 || this->id == 3) {
                 speed *= -1;
             }
             break;
         case 'Y':
         case 'y':
-            desired_pos = y_pos; // handle BR and FR motors when driving in Y direction
+            desired_pos = y_pos; // handle BR and FR motors when is_driving in Y direction
             if (this->id == 3 || this->id == 4) {
                 speed *= -1;
             }
@@ -137,7 +137,6 @@ public:
         if (!wait) {
             waiting = false; // reset waiting boolean
             if(last_position == axis) { // save last position
-                ready = true;
                 return 0;
             }
             controller_result = rotate_position(axis, desired_pos);
@@ -145,28 +144,19 @@ public:
                 controller_result = stop_motors();
                 return controller_result;
             }
-            if (controller_result == -1) {
-                ready = false;
-                return -1; // an error has occured
-            } else if (controller_result == 1) {
-                ready = false;
-                return 1; // still rotating
-            } else if (controller_result == 0) {
-                ready = true;
-                return 0; // ready
-            }
-            return -1; // an error has occured in the logic
+            return controller_result;
         } else {
             if(!waiting) {
                 waiting = true;
+                printf("Wheel %d is in position.\n", id);
                 last_position = axis;
                 stop_rotation();
             }
             if (proceed) { // received proceed command from drive module
-                if (!driving) {
+                if (!is_driving) {
                     controller_result = drive_wheel(speed);
-                    printf("Driving wheel %d", id);
-                    driving = true;
+                    printf("Driving wheel. %d\n", id);
+                    is_driving = true;
                     return controller_result; // returns 0 if good, -1 if error
                 }
             } else {
@@ -186,33 +176,32 @@ public:
         current_pos = dir_feedback->get_average_val();    //get starting position
         // printf("current_pos: %d, desired_pos: %d\n", current_pos, desired_pos);
         // return 0;
-        if (desired_pos + 30 <= current_pos) {
+        if (desired_pos + 40 <= current_pos) {
             // overshoot and then approach from CW side
-            correct_pos = false;
-            rotating_cw = false;
-            has_passed = true;
-            if (!rotating_ccw) {
+            correct_pos = false;    //not in the correct position
+            is_rotating_cw = false;    //not rotating clockwise
+            has_passed = true;      //overshot position
+            if (!is_rotating_ccw) {
                 rotation_result = rotate_ccw(); // increase pot value
-                if(rotation_result != -1) {
-                    rotating_ccw = true;
+                if(rotation_result != -1) { // check for errors
+                    is_rotating_ccw = true;
                 }
             }
-        } else if (desired_pos >= current_pos) {         //rotate CW
+        } else if (desired_pos - 40 >= current_pos) {         //rotate CW
             correct_pos = false;
-            rotating_ccw = false;
+            is_rotating_ccw = false;
             has_passed = false;
-            if (!rotating_cw) {
+            if (!is_rotating_cw) {
                 rotation_result = rotate_cw(); // decrease pot value
-                if(rotation_result != -1) {
-                    rotating_cw = true;
+                if(rotation_result != -1) { // check for errors
+                    is_rotating_cw = true;
                 }
             }
         } else if (has_passed) {
-            rotating_cw = false;
-            rotating_ccw = false;
+            is_rotating_cw = false;
+            is_rotating_ccw = false;
             if(!correct_pos) {
                 rotation_result = stop_rotation(); // stop rotation
-                printf("Module %d Aligned!\n", id);
                 if(rotation_result != -1) {
                     correct_pos = true;
                 }
@@ -229,7 +218,6 @@ public:
         Rotates drive wheel forwards
     */
     int drive_wheel(float speed) {
-        printf("DRIVE module %d\n", id);
         mraa_result_t result = drive_motor->send_signal(i2c_context, speed);
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
@@ -238,7 +226,6 @@ public:
         Rotates wheel clockwise. Stops if limit is reached.
     */
     int rotate_cw() {
-        printf("ROTATE CW module %d\n", id);
         mraa_result_t result = steer_motor->send_signal(i2c_context, -0.4);
         return (result != MRAA_SUCCESS ? -1 : 0);
 
@@ -249,7 +236,6 @@ public:
     */
     int rotate_ccw() {
         mraa_result_t result = MRAA_SUCCESS;
-        printf("ROTATE CCW module %d\n", id);
         result = steer_motor->send_signal(i2c_context, 0.6);
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
@@ -258,7 +244,6 @@ public:
         Stop rotating
     */
     int stop_rotation() {
-        printf("STOP ROTATE on module %d\n", id);
         mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
@@ -266,21 +251,22 @@ public:
         Stops all motors
     */
     int stop_motors() {
-        printf("STOP ALL motors on module %d\n", id);
         mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
-        result = drive_motor->send_signal(i2c_context, 0);
-        if (!this->ready) { // if the last calibration didn't finish calibrating
+        if (!is_stopping) {
+            result = drive_motor->send_signal(i2c_context, 0);
+            printf("STOP ALL motors on module %d\n", id);
+            if(result == MRAA_SUCCESS) {
+                is_stopping = true;
+            }
+        }
+        if (!this->correct_pos) { // if the last calibration didn't finish calibrating
             this->last_position = 'Q'; // resets last_position to not be X, Y, or Z
         }
-        this->ready = false;
-        this->driving = false;
+        this->is_driving = false;
+        this->is_rotating_ccw = false;
+        this->is_rotating_cw = false;
         this->correct_pos = false;
-        this->rotating_ccw = false;
-        this->rotating_cw = false;
         this->waiting = false;
-        this->driving = false;
-        this->has_passed = false;
-        this->ready = false;
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
 };

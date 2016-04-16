@@ -58,13 +58,12 @@ public:
     }
 
     int drive(char axes, float speed){
-        FR_ready = FR->ready;
-        FL_ready = FL->ready;
-        BR_ready = BR->ready;
-        BL_ready = BL->ready;
+        FR_ready = (FR->correct_pos == 1 ? true : false);
+        FL_ready = (FL->correct_pos == 1 ? true : false);
+        BR_ready = (BR->correct_pos == 1 ? true : false);
+        BL_ready = (BL->correct_pos == 1 ? true : false);
         if(FR_ready && FL_ready && BR_ready && BL_ready) {
             drive_proceed = true;
-            printf("Started to move!\n");
         } else {
             drive_proceed = false;
         }

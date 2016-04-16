@@ -116,7 +116,6 @@ int main(int argc, char** argv) {
         Intake_Module i1 = Intake_Module(i2c, 8); // setup intake module on port 8
 
         Drive_Module d1 = Drive_Module(i2c); // initialize drive module
-        bool stopping = false;
         while(1) {
             usleep(50000); // cycle time
             ipc.unix_socket_write(sending); // send most recent data to socket
@@ -138,40 +137,33 @@ int main(int argc, char** argv) {
                     }
                     break;
                 case 1: // Manual mode
-                    if (input != 0) { // keeps track of whether or not the robot is stopped
-                        stopping = false;
-                    }
                     switch(input) {
                         case 0: // break button pressed
-                            if(!stopping) {
-                                printf("Received BREAK command\n");
-                                d1.stop();
-                                stopping = true;
-                            }
+                            // printf("Received BREAK command\n");
+                            d1.stop();
                             break;
                         case 1: // forward button pressed
-                            printf("Received FORWARD command\n");
+                            // printf("Received FORWARD command\n");
                             d1.drive('Y', user_input);
-                            // printf("User input: %f\n", user_input);
                             break;
                         case 2: // left button pressed
-                            printf("Received LEFT command\n");
+                            // printf("Received LEFT command\n");
                             d1.drive('X', -user_input);
                             break;
                         case 3: // back button pressed
-                            printf("Received BACKWARDS command\n");
+                            // printf("Received BACKWARDS command\n");
                             d1.drive('Y', -user_input);
                             break;
                         case 4: // right button pressed
-                            printf("Received RIGHT command\n");
+                            // printf("Received RIGHT command\n");
                             d1.drive('X', user_input);
                             break;
                         case 5: // right trigger button pressed
-                            printf("Received CLOCKWISE command\n");
+                            // printf("Received CLOCKWISE command\n");
                             d1.drive('Z', user_input);
                             break;
                         case 6: // left trigger button pressed
-                            printf("Received COUNTER CLOCKWISE command\n");
+                            // printf("Received COUNTER CLOCKWISE command\n");
                             d1.drive('Z', -user_input);
                             break;
                         default: // error has occured
