@@ -114,14 +114,14 @@ public:
         switch(axis) {          //desired swerve position based on desired axis translation
         case 'X':
         case 'x':
-            desired_pos = x_pos;
+            desired_pos = x_pos; // handle BL and BR motors when driving in X direction
             if (this->id == 1 || this->id == 3) {
                 speed *= -1;
             }
             break;
         case 'Y':
         case 'y':
-            desired_pos = y_pos;
+            desired_pos = y_pos; // handle BR and FR motors when driving in Y direction
             if (this->id == 3 || this->id == 4) {
                 speed *= -1;
             }
@@ -133,9 +133,9 @@ public:
         default:
             return -1;
         }
-        controller_result = 0; // assume function is good from the start
+        controller_result = 0; // assume function returns OKAY from the start
         if (!wait) {
-            waiting = false;
+            waiting = false; // reset waiting boolean
             if(last_position == axis) { // save last position
                 ready = true;
                 return 0;
@@ -271,6 +271,7 @@ public:
         result = drive_motor->send_signal(i2c_context, 0);
         this->ready = false;
         this->driving = false;
+        this->last_position = 'Q'; // resets last_position to not be X, Y, or Z
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
 };

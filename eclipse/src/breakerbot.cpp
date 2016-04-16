@@ -127,56 +127,57 @@ int main(int argc, char** argv) {
                 input = instructions[1];
             }
             switch(mode) {
-                case -1:
+                case -1: // server sends -1 of the client is disconnected
                     printf("CLIENT DISCONNECT STOPPING ALL MOTORS\n");
                     d1.stop(); // stop all motors
                     break;
-                case 0:
+                case 0: // Idle mode
                     if(instructions[1] != 0) {
                         // printf("Received OKAY command from intel edison %d\n", input);
                         printf("IDLE MODE, Waiting for input\n");
                     }
                     break;
-                case 1:
-                    if (input != 0) {
+                case 1: // Manual mode
+                    if (input != 0) { // keeps track of whether or not the robot is stopped
                         stopping = false;
                     }
                     switch(input) {
-                        case 0:
+                        case 0: // break button pressed
                             if(!stopping) {
                                 printf("Received BREAK command\n");
                                 d1.stop();
                                 stopping = true;
                             }
                             break;
-                        case 1:
+                        case 1: // forward button pressed
                             printf("Received FORWARD command\n");
                             d1.drive('Y', user_input);
                             // printf("User input: %f\n", user_input);
                             break;
-                        case 2:
+                        case 2: // left button pressed
                             printf("Received LEFT command\n");
                             d1.drive('X', -user_input);
                             break;
-                        case 3:
+                        case 3: // back button pressed
                             printf("Received BACKWARDS command\n");
                             d1.drive('Y', -user_input);
                             break;
-                        case 4:
+                        case 4: // right button pressed
                             printf("Received RIGHT command\n");
                             d1.drive('X', user_input);
                             break;
-                        case 5:
+                        case 5: // right trigger button pressed
                             printf("Received CLOCKWISE command\n");
                             d1.drive('Z', user_input);
                             break;
-                        case 6:
+                        case 6: // left trigger button pressed
                             printf("Received COUNTER CLOCKWISE command\n");
                             d1.drive('Z', -user_input);
                             break;
-                        default:
+                        default: // error has occured
                             break;
                     }
+                    // wake up I2C chip so it registers commands
                     mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                     break;
                 case 2:
