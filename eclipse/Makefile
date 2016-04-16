@@ -9,5 +9,8 @@ pots:
 stop:
 	${GCC} ${FLAGS} src/breakerbot.cpp -o stop -lmraa
 
+swerve:
+	${GCC} ${FLAGS} src/breakerbot.cpp -o swerve -lmraa
+
 clean:
 	rm bin/*

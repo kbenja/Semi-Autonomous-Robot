@@ -187,10 +187,10 @@ int main(int argc, char** argv) {
                     printf("INTAKE MODE, INPUT = %d\n", input);
                     if(input == 1) {
                         printf("push out\n");
-                        i1.drive_intake(-0.5);
+                        i1.drive_intake(0.8);
                     } else if (input == 3) {
                         printf("pull in\n");
-                        i1.drive_intake(0.5);
+                        i1.drive_intake(-0.9);
                     } else if (input == 0) {
                         i1.stop_intake();
                         printf("stop everything\n");

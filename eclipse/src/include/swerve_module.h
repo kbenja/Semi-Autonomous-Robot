@@ -269,9 +269,18 @@ public:
         printf("STOP ALL motors on module %d\n", id);
         mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
         result = drive_motor->send_signal(i2c_context, 0);
+        if (!this->ready) { // if the last calibration didn't finish calibrating
+            this->last_position = 'Q'; // resets last_position to not be X, Y, or Z
+        }
         this->ready = false;
         this->driving = false;
-        this->last_position = 'Q'; // resets last_position to not be X, Y, or Z
+        this->correct_pos = false;
+        this->rotating_ccw = false;
+        this->rotating_cw = false;
+        this->waiting = false;
+        this->driving = false;
+        this->has_passed = false;
+        this->ready = false;
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
 };
