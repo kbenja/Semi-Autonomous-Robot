@@ -116,6 +116,11 @@ int main(int argc, char** argv) {
         Intake_Module i1 = Intake_Module(i2c, 8); // setup intake module on port 8
 
         Drive_Module d1 = Drive_Module(i2c); // initialize drive module
+
+        // try sending signals
+        ipc.unix_socket_write(sending);
+        printf("Sending initial signal\n");
+        sleep(2);
         while(1) {
             usleep(50000); // cycle time
             ipc.unix_socket_write(sending); // send most recent data to socket
