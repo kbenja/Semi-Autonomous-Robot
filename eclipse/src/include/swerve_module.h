@@ -102,16 +102,21 @@ public:
     }
 
     /*
-        Decides when to rotate or drive the swerve module. Waits for Driving module's OK to continue
+        Decides when to rotate or drive the swerve module. Waits for Drive_Module's permission to continue
+
         @param  char    axis:       desired translation position (XYZ), case-insensitive
         @param  float   speed:      desired speed for the drive wheel to turn when ready
         @param  bool    proceed:    the OK signal received which means all 4 swerve modules are ready to continue
+        @param  bool    wait:       is the swerve module in the correct position?
+
         @returns:       1 if still rotating direction motor, 0 if ready to move, -1 if error has occured
     */
     int swerve_controller(char axis, float speed, bool proceed, bool wait) {
         is_stopping = false;
+
+        //desired swerve position based on desired axis translation
         uint16_t desired_pos;
-        switch(axis) {          //desired swerve position based on desired axis translation
+        switch(axis) {
         case 'X':
         case 'x':
             desired_pos = x_pos; // handle BL and BR motors when is_driving in X direction
@@ -133,8 +138,12 @@ public:
         default:
             return -1;
         }
+
+
         controller_result = 0; // assume function returns OKAY from the start
-        if (!wait) {
+
+
+        if (!wait) {        //if swerve module is not in the correct position, rotate it
             waiting = false; // reset waiting boolean
             if(last_position == axis) { // save last position
                 return 0;
@@ -167,7 +176,10 @@ public:
     }
 
     /*
-        Rotates swerve module to correct position for XYZ translation
+        Rotates swerve module to correct position for XYZ translation. To ensure consistency, all swerve modules will approach
+            the desired position from the clockwise direction. If the module needs to first rotate counterclockwise, it will
+            overshoot the desired position so as to allow approach of the correct position from the clockwise direction.
+
         @param  char    position:       desired translation position (XYZ), case-insensitive
         @returns:   the result of the Y-translation positioning as a mraa_result_t value
     */
@@ -176,21 +188,20 @@ public:
         current_pos = dir_feedback->get_average_val();    //get starting position
         // printf("current_pos: %d, desired_pos: %d\n", current_pos, desired_pos);
         // return 0;
-        if (desired_pos + 40 <= current_pos) {
-            // overshoot and then approach from CW side
-            correct_pos = false;    //not in the correct position
-            is_rotating_cw = false;    //not rotating clockwise
-            has_passed = true;      //overshot position
-            if (!is_rotating_ccw) {
-                rotation_result = rotate_ccw(); // increase pot value
-                if(rotation_result != -1) { // check for errors
+        if (desired_pos + 40 <= current_pos) {      //overshoot desired position by ~8 degrees in the counterclockwise direction
+            correct_pos = false;        //not in the correct position
+            is_rotating_cw = false;     //not rotating clockwise
+            has_passed = true;          //has overshot position
+            if (!is_rotating_ccw) {     //if not rotating counterclockwise, then rotate counterclockwise
+                rotation_result = rotate_ccw();
+                if(rotation_result != -1) { //
                     is_rotating_ccw = true;
                 }
             }
-        } else if (desired_pos - 40 >= current_pos) {         //rotate CW
-            correct_pos = false;
-            is_rotating_ccw = false;
-            has_passed = false;
+        } else if (desired_pos - 40 >= current_pos) {
+            correct_pos = false;        //not in the correct position
+            is_rotating_ccw = false;    //not rotating counterclockwise
+            has_passed = false;         //has not overshot position
             if (!is_rotating_cw) {
                 rotation_result = rotate_cw(); // decrease pot value
                 if(rotation_result != -1) { // check for errors

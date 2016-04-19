@@ -15,11 +15,24 @@ public:
     bool drive_proceed; // waits for all 4 swerve modules to be ready
     int swerve_controller_result;
 
-    Swerve_Module * FR;
-    Swerve_Module * BR;
-    Swerve_Module * FL;
-    Swerve_Module * BL;
+    float current_speed;
+    bool increase_speed;
+    bool decrease_speed;
 
+    //Swerve_Module objects
+    Swerve_Module * FR;     //front right
+    Swerve_Module * BR;     //back right
+    Swerve_Module * FL;     //front left
+    Swerve_Module * BL;     //back left
+
+
+    /*
+        Creates a Drive_Module object with a mraa_i2c_context member object.
+
+        @param mraa_i2c_context i2c:    i2c context used for communication with motors and encoders
+
+        @returns:                       Drive_Module object
+    */
     Drive_Module(mraa_i2c_context i2c) {
     	i2c_bus = i2c;
         //initialize Swerve_Modules (ID, dir port, drive port, AOIN, Encoder, X, Y, Z)
@@ -41,6 +54,7 @@ public:
         // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1727, 2224, 2083); // BR swerve S3
         // BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2881, 2290, 2442); // BL swerve S1
         // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1974, 2542, 2362); // FL swerve S2
+
         //initialize proceed flags
         FR_ready = false;
         BR_ready = false;
@@ -50,6 +64,9 @@ public:
         swerve_controller_result = 1;
     }
 
+    /*
+        Frees memory by deleting member Swerve_Modules
+    */
     ~Drive_Module() {   //free memory
         delete FR;
         delete BR;
@@ -57,23 +74,38 @@ public:
         delete BL;
     }
 
+    /*
+        Drives the robot along one of three axes at a given speed.
+
+        @param  char    axes:   desired axis of translation (X/x, Y/y or Z/z)
+        @param  float   speed:  speed of movement along axis
+        @returns:               integer indicating result of operation
+    */
     int drive(char axes, float speed){
+        //check position of each swerve module
         FR_ready = (FR->correct_pos == 1 ? true : false);
         FL_ready = (FL->correct_pos == 1 ? true : false);
         BR_ready = (BR->correct_pos == 1 ? true : false);
         BL_ready = (BL->correct_pos == 1 ? true : false);
-        if(FR_ready && FL_ready && BR_ready && BL_ready) {
+
+        if(FR_ready && FL_ready && BR_ready && BL_ready) {  //if positions of swerve modules are correct, allow for driving
             drive_proceed = true;
         } else {
             drive_proceed = false;
         }
+
+        //send position or drive commands to individual swerve drives
         swerve_controller_result = FR->swerve_controller(axes, speed, drive_proceed, FR_ready);
         swerve_controller_result = FL->swerve_controller(axes, speed, drive_proceed, FL_ready);
         swerve_controller_result = BR->swerve_controller(axes, speed, drive_proceed, BR_ready);
         swerve_controller_result = BL->swerve_controller(axes, speed, drive_proceed, BL_ready);
         return swerve_controller_result;
     }
+    /*
+        Stops movement of the robot by stopping individual swerve modules.
 
+        @returns:               integer indicating result of operation
+    */
     int stop() {
         swerve_controller_result = FR->stop_motors();
         swerve_controller_result = FL->stop_motors();

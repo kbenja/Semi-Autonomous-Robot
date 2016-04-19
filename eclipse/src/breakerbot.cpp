@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
                 mode = instructions[0];
                 input = instructions[1];
             }
-            switch(mode) {
+            switch(mode) {  //different controller commands based on mode
                 case -1: // server sends -1 of the client is disconnected
                     printf("CLIENT DISCONNECT STOPPING ALL MOTORS\n");
                     d1.stop(); // stop all motors
