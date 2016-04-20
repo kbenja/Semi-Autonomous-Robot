@@ -1,4 +1,4 @@
-var development = false;
+var development = true;
 
 var express = require('express');
 var app = express();
