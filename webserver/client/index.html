@@ -136,27 +136,21 @@
                             </div>
                         </div>
                     </div>
-                    <div ng-show="mode === 'INTAKE'" class="manual mode">
+                    <div ng-show="mode === 'INTAKE'" class="intake mode">
                         <div class="control-container">
-                            <div class="connect" ng-hide="gamepad_connected">Please connect or reconnect the controller.</div>
+                            <!-- <div class="connect" ng-hide="gamepad_connected">Please connect or reconnect the controller.</div> -->
                             <div class="controls" ng-style="{opacity: (gamepad_connected) ? '1' : '0.2'}">
-                                <div class="cartesian">
-                                    <div class="command up">&#9650;</div>
-                                    <div class="command left">&#9664;</div>
-                                    <div class="command right">&#9654;</div>
-                                    <div class="command down">&#9660;</div>
-                                </div>
-                                <div class="cartesian">
-                                    <div class="command y_button">Y</div>
-                                    <div class="command x_button">X</div>
-                                    <div class="command b_button">B</div>
-                                    <div class="command a_button">A</div>
-                                </div>
-                                <div class="joystick">
-                                    <div class="pos left_joystick"></div>
-                                </div>
-                                <div class="joystick">
-                                    <div class="pos right_joystick"></div>
+                                <div class="intake-container">
+                                    <!-- <div class="intake-button command down pull">Pull In<br><span>&#9660;</span></div> -->
+                                    <div class="intake-button command down pull">Pull In</div>
+                                    <div class="intake-button command up push">Push Out</div>
+                                    <!-- <div class="intake-button command up push">Push Out<br><span>&#9650;</span></div> -->
+                                    <div class="joystick">
+                                        <div class="pos left_joystick"></div>
+                                    </div>
+                                    <div class="joystick">
+                                        <div class="pos right_joystick"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -210,7 +204,10 @@
                         <p>11:57:59 Goodbye</p>
                     </div>
                 </div> -->
-                <button type="button" ng-click="emergency_stop()" class="btn-lg btn-danger e-stop">S<br>T<br>O<br>P</button>
+                <button type="button" ng-click="emergency_stop()" class="btn-lg btn-danger e-stop">S
+                    <br>T
+                    <br>O
+                    <br>P</button>
                 <!-- <button id="stop">STOP</button> -->
             </div>
         </div>

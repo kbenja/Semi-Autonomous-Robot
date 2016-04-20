@@ -179,65 +179,128 @@ button {
             }
           }
         }
-        .manual {
-          .control-container {
-            position: relative;
-            .connect {
-              position: absolute;
-              margin: 0 auto;
-              width: 100%;
-              margin-top: 54px;
-            }
-            .controls {
-              color: #000000;
-              width: 100%;
-              opacity: 0.2;
-              -webkit-transition: opacity 500ms ease-out;
-              -moz-transition: opacity 500ms ease-out;
-              -o-transition: opacity 500ms ease-out;
-              transition: opacity 500ms ease-out;
-              .joystick {
-                position: relative;
-                display: inline-block;
-                width: 100px;
-                height: 100px;
-                margin: 10px;
-                margin-left: 30px;
-                background: #aaaaaa;
+        .control-container {
+          position: relative;
+          .connect {
+            position: absolute;
+            margin: 0 auto;
+            width: 100%;
+            margin-top: 54px;
+          }
+          .controls {
+            color: #000000;
+            width: 100%;
+            opacity: 0.2;
+            -webkit-transition: opacity 500ms ease-out;
+            -moz-transition: opacity 500ms ease-out;
+            -o-transition: opacity 500ms ease-out;
+            transition: opacity 500ms ease-out;
+            .joystick {
+              position: relative;
+              display: inline-block;
+              width: 100px;
+              height: 100px;
+              margin: 10px;
+              margin-left: 30px;
+              background: #aaaaaa;
+              border-radius: 100%;
+              .pos {
+                position: absolute;
+                margin-left: 25px;
+                margin-top: 25px;
+                width: 50px;
+                height: 50px;
+                background: #333333;
                 border-radius: 100%;
-                .pos {
-                  position: absolute;
-                  margin-left: 25px;
-                  margin-top: 25px;
-                  width: 50px;
-                  height: 50px;
-                  background: #333333;
-                  border-radius: 100%;
+              }
+            }
+            .cartesian {
+              vertical-align: top;
+              display: inline-block;
+              padding: 0 20px;
+              .command {
+                height: 30px;
+                width: 60px;
+                line-height: 30px;
+                margin: 3px auto;
+                background-color: #aaaaaa;
+                &.left,
+                &.right,
+                &.x_button,
+                &.b_button {
+                  display: inline-block;
                 }
               }
-              .cartesian {
-                vertical-align: top;
+            }
+            .intake-container{
+              .command {
+                color: #aaaaaa;
+                padding: 0 15px;
+                font-size: 30px;
                 display: inline-block;
-                padding: 0 20px;
-                .command {
-                  height: 30px;
-                  width: 60px;
-                  line-height: 30px;
-                  margin: 3px auto;
-                  background-color: #aaaaaa;
-                  &.left,
-                  &.right,
-                  &.x_button,
-                  &.b_button {
-                    display: inline-block;
+                vertical-align: top;
+                // span {
+                //   font-size: 60px;
+                // }
+                &.pull::after{
+                  content: "";
+                  width: 0; 
+                  height: 0; 
+                  border-left: 30px solid transparent;
+                  border-right: 30px solid transparent;
+                  border-top: 50px solid #aaaaaa;
+                  top: 50px;
+                  left: 80px;
+                  position: absolute;
+                }
+                &.pull.active{
+                  &::after{
+                    border-top: 50px solid #eeeeee;
+                  }
+                }
+                &.push::after{
+                  content: "";
+                  width: 0; 
+                  height: 0; 
+                  border-left: 30px solid transparent;
+                  border-right: 30px solid transparent;
+                  border-bottom: 50px solid #aaaaaa;
+                  top: 50px;
+                  left: 200px;
+                  position: absolute;
+                }
+                &.push.active{
+                  &::after{
+                    border-bottom: 50px solid #eeeeee;
                   }
                 }
               }
             }
           }
         }
+        .intake {
+          // .cartesian{
+          //   vertical-align: top;
+          //   display: inline-block;
+          //   padding: 0 20px;
+          //   .intake-button {
+          //     display: inline-block;
+          //     height: 30px;
+          //     width: 60px;
+          //     line-height: 30px;
+          //     margin: 3px auto;
+          //     color: #000000;
+          //     background-color:#FFFFFF;
+          //     opacity: 0.2;
+          //     -webkit-transition: opacity 500ms ease-out;
+          //     -moz-transition: opacity 500ms ease-out;
+          //     -o-transition: opacity 500ms ease-out;
+          //     transition: opacity 500ms ease-out;
+          //     font-size: larger;
+          //   }
+          }
+        }
       }
-    }
     &.panel-right {
       width: 17.25%;
       // min-width: 210px;
