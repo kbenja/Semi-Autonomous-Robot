@@ -31,10 +31,10 @@ public:
         // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1662, 2175, 1981); // FL swerve S2
 
         // // recorded 4/13 about 1 week after caibration
-        FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2508, 2003, 2127); // FR swerve S4
-        BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1480, 1980, 1810); // BR swerve S3
-        BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2580, 2080, 2190); // BL swerve S1
-        FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1753, 2266, 2089); // FL swerve S2
+        FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2508, 2003, 2127, false, 0); // FR swerve S4
+        BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1480, 1980, 1810, false, 0); // BR swerve S3
+        BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2580, 2080, 2190, false, 0); // BL swerve S1
+        FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1753, 2266, 2089, true, 10); // FL swerve S2
 
 
         // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2490, 2124, 1981); // FR swerve S4

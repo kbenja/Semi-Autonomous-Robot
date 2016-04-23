@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
         printf("LIDAR MODULE TESTING\n\n");
 
         //INITIALIZATION
-        Lidar_Module lidar(3); //ANALOG PIN #3
+        Lidar_Module lidar(3, true, 10); //ANALOG PIN #3
         while(1) {
             usleep(500000); //sleep every .5 sec
             printf("LIDAR:%d\n",lidar.get_average_distance_reading_int());
@@ -247,7 +247,7 @@ int main(int argc, char** argv) {
         int swerve_port = 6;
         int drive_port = 7;
 
-        Swerve_Module s1 = Swerve_Module(i2c, 0, swerve_port, drive_port, motor, 0, 2508, 1992, 2127);
+        Swerve_Module s1 = Swerve_Module(i2c, 0, swerve_port, drive_port, motor, 0, 2508, 1992, 2127, false, 0);
         if (argc > 1) {
             motor = atoi(argv[1]);
             if (atoi(argv[1]) == 0) {
@@ -286,17 +286,17 @@ int main(int argc, char** argv) {
         }
         printf("MOTOR: %d, DIRECTION %c\n", motor, direction);
         if (PWM != 0) {
-            Swerve_Module s1 = Swerve_Module(i2c, 0, swerve_port, drive_port, motor, 0, PWM, PWM, PWM);
+            Swerve_Module s1 = Swerve_Module(i2c, 0, swerve_port, drive_port, motor, 0, PWM, PWM, PWM, false, 0);
             printf("GOING TO CUSTOM VALUE OF %d\n", PWM);
         } else {
             if(motor == 0) {
-                Swerve_Module s1 = Swerve_Module(i2c, 1, swerve_port, drive_port, 0, 0, 2508, 1992, 2127);
+                Swerve_Module s1 = Swerve_Module(i2c, 1, swerve_port, drive_port, 0, 0, 2508, 1992, 2127, false, 0);
             } else if (motor == 1) {
-                Swerve_Module s1 = Swerve_Module(i2c, 2, swerve_port, drive_port, 1, 0, 1480, 1921, 1810);
+                Swerve_Module s1 = Swerve_Module(i2c, 2, swerve_port, drive_port, 1, 0, 1480, 1921, 1810, false, 0);
             } else if (motor == 2) {
-                Swerve_Module s1 = Swerve_Module(i2c, 3, swerve_port, drive_port, 2, 0, 2540, 2040, 2190);
+                Swerve_Module s1 = Swerve_Module(i2c, 3, swerve_port, drive_port, 2, 0, 2540, 2040, 2190, false, 0);
             } else if (motor == 3) {
-                Swerve_Module s1 = Swerve_Module(i2c, 4, swerve_port, drive_port, 3, 0, 1753, 2266, 2089);
+                Swerve_Module s1 = Swerve_Module(i2c, 4, swerve_port, drive_port, 3, 0, 1753, 2266, 2089, true, 10);
             }
         }
         bool waiting = false;

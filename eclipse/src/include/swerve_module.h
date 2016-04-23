@@ -60,11 +60,12 @@ public:
         @returns:                                   Swerve_Module object
 
     */
-    Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int steer_port, int drive_port, int pot_adc, int encoder_port, uint16_t x_position, uint16_t y_position, uint16_t z_position) {
+    Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int steer_port, int drive_port, int pot_adc, int encoder_port,
+            uint16_t x_position, uint16_t y_position, uint16_t z_position, bool is_muxed, int mux_port) {
         id = module_id;
         steer_motor = new Motor_Module(steer_port);
         drive_motor = new Motor_Module(drive_port);
-        dir_feedback = new Pot_Module(pot_adc, 12);
+        dir_feedback = new Pot_Module(pot_adc, 12, is_muxed, mux_port);
         // drive_feedback = new Encoder_Module(encoder_port);
 
         //potentiometer initialization

@@ -12,7 +12,7 @@
 
 void test_pot_module(int testing_port) {
     printf("TESTING pot module\n");
-    Pot_Module pot = Pot_Module(testing_port, 12);
+    Pot_Module pot = Pot_Module(testing_port, 12, false, 0);
     while(1) {
         usleep(500000); // sleep for 0.5s
         printf("VALUE for port: %d equals %d\n", testing_port, pot.get_average_val());
@@ -21,7 +21,7 @@ void test_pot_module(int testing_port) {
 
 void test_lidar_module(int testing_port) {
     printf("LIDAR MODULE TESTING\n\n");
-    Lidar_Module l1(testing_port);
+    Lidar_Module l1(testing_port, true, 10);
     while(1) {
         usleep(25000);
         printf("%f\n",l1.get_distance_reading());

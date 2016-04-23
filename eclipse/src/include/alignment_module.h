@@ -28,7 +28,7 @@ public:
     Alignment_Module() {
         printf("[ init ] Created Alignment Module\n");
         navx = new NavX_Module();
-        lidar = new Lidar_Module(3);
+        lidar = new Lidar_Module(3, true, 10);
 
     	//INITIALIZATION
     	current_distance = 0;
