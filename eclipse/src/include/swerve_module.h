@@ -139,7 +139,6 @@ public:
             this->waiting = false; // reset waiting boolean
             printf("AXIS: %c\n", axis);
             if(axis == last_position) { // save last position
-                printf("Same position as last time\n");
                 this->correct_pos =  true;
                 return 0;
             }

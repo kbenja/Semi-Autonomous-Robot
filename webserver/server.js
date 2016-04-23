@@ -31,10 +31,7 @@ comm_socket.on('connection', function(socket) {
     socket.on("message", function(command) {
         console.log("command", command);
         obj = JSON.parse(command);
-        if(obj.mode == -1) {
-            console.log("STOPPING ALL MOTORS");
-            var stop = childProcess.exec('.././eclipse/stop');
-        }
+        var stop = childProcess.exec('.././eclipse/stop');
         commands.push([obj.mode, obj.code]);
         console.log(commands.length);
     })
@@ -51,7 +48,7 @@ comm_socket.on('connection', function(socket) {
         } else {
             comm_socket.broadcast(JSON.stringify({data: false}));
         }
-    }, 250);
+    }, 1200);
 });
 
         // comm_socket.broadcast(JSON.stringify({count: to_send}));
