@@ -29,12 +29,12 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool main_program = true;
+bool main_program = false;
 bool pot_testing = false;
 bool stop_motors = false;
 bool motor_testing = false;
 bool navx_testing = false;
-bool swerve_module = false;
+bool swerve_module = true;
 bool drive_module = false;
 
 bool lidar_module = false;
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 
     if(lidar_module) {
 
-    	printf("LIDAR MODULE TESTING\n\n");
+        printf("LIDAR MODULE TESTING\n\n");
 
         //INITIALIZATION
         Lidar_Module lidar(3); //ANALOG PIN #3
@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
         // try sending signals
         ipc.unix_socket_write(sending);
         printf("Sending initial signal\n");
-        sleep(2);
+        // sleep(2);
         while(1) {
             usleep(50000); // cycle time
             ipc.unix_socket_write(sending); // send most recent data to socket
@@ -235,67 +235,87 @@ int main(int argc, char** argv) {
 
     if (swerve_module) {
         printf("Testing swerve module\n");
-        int swerve_result1;
-        bool drive_proceed = false;
-
-        int stop_point = 0;
+        printf("argc = %d\n", argc);
 
         uint8_t address = 0x40;
         mraa_i2c_context i2c = mraa_i2c_init(6);
         mraa_result_t i2c_status = i2c_init_board(i2c, address);
         if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
 
+        int motor = 0; // default motor chosen
+        char direction = 'X'; // default direction
+        int PWM = 0;
+        int swerve_port = 6;
+        int drive_port = 7;
 
-        // ID, dir port, drive port, AOIN, Encoder, Y, X, Z
-        // FR swerve M7
-        // Swerve_Module s1 = Swerve_Module(i2c, 1, 6, 7, 0, 0, 2508, 1992, 2127);
-        // BR swerve M5
-        // Swerve_Module s1 = Swerve_Module(i2c, 2, 4, 5, 1, 0, 1480, 1921, 1810);
-        // BL swerve M1
-        Swerve_Module s1 = Swerve_Module(i2c, 3, 0, 1, 2, 0, 2540, 2040, 2190);
-        // FL swerve M3
-        // Swerve_Module s1 = Swerve_Module(i2c, 4, 2, 3, 3, 0, 1753, 2266, 2089);
-
-
+        Swerve_Module s1 = Swerve_Module(i2c, 0, swerve_port, drive_port, motor, 0, 2508, 1992, 2127);
+        if (argc > 1) {
+            motor = atoi(argv[1]);
+            if (atoi(argv[1]) == 0) {
+                printf("FRONT RIGHT motor chosen, %s\n", argv[1]);
+                swerve_port = 6;
+                drive_port = 7;
+            } else if (atoi(argv[1]) == 1) {
+                printf("BACK RIGHT motor chosen, %s\n", argv[1]);
+                swerve_port = 4;
+                drive_port = 5;
+            } else if (atoi(argv[1]) == 2) {
+                printf("BACK LEFT motor chosen, %s\n", argv[1]);
+                swerve_port = 0;
+                drive_port = 1;
+            } else if (atoi(argv[1]) == 3) {
+                printf("FRONT LEFT motor chosen, %s\n", argv[1]);
+                swerve_port = 2;
+                drive_port = 3;
+            }
+        }
+        if (argc > 3) {
+            printf("CUSTOM direction: %d\n", atoi(argv[3]));
+            direction = 'X';
+            PWM = atoi(argv[3]);
+        } else {
+            if (argc > 2) {
+                direction = argv[2][0];
+                if (argv[2][0] == 'X') {
+                    printf("X direction chosen\n");
+                } else if (argv[2][0] == 'Y') {
+                    printf("Y direction chosen\n");
+                } else if (argv[2][0] == 'Z') {
+                    printf("Z direction chosen\n");
+                }
+            }
+        }
+        printf("MOTOR: %d, DIRECTION %c\n", motor, direction);
+        if (PWM != 0) {
+            Swerve_Module s1 = Swerve_Module(i2c, 0, swerve_port, drive_port, motor, 0, PWM, PWM, PWM);
+            printf("GOING TO CUSTOM VALUE OF %d\n", PWM);
+        } else {
+            if(motor == 0) {
+                Swerve_Module s1 = Swerve_Module(i2c, 1, swerve_port, drive_port, 0, 0, 2508, 1992, 2127);
+            } else if (motor == 1) {
+                Swerve_Module s1 = Swerve_Module(i2c, 2, swerve_port, drive_port, 1, 0, 1480, 1921, 1810);
+            } else if (motor == 2) {
+                Swerve_Module s1 = Swerve_Module(i2c, 3, swerve_port, drive_port, 2, 0, 2540, 2040, 2190);
+            } else if (motor == 3) {
+                Swerve_Module s1 = Swerve_Module(i2c, 4, swerve_port, drive_port, 3, 0, 1753, 2266, 2089);
+            }
+        }
+        bool waiting = false;
+        int swerve_result1;
         while(1) {
             usleep(50000); //sleep for 0.05s
-            switch (stop_point) {
-                case 0:
-                    swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, false);
-                    break;
-                case 1:
-                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, false);
-                    break;
-                case 2:
-                    swerve_result1 = s1.swerve_controller('Z', 0.6, drive_proceed, false);
-                    break;
-                case 3:
-                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, false);
-                    break;
-                case 4:
-                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, false);
-                    break;
-                case 5:
-                    swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, false);
-                    break;
-                default:
-                    printf("INCORRECT CASE\n");
-                    break;
-            }
-            drive_proceed = false;
+            swerve_result1 = s1.swerve_controller(direction, 0.6, false, waiting);
             if(swerve_result1 == 0) {
-                stop_point++;
-                stop_point = stop_point%5;
-                printf("ALIGNED! moving to stopping point %d\n", stop_point);
-                drive_proceed = true;
-                swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, true);
-                usleep(1000000);
+                printf("ALIGNED!\n");
+                waiting = true;
+                swerve_result1 = s1.swerve_controller(direction, 0.6, false, waiting );
             }
             usleep(50);
             mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
 
         }
     }
+
     if (pot_testing) {
         int testing_port = 0;                          // default value of pot is 0
         if (argc > 1) {

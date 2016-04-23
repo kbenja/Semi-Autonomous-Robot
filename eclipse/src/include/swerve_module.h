@@ -137,6 +137,7 @@ public:
         if (!wait) {
             waiting = false; // reset waiting boolean
             if(last_position == axis) { // save last position
+                this->correct_pos = true;
                 return 0;
             }
             controller_result = rotate_position(axis, desired_pos);
@@ -260,14 +261,13 @@ public:
                 is_stopping = true;
             }
         }
-        if (!this->correct_pos) { // if the last calibration didn't finish calibrating
+        if (!(this->correct_pos)) { // if the last calibration didn't finish calibrating
             this->last_position = 'Q'; // resets last_position to not be X, Y, or Z
         }
         // reset all variables to false for next turn
         this->is_driving = false;
         this->is_rotating_ccw = false;
         this->is_rotating_cw = false;
-        this->correct_pos = false;
         this->waiting = false;
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
