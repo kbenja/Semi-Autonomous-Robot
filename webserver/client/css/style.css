@@ -5959,14 +5959,14 @@ button {
         .wrapper .panel.panel-middle .mode-container .auto .alignment-mode-container img {
           width: 200px;
           height: auto; }
-      .wrapper .panel.panel-middle .mode-container .manual .control-container {
+      .wrapper .panel.panel-middle .mode-container .control-container {
         position: relative; }
-        .wrapper .panel.panel-middle .mode-container .manual .control-container .connect {
+        .wrapper .panel.panel-middle .mode-container .control-container .connect {
           position: absolute;
           margin: 0 auto;
           width: 100%;
           margin-top: 54px; }
-        .wrapper .panel.panel-middle .mode-container .manual .control-container .controls {
+        .wrapper .panel.panel-middle .mode-container .control-container .controls {
           color: #000000;
           width: 100%;
           opacity: 0.2;
@@ -5974,7 +5974,7 @@ button {
           -moz-transition: opacity 500ms ease-out;
           -o-transition: opacity 500ms ease-out;
           transition: opacity 500ms ease-out; }
-          .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .joystick {
+          .wrapper .panel.panel-middle .mode-container .control-container .controls .joystick {
             position: relative;
             display: inline-block;
             width: 100px;
@@ -5983,7 +5983,7 @@ button {
             margin-left: 30px;
             background: #aaaaaa;
             border-radius: 100%; }
-            .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .joystick .pos {
+            .wrapper .panel.panel-middle .mode-container .control-container .controls .joystick .pos {
               position: absolute;
               margin-left: 25px;
               margin-top: 25px;
@@ -5991,18 +5991,48 @@ button {
               height: 50px;
               background: #333333;
               border-radius: 100%; }
-          .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian {
+          .wrapper .panel.panel-middle .mode-container .control-container .controls .cartesian {
             vertical-align: top;
             display: inline-block;
             padding: 0 20px; }
-            .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command {
+            .wrapper .panel.panel-middle .mode-container .control-container .controls .cartesian .command {
               height: 30px;
               width: 60px;
               line-height: 30px;
               margin: 3px auto;
               background-color: #aaaaaa; }
-              .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.left, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.right, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.x_button, .wrapper .panel.panel-middle .mode-container .manual .control-container .controls .cartesian .command.b_button {
+              .wrapper .panel.panel-middle .mode-container .control-container .controls .cartesian .command.left, .wrapper .panel.panel-middle .mode-container .control-container .controls .cartesian .command.right, .wrapper .panel.panel-middle .mode-container .control-container .controls .cartesian .command.x_button, .wrapper .panel.panel-middle .mode-container .control-container .controls .cartesian .command.b_button {
                 display: inline-block; }
+          .wrapper .panel.panel-middle .mode-container .control-container .controls .intake-container .command {
+            color: #aaaaaa;
+            padding: 0 15px;
+            font-size: 30px;
+            display: inline-block;
+            vertical-align: top; }
+            .wrapper .panel.panel-middle .mode-container .control-container .controls .intake-container .command.pull::after {
+              content: "";
+              width: 0;
+              height: 0;
+              border-left: 30px solid transparent;
+              border-right: 30px solid transparent;
+              border-top: 50px solid #aaaaaa;
+              top: 50px;
+              left: 80px;
+              position: absolute; }
+            .wrapper .panel.panel-middle .mode-container .control-container .controls .intake-container .command.pull.active::after {
+              border-top: 50px solid #eeeeee; }
+            .wrapper .panel.panel-middle .mode-container .control-container .controls .intake-container .command.push::after {
+              content: "";
+              width: 0;
+              height: 0;
+              border-left: 30px solid transparent;
+              border-right: 30px solid transparent;
+              border-bottom: 50px solid #aaaaaa;
+              top: 50px;
+              left: 200px;
+              position: absolute; }
+            .wrapper .panel.panel-middle .mode-container .control-container .controls .intake-container .command.push.active::after {
+              border-bottom: 50px solid #eeeeee; }
     .wrapper .panel.panel-right {
       width: 17.25%;
       padding: 10px 10px; }

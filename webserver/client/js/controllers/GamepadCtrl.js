@@ -145,14 +145,26 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
                             keyPressed(button);
                         }
                         last_state[it] = true;
-                        $("." + button).css("background-color","#EEEEEE");
+                        if($rootScope.mode === "INTAKE") {
+                            $("." + button).css("background-color","rgba(155,155,155,0)");
+                            $("." + button).css("color","#EEEEEE");
+                            $("." + button).addClass("active");
+                        } else {
+                            $("." + button).css("background-color","#EEEEEE");
+                        }
                     } else {
 
                         if(last_state[it]) {
                             keyReleased(button);
                         }
                         last_state[it] = false;
-                        $("." + button).css("background-color","#AAAAAA");
+                        if($rootScope.mode === "INTAKE") {
+                            $("." + button).css("background-color","rgba(155,155,155,0)");
+                            $("." + button).css("color","#AAAAAA");
+                            $("." + button).removeClass("active");
+                        } else {
+                            $("." + button).css("background-color","#AAAAAA");
+                        }
                     }
                 }
             })
