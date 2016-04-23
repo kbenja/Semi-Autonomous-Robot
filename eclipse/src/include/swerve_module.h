@@ -252,6 +252,12 @@ public:
         Stops all motors
     */
     int stop_motors() {
+        if(steer_motor == NULL) {
+            printf("STEER MOTOR IS NULL\n");
+        }
+        if(drive_motor == NULL) {
+            printf("STEER MOTOR IS NULL\n");
+        }
         mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
         // stop if module isn't already stopped
         if (!is_stopping) {

@@ -35,15 +35,15 @@ void test_motor_module(float user_input) {
     mraa_i2c_context i2c = mraa_i2c_init(6);    // get board context
     i2c_init_board(i2c, address);               // initialize the board
 
-    Motor_Module m1(1);                         // create motors to ports 1, 2, and 3
-    Motor_Module m2(2);
-    Motor_Module m3(5);
-    Motor_Module m4(7);
+    Motor_Module m1(7);                         // create motors to ports 1, 2, and 3
+    // Motor_Module m2(2);
+    // Motor_Module m3(5);
+    // Motor_Module m4(7);
 
     m1.send_signal(i2c, user_input);                // send signal to boards
-    m2.send_signal(i2c, user_input);
-    m3.send_signal(i2c, user_input);
-    m4.send_signal(i2c, user_input);
+    // m2.send_signal(i2c, user_input);
+    // m3.send_signal(i2c, user_input);
+    // m4.send_signal(i2c, user_input);
 
     printf("waking up the board\n");
     mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));

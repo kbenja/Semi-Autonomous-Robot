@@ -30,8 +30,8 @@ public:
         }
         // int flags = fcntl(fd, F_GETFL, 0);
         // fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-        int opt = 1;
-        ioctl(fd, FIONBIO, &opt);
+        // int opt = 1;
+        // ioctl(fd, FIONBIO, &opt);
 
         memset(&addr, 0, sizeof(addr)); // initialize all socket memory to 0
 

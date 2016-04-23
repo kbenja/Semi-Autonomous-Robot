@@ -29,12 +29,12 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool main_program = false;
+bool main_program = true;
 bool pot_testing = false;
 bool stop_motors = false;
 bool motor_testing = false;
 bool navx_testing = false;
-bool swerve_module = true;
+bool swerve_module = false;
 bool drive_module = false;
 
 bool lidar_module = false;
@@ -50,7 +50,6 @@ int input = -1;
 int result; // used for error handling
 
 int main(int argc, char** argv) {
-
     if(lidar_module) {
 
         printf("LIDAR MODULE TESTING\n\n");
