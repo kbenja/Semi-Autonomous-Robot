@@ -31,16 +31,17 @@ public:
         // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1662, 2175, 1981); // FL swerve S2
 
         // // recorded 4/13 about 1 week after caibration
-        FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2508, 2003, 2127); // FR swerve S4
-        BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1480, 1980, 1810); // BR swerve S3
-        BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2580, 2080, 2190); // BL swerve S1
-        FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1753, 2266, 2089); // FL swerve S2
+        // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2508, 2003, 2127); // FR swerve S4
+        // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1480, 1980, 1810); // BR swerve S3
+        // BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2580, 2080, 2190); // BL swerve S1
+        // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1753, 2266, 2089); // FL swerve S2
 
+        // Paul's new measurements (all wheels turning same direction for X and Y):
+        FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1491, 1001, 2127); // FR swerve S4
+        BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1428, 925, 1810); // BR swerve S3
+        BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2510, 2021, 2190); // BL swerve S1
+        FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 2808, 2331, 2089); // FL swerve S2
 
-        // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2490, 2124, 1981); // FR swerve S4
-        // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1727, 2224, 2083); // BR swerve S3
-        // BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2881, 2290, 2442); // BL swerve S1
-        // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1974, 2542, 2362); // FL swerve S2
         //initialize proceed flags
         FR_ready = false;
         BR_ready = false;

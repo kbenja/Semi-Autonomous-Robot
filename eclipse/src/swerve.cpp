@@ -65,24 +65,28 @@ int main(int argc, char** argv) {
         printf("GOING TO CUSTOM VALUE OF %d\n", PWM);
     } else {
         if(motor == 0) {
+            // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1491, 1001, 2127); // FR swerve S4
+            // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1428, 925, 1810); // BR swerve S3
+            // BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2502, 2021, 2190); // BL swerve S1
+            // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 2808, 2331, 2089); // FL swerve S2
             // FRONT RIGHT
-            s1.x_pos = 2508;
-            s1.y_pos = 1992;
+            s1.x_pos = 1491;
+            s1.y_pos = 1001;
             s1.z_pos = 2127;
         } else if (motor == 1) {
             // BACK RIGHT
-            s1.x_pos = 1480;
-            s1.y_pos = 1921;
+            s1.x_pos = 1428;
+            s1.y_pos = 925;
             s1.z_pos = 1810;
         } else if (motor == 2) {
             // BACK LEFT
-            s1.x_pos = 2540;
-            s1.y_pos = 2040;
+            s1.x_pos = 2502;
+            s1.y_pos = 2021;
             s1.z_pos = 2190;
         } else if (motor == 3) {
             // FRONT LEFT
-            s1.x_pos = 1753;
-            s1.y_pos = 2266;
+            s1.x_pos = 2808;
+            s1.y_pos = 2331;
             s1.z_pos = 2089;
         }
     }
@@ -93,9 +97,10 @@ int main(int argc, char** argv) {
         usleep(50000); //sleep for 0.05s
         swerve_result1 = s1.swerve_controller(direction, 0.6, false, waiting);
         if(swerve_result1 == 0) {
-            printf("ALIGNED!\n");
             waiting = true;
-            swerve_result1 = s1.swerve_controller(direction, 0.6, false, waiting );
+            swerve_result1 = s1.swerve_controller(direction, 0.6, false, waiting);
+            sleep(1);
+            break;
         } else {
             if(PWM) {
                 printf("ROTATING TO = %d CURRENT POS = %d\n", PWM, s1.current_pos);
@@ -106,6 +111,7 @@ int main(int argc, char** argv) {
         usleep(50);
         mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
     }
-
+    printf("ALIGNED %d\n", s1.get_position());
+    sleep(1);
     return 0;
 }

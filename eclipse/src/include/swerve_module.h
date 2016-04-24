@@ -10,6 +10,8 @@
 #ifndef SWERVE_MODULE_H
 #define SWERVE_MODULE_H
 
+#define OFFSET 30
+
 class Swerve_Module {
 public:
     int id;                 //module unique ID
@@ -109,6 +111,10 @@ public:
         @param  bool    proceed:    the OK signal received which means all 4 swerve modules are ready to continue
         @returns:       1 if still rotating direction motor, 0 if ready to move, -1 if error has occured
     */
+    int get_position() {
+        return dir_feedback->get_average_val();
+    }
+
     int swerve_controller(char axis, float speed, bool proceed, bool wait) {
         is_stopping = false;
         uint16_t desired_pos;
@@ -116,16 +122,16 @@ public:
             case 'X':
             case 'x':
                 desired_pos = this->x_pos; // handle BL and BR motors when is_driving in X direction
-                if (this->id == 1 || this->id == 3) {
-                    speed *= -1;
-                }
+                // if (this->id == 1 || this->id == 3) {
+                //     speed *= -1;
+                // }
                 break;
             case 'Y':
             case 'y':
                 desired_pos = this->y_pos; // handle BR and FR motors when is_driving in Y direction
-                if (this->id == 3 || this->id == 4) {
-                    speed *= -1;
-                }
+                // if (this->id == 3 || this->id == 4) {
+                //     speed *= -1;
+                // }
                 break;
             case 'Z':
             case 'z':
@@ -179,18 +185,18 @@ public:
         current_pos = dir_feedback->get_average_val();    //get starting position
         // printf("current_pos: %d, desired_pos: %d\n", current_pos, desired_pos);
         // return 0;
-        if (desired_pos + 40 <= current_pos) {
+        if (desired_pos + OFFSET <= current_pos) {
             // overshoot and then approach from CW side
             this->correct_pos = false;    //not in the correct position
             this->is_rotating_cw = false;    //not rotating clockwise
             this->has_passed = true;      //overshot position
             if (!is_rotating_ccw) {
-                rotation_result = rotate_ccw(); // increase pot value
+                rotation_result = last_rotate_ccw(); // increase pot value
                 if(rotation_result != -1) { // check for errors
                     is_rotating_ccw = true;
                 }
             }
-        } else if (desired_pos - 40 >= current_pos) {         //rotate CW
+        } else if (desired_pos - OFFSET >= current_pos) {         //rotate CW
             this->correct_pos = false;
             this->is_rotating_ccw = false;
             this->has_passed = false;
@@ -240,6 +246,12 @@ public:
     int rotate_ccw() {
         mraa_result_t result = MRAA_SUCCESS;
         result = steer_motor->send_signal(i2c_context, 0.6);
+        return (result != MRAA_SUCCESS ? -1 : 0);
+    }
+
+    int last_rotate_ccw() {
+        mraa_result_t result = MRAA_SUCCESS;
+        result = steer_motor->send_signal(i2c_context, 0.45);
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
 
