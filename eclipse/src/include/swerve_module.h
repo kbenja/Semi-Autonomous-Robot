@@ -122,16 +122,10 @@ public:
             case 'X':
             case 'x':
                 desired_pos = this->x_pos; // handle BL and BR motors when is_driving in X direction
-                // if (this->id == 1 || this->id == 3) {
-                //     speed *= -1;
-                // }
                 break;
             case 'Y':
             case 'y':
                 desired_pos = this->y_pos; // handle BR and FR motors when is_driving in Y direction
-                // if (this->id == 3 || this->id == 4) {
-                //     speed *= -1;
-                // }
                 break;
             case 'Z':
             case 'z':
@@ -139,6 +133,9 @@ public:
                 break;
             default:
                 return -1;
+        }
+        if(speed > 0) {
+            speed = speed*1.3;
         }
         controller_result = 0; // assume function returns OKAY from the start
         if (!wait) {
@@ -235,7 +232,7 @@ public:
         Rotates wheel clockwise. Stops if limit is reached.
     */
     int rotate_cw() {
-        mraa_result_t result = steer_motor->send_signal(i2c_context, -0.4);
+        mraa_result_t result = steer_motor->send_signal(i2c_context, -0.5);
         return (result != MRAA_SUCCESS ? -1 : 0);
 
     }
@@ -251,7 +248,7 @@ public:
 
     int last_rotate_ccw() {
         mraa_result_t result = MRAA_SUCCESS;
-        result = steer_motor->send_signal(i2c_context, 0.45);
+        result = steer_motor->send_signal(i2c_context, 0.5);
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
 

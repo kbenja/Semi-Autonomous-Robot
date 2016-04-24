@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
                             break;
                         case 2: // left button pressed
                             // printf("Received LEFT command\n");
-                            d1.drive('X', -user_input);
+                            d1.drive('X', user_input);
                             break;
                         case 3: // back button pressed
                             // printf("Received BACKWARDS command\n");
@@ -156,7 +156,7 @@ int main(int argc, char** argv) {
                             break;
                         case 4: // right button pressed
                             // printf("Received RIGHT command\n");
-                            d1.drive('X', user_input);
+                            d1.drive('X', -user_input);
                             break;
                         case 5: // right trigger button pressed
                             // printf("Received CLOCKWISE command\n");
