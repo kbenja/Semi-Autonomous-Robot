@@ -2,7 +2,6 @@
 #include <cmath>
 #include "include/ipc_module.h"
 #include "include/test_module.h"
-#include "include/steering_module.h"
 #include "include/swerve_module.h"
 #include "include/pot_module.h"
 #include "include/drive_module.h"
@@ -123,16 +122,10 @@ int main(int argc, char** argv) {
                     }
                     break;
                 case 1:
-                    if (input != 0) {
-                        stopping = false;
-                    }
                     switch(input) {
                         case 0:
-                            if(!stopping) {
-                                printf("Received BREAK command\n");
-                                d1.stop();
-                                stopping = true;
-                            }
+                            printf("Received BREAK command\n");
+                            d1.stop();
                             break;
                         case 1:
                             printf("Received FORWARD command\n");

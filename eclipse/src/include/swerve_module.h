@@ -43,6 +43,8 @@ public:
 
     int controller_result;
 
+    bool ready;
+
     /*
         Initializes swerve module with specified ID:
 
@@ -259,6 +261,7 @@ public:
         Stops all motors
     */
     int stop_motors() {
+        mraa_result_t result = MRAA_SUCCESS;
         if(steer_motor == NULL) {
             printf("STEER MOTOR IS NULL\n");
         }
