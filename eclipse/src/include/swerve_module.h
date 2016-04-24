@@ -12,7 +12,7 @@
 
 class Swerve_Module {
 public:
-	int id;                 //module unique ID
+    int id;                 //module unique ID
     uint16_t current_pos;   //swerve orientation
     uint16_t speed;         //swerve speed
 
@@ -34,6 +34,7 @@ public:
 
     // stopping state variables
     bool is_stopping;   // use to reduce signals sent to i2c chip
+    bool saved_last_position;
 
     mraa_i2c_context i2c_context;   //i2c context for communication
 
@@ -61,16 +62,16 @@ public:
 
     */
     Swerve_Module(const mraa_i2c_context & i2c_in, int module_id, int steer_port, int drive_port, int pot_adc, int encoder_port, uint16_t x_position, uint16_t y_position, uint16_t z_position) {
-        id = module_id;
-        steer_motor = new Motor_Module(steer_port);
-        drive_motor = new Motor_Module(drive_port);
-        dir_feedback = new Pot_Module(pot_adc, 12);
+        this->id = module_id;
+        this->steer_motor = new Motor_Module(steer_port);
+        this->drive_motor = new Motor_Module(drive_port);
+        this->dir_feedback = new Pot_Module(pot_adc, 12);
         // drive_feedback = new Encoder_Module(encoder_port);
 
         //potentiometer initialization
-        current_pos = dir_feedback->get_val();
-        limit_cw = (current_pos < CW_LIMIT) ? false : true;    //check for clockwise limit
-        limit_ccw = (current_pos > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
+        this->current_pos = dir_feedback->get_val();
+        this->limit_cw = (current_pos < CW_LIMIT) ? false : true;    //check for clockwise limit
+        this->limit_ccw = (current_pos > CCW_LIMIT) ? false : true;  //check for c-clockwise limit
 
         //encoder initialization
         speed = 0;
@@ -79,14 +80,14 @@ public:
         i2c_context = i2c_in;
 
         //position initialization
-        x_pos = x_position;
-        y_pos = y_position;
-        z_pos = z_position;
+        this->x_pos = x_position;
+        this->y_pos = y_position;
+        this->z_pos = z_position;
 
-        has_passed = false;
-        waiting = false;
-        is_driving = false;
-
+        this->has_passed = false;
+        this->waiting = false;
+        this->is_driving = false;
+        this->last_position = 'q';
         printf("[ init ] Created swerve module ID %d\n", id);
     }
 
@@ -112,31 +113,34 @@ public:
         is_stopping = false;
         uint16_t desired_pos;
         switch(axis) {          //desired swerve position based on desired axis translation
-        case 'X':
-        case 'x':
-            desired_pos = x_pos; // handle BL and BR motors when is_driving in X direction
-            if (this->id == 1 || this->id == 3) {
-                speed *= -1;
-            }
-            break;
-        case 'Y':
-        case 'y':
-            desired_pos = y_pos; // handle BR and FR motors when is_driving in Y direction
-            if (this->id == 3 || this->id == 4) {
-                speed *= -1;
-            }
-            break;
-        case 'Z':
-        case 'z':
-            desired_pos = z_pos;
-            break;
-        default:
-            return -1;
+            case 'X':
+            case 'x':
+                desired_pos = this->x_pos; // handle BL and BR motors when is_driving in X direction
+                if (this->id == 1 || this->id == 3) {
+                    speed *= -1;
+                }
+                break;
+            case 'Y':
+            case 'y':
+                desired_pos = this->y_pos; // handle BR and FR motors when is_driving in Y direction
+                if (this->id == 3 || this->id == 4) {
+                    speed *= -1;
+                }
+                break;
+            case 'Z':
+            case 'z':
+                desired_pos = this->z_pos;
+                break;
+            default:
+                return -1;
         }
         controller_result = 0; // assume function returns OKAY from the start
         if (!wait) {
-            waiting = false; // reset waiting boolean
-            if(last_position == axis) { // save last position
+            this->waiting = false; // reset waiting boolean
+            printf("AXIS: %c\n", axis);
+            if(axis == last_position) { // save last position
+                printf("Same position as last time\n");
+                this->correct_pos =  true;
                 return 0;
             }
             controller_result = rotate_position(axis, desired_pos);
@@ -146,19 +150,20 @@ public:
             }
             return controller_result;
         } else {
+            if (this->correct_pos) { // if the last calibration didn't finish calibrating
+                printf("SWERVE %d is keeping the last position\n", this->id);
+                this->last_position = axis;
+            }
             if(!waiting) {
-                waiting = true;
+                this->waiting = true;
                 printf("Wheel %d is in position.\n", id);
-                last_position = axis;
                 stop_rotation();
             }
-            if (proceed) { // received proceed command from drive module
-                if (!is_driving) {
-                    controller_result = drive_wheel(speed);
-                    printf("Driving wheel. %d\n", id);
-                    is_driving = true;
-                    return controller_result; // returns 0 if good, -1 if error
-                }
+            if (proceed && !is_driving) { // received proceed command from drive module
+                controller_result = drive_wheel(speed);
+                printf("Driving wheel. %d\n", id);
+                this->is_driving = true;
+                return controller_result; // returns 0 if good, -1 if error
             } else {
                 return 0; // returns
             }
@@ -178,9 +183,9 @@ public:
         // return 0;
         if (desired_pos + 40 <= current_pos) {
             // overshoot and then approach from CW side
-            correct_pos = false;    //not in the correct position
-            is_rotating_cw = false;    //not rotating clockwise
-            has_passed = true;      //overshot position
+            this->correct_pos = false;    //not in the correct position
+            this->is_rotating_cw = false;    //not rotating clockwise
+            this->has_passed = true;      //overshot position
             if (!is_rotating_ccw) {
                 rotation_result = rotate_ccw(); // increase pot value
                 if(rotation_result != -1) { // check for errors
@@ -188,9 +193,9 @@ public:
                 }
             }
         } else if (desired_pos - 40 >= current_pos) {         //rotate CW
-            correct_pos = false;
-            is_rotating_ccw = false;
-            has_passed = false;
+            this->correct_pos = false;
+            this->is_rotating_ccw = false;
+            this->has_passed = false;
             if (!is_rotating_cw) {
                 rotation_result = rotate_cw(); // decrease pot value
                 if(rotation_result != -1) { // check for errors
@@ -198,8 +203,8 @@ public:
                 }
             }
         } else if (has_passed) {
-            is_rotating_cw = false;
-            is_rotating_ccw = false;
+            this->is_rotating_cw = false;
+            this->is_rotating_ccw = false;
             if(!correct_pos) {
                 rotation_result = stop_rotation(); // stop rotation
                 if(rotation_result != -1) {
@@ -253,6 +258,7 @@ public:
     int stop_motors() {
         mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
         // stop if module isn't already stopped
+        printf("LAST POSITION %c\n", this->last_position);
         if (!is_stopping) {
             result = drive_motor->send_signal(i2c_context, 0);
             printf("STOP ALL motors on module %d\n", id);
@@ -260,14 +266,11 @@ public:
                 is_stopping = true;
             }
         }
-        if (!this->correct_pos) { // if the last calibration didn't finish calibrating
-            this->last_position = 'Q'; // resets last_position to not be X, Y, or Z
-        }
         // reset all variables to false for next turn
+        this->correct_pos = false;
         this->is_driving = false;
         this->is_rotating_ccw = false;
         this->is_rotating_cw = false;
-        this->correct_pos = false;
         this->waiting = false;
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
