@@ -2,12 +2,9 @@
 #include <cmath>
 #include "include/ipc_module.h"
 #include "include/test_module.h"
-#include "include/steering_module.h"
 #include "include/swerve_module.h"
 #include "include/pot_module.h"
 #include "include/drive_module.h"
-#include "include/lidar_module.h"
-#include "include/alignment_module.h"
 #include "include/intake_module.h"
 
 enum modes {
@@ -29,16 +26,14 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool main_program = true;
+bool main_program = false;
 bool pot_testing = false;
 bool stop_motors = false;
 bool motor_testing = false;
 bool navx_testing = false;
 bool swerve_module = false;
 bool drive_module = false;
-
-bool lidar_module = false;
-bool alignment_module = false;
+bool drive_unit_testing = true;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
@@ -50,45 +45,6 @@ int input = -1;
 int result; // used for error handling
 
 int main(int argc, char** argv) {
-
-    if(lidar_module) {
-
-    	printf("LIDAR MODULE TESTING\n\n");
-
-        //INITIALIZATION
-        Lidar_Module lidar(3); //ANALOG PIN #3
-        while(1) {
-            usleep(500000); //sleep every .5 sec
-            printf("LIDAR:%d\n",lidar.get_average_distance_reading_int());
-            //printf("LIDAR:%d\n",lidar.get_distance_reading_int());
-            //printf("LIDAR:%f\n",lidar.get_distance_reading());
-
-            //printf("LIDAR_AVERAGE:%f\n\n",lidar.get_average_distance_reading());
-
-            //printf("LIDAR#1:%X - %d\n",l1.get_distance_reading());
-            //printf("LIDAR#2:%X - %d\n\n",l2.get_distance_reading());
-        }
-    }
-
-    if(alignment_module) {
-
-        printf("ALIGNMENT MODULE TESTING\n\n");
-
-        Alignment_Module lidar = Alignment_Module();
-
-        while(1) {
-            usleep(50000); //sleep every .5 sec
-
-            //LIDAR
-            lidar.lidar_alignment();
-
-            //CAMERA
-            //camera_alignment();
-
-        }
-    }
-
-
     if (main_program) {
         float user_input = 0.0;                          // receive signal from argv or use default (stop)
         if (argc > 1) {
@@ -160,11 +116,11 @@ int main(int argc, char** argv) {
                             break;
                         case 5: // right trigger button pressed
                             // printf("Received CLOCKWISE command\n");
-                            d1.drive('Z', user_input);
+                            d1.drive('Z', 0.3);
                             break;
                         case 6: // left trigger button pressed
                             // printf("Received COUNTER CLOCKWISE command\n");
-                            d1.drive('Z', -user_input);
+                            d1.drive('Z', -0.3);
                             break;
                         default: // error has occured
                             break;
@@ -179,10 +135,10 @@ int main(int argc, char** argv) {
                     printf("INTAKE MODE, INPUT = %d\n", input);
                     if(input == 1) {
                         printf("push out\n");
-                        i1.drive_intake(0.8);
+                        i1.drive_intake(0.5);
                     } else if (input == 3) {
                         printf("pull in\n");
-                        i1.drive_intake(-0.9);
+                        i1.drive_intake(-0.55);
                     } else if (input == 0) {
                         i1.stop_intake();
                         printf("stop everything\n");
@@ -228,67 +184,42 @@ int main(int argc, char** argv) {
         }
     }
 
-    if (swerve_module) {
-        printf("Testing swerve module\n");
-        int swerve_result1;
-        bool drive_proceed = false;
-
-        int stop_point = 0;
-
+    if (drive_unit_testing) {
+        int test = 0;
         uint8_t address = 0x40;
         mraa_i2c_context i2c = mraa_i2c_init(6);
-        mraa_result_t i2c_status = i2c_init_board(i2c, address);
+        mraa_result_t i2c_status = i2c_init_board(i2c, address); // initialize i2c board
         if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
-
-
-        // ID, dir port, drive port, AOIN, Encoder, Y, X, Z
-        // FR swerve M7
-        // Swerve_Module s1 = Swerve_Module(i2c, 1, 6, 7, 0, 0, 2508, 1992, 2127);
-        // BR swerve M5
-        // Swerve_Module s1 = Swerve_Module(i2c, 2, 4, 5, 1, 0, 1480, 1921, 1810);
-        // BL swerve M1
-        Swerve_Module s1 = Swerve_Module(i2c, 3, 0, 1, 2, 0, 2540, 2040, 2190);
-        // FL swerve M3
-        // Swerve_Module s1 = Swerve_Module(i2c, 4, 2, 3, 3, 0, 1753, 2266, 2089);
-
-
+        int test_result = 0;
+        Drive_Module d1 = Drive_Module(i2c); // initialize drive module
         while(1) {
-            usleep(50000); //sleep for 0.05s
-            switch (stop_point) {
+            usleep(50000); // cycle time
+            switch(test) {
                 case 0:
-                    swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, false);
+                    test_result = d1.drive('Y', 0.6);
                     break;
                 case 1:
-                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, false);
+                    test_result = d1.drive('X', -0.6);
                     break;
                 case 2:
-                    swerve_result1 = s1.swerve_controller('Z', 0.6, drive_proceed, false);
+                    test_result = d1.drive('Z', -0.6);
                     break;
                 case 3:
-                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, false);
+                    test_result = d1.drive('Y', 0.25);
                     break;
                 case 4:
-                    swerve_result1 = s1.swerve_controller('Y', 0.6, drive_proceed, false);
-                    break;
-                case 5:
-                    swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, false);
+                    test_result = d1.drive('X', 0.8);
                     break;
                 default:
-                    printf("INCORRECT CASE\n");
                     break;
             }
-            drive_proceed = false;
-            if(swerve_result1 == 0) {
-                stop_point++;
-                stop_point = stop_point%5;
-                printf("ALIGNED! moving to stopping point %d\n", stop_point);
-                drive_proceed = true;
-                swerve_result1 = s1.swerve_controller('X', 0.6, drive_proceed, true);
-                usleep(1000000);
+            if(test_result == 2) {
+                printf("TEST %d COMPLETE\n", test);
+                sleep(3);
+                test_result = d1.stop();
+                test++;
             }
-            usleep(50);
-            mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
-
+            mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
         }
     }
     if (pot_testing) {

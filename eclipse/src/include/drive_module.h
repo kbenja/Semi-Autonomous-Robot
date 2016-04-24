@@ -72,6 +72,9 @@ public:
         swerve_controller_result = FL->swerve_controller(axes, speed, drive_proceed, FL_ready);
         swerve_controller_result = BR->swerve_controller(axes, speed, drive_proceed, BR_ready);
         swerve_controller_result = BL->swerve_controller(axes, speed, drive_proceed, BL_ready);
+        if (drive_proceed == true) {
+            return 2;
+        }
         return swerve_controller_result;
     }
 

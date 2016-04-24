@@ -36,7 +36,7 @@ public:
 
     // stopping state variables
     bool is_stopping;   // use to reduce signals sent to i2c chip
-    bool saved_last_position;
+    bool stopped_flag;
 
     mraa_i2c_context i2c_context;   //i2c context for communication
 
@@ -87,9 +87,13 @@ public:
         this->z_pos = z_position;
 
         this->has_passed = false;
-        this->waiting = false;
-        this->is_driving = false;
         this->last_position = 'q';
+        this->correct_pos = false;
+        this->is_driving = false;
+        this->is_rotating_ccw = false;
+        this->is_rotating_cw = false;
+        this->waiting = false;
+
         printf("[ init ] Created swerve module ID %d\n", id);
     }
 
@@ -140,7 +144,6 @@ public:
         controller_result = 0; // assume function returns OKAY from the start
         if (!wait) {
             this->waiting = false; // reset waiting boolean
-            printf("AXIS: %c\n", axis);
             if(axis == last_position) { // save last position
                 this->correct_pos =  true;
                 return 0;
@@ -270,6 +273,9 @@ public:
             printf("STOP ALL motors on module %d\n", id);
             if(result == MRAA_SUCCESS) {
                 is_stopping = true;
+                if (!correct_pos) {
+                    this->last_position = 'q';
+                }
             }
         }
         // reset all variables to false for next turn
