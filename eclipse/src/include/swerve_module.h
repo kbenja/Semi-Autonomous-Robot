@@ -139,7 +139,6 @@ public:
             this->waiting = false; // reset waiting boolean
             printf("AXIS: %c\n", axis);
             if(axis == last_position) { // save last position
-                printf("Same position as last time\n");
                 this->correct_pos =  true;
                 return 0;
             }
@@ -151,7 +150,6 @@ public:
             return controller_result;
         } else {
             if (this->correct_pos) { // if the last calibration didn't finish calibrating
-                printf("SWERVE %d is keeping the last position\n", this->id);
                 this->last_position = axis;
             }
             if(!waiting) {
@@ -258,7 +256,6 @@ public:
     int stop_motors() {
         mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
         // stop if module isn't already stopped
-        printf("LAST POSITION %c\n", this->last_position);
         if (!is_stopping) {
             result = drive_motor->send_signal(i2c_context, 0);
             printf("STOP ALL motors on module %d\n", id);
