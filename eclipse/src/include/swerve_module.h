@@ -40,7 +40,6 @@ public:
     Motor_Module * steer_motor;         //steering motor
     Motor_Module * drive_motor;       //is_driving motor
     Pot_Module * dir_feedback;        //potentiometer for angular reference
-    // Encoder_Module drive_feedback;  //optical encoder for drive
 
     int controller_result;
 
@@ -86,6 +85,8 @@ public:
         has_passed = false;
         waiting = false;
         is_driving = false;
+
+        ready = false;
 
         printf("[ init ] Created swerve module ID %d\n", id);
     }
@@ -137,13 +138,18 @@ public:
         if (!wait) {
             waiting = false; // reset waiting boolean
             if(last_position == axis) { // save last position
-                this->correct_pos = true;
+                ready = true;
                 return 0;
             }
             controller_result = rotate_position(axis, desired_pos);
             if (speed == 0) {
                 controller_result = stop_motors();
                 return controller_result;
+            }
+            if (controller_result == 0) {
+                ready = true;
+            } else {
+                ready = false;
             }
             return controller_result;
         } else {
@@ -219,6 +225,7 @@ public:
         Rotates drive wheel forwards
     */
     int drive_wheel(float speed) {
+        printf("DRIVE module %d\n", id);
         mraa_result_t result = drive_motor->send_signal(i2c_context, speed);
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
@@ -258,9 +265,9 @@ public:
         if(drive_motor == NULL) {
             printf("STEER MOTOR IS NULL\n");
         }
-        mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
         // stop if module isn't already stopped
         if (!is_stopping) {
+            mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
             result = drive_motor->send_signal(i2c_context, 0);
             printf("STOP ALL motors on module %d\n", id);
             if(result == MRAA_SUCCESS) {
@@ -271,10 +278,14 @@ public:
             this->last_position = 'Q'; // resets last_position to not be X, Y, or Z
         }
         // reset all variables to false for next turn
+        // this->is_driving = false;
+        // this->is_rotating_ccw = false;
+        // this->is_rotating_cw = false;
+        // this->waiting = false;
+
+        this->ready = false;
         this->is_driving = false;
-        this->is_rotating_ccw = false;
-        this->is_rotating_cw = false;
-        this->waiting = false;
+
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
 };
