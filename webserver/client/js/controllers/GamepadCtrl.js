@@ -173,6 +173,8 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
             return registeredButton(btn);
         } else if ($rootScope.mode === "INTAKE") {
             return registeredIntakeButton(btn);
+        } else if ($rootScope.mode === "AUTO") {
+            return registeredAutoButton(btn);
         } else {
             return false;
         }
@@ -184,6 +186,11 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
     function registeredIntakeButton(btn) {
         return (btn === "up" || btn === "down") ? true : false;
     }
+
+    function registeredAutoButton(btn) {
+        return (btn === "b_button") ? true : false;
+    }
+
     function getButton(btn) {
         switch(btn) {
             case 0:

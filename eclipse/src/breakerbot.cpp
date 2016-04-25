@@ -44,6 +44,11 @@ int mode; // used to decide how to use robot
 int input = -1;
 int result; // used for error handling
 
+//intake variables
+bool is_pushing = false;
+bool is_pulling = false;
+bool is_stopping = false;
+
 int main(int argc, char** argv) {
     if (main_program) {
         float user_input = 0.0;                          // receive signal from argv or use default (stop)
@@ -81,74 +86,74 @@ int main(int argc, char** argv) {
                 mode = instructions[0];
                 input = instructions[1];
             }
-            switch(mode) {
-                case -1: // server sends -1 of the client is disconnected
-                    printf("CLIENT DISCONNECT STOPPING ALL MOTORS\n");
-                    d1.stop(); // stop all motors
-                    break;
-                case 0: // Idle mode
-                    if(instructions[1] != 0) {
-                        // printf("Received OKAY command from intel edison %d\n", input);
-                        printf("IDLE MODE, Waiting for input\n");
+            if (mode == -1) {
+                printf("CLIENT DISCONNECT STOPPING ALL MOTORS\n");
+                d1.stop(); // stop all motors
+            } else if (mode == 0 && instructions[1] != 0) {
+                // printf("Received OKAY command from intel edison %d\n", input);
+                printf("IDLE MODE, Waiting for input\n");
+            } else if (mode == 1) {
+                if(input == 0) {
+                    d1.stop();
+                } else if (input == 1) {
+                    d1.drive('Y', user_input);
+                } else if (input == 2) {
+                    d1.drive('X', user_input);
+                } else if (input == 3) {
+                    d1.drive('Y', -user_input);
+                } else if (input == 4) {
+                    d1.drive('X', -user_input);
+                } else if (input == 5) {
+                    d1.drive('Z', 0.3);
+                } else if (input == 6) {
+                    d1.drive('Z', -0.3);
+                }
+                // wake up chip
+                mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
+            } else if (mode == 2) {
+                printf("AUTO MODE, INPUT = %d\n", input);
+                if(input == 0) {
+                    d1.stop();
+                } else if (input == 1) {
+                    // slow right
+                    d1.drive('X', 0.215);
+                } else if (input == 2) {
+                    // slow right
+                    d1.drive('X', 0.4);
+                } else if (input == 3) {
+                    // slow left
+                    d1.drive('X', -0.215);
+                } else if (input == 4) {
+                    // slow right
+                    d1.drive('X', -0.4);
+                }
+            } else if (mode == 3) {
+                printf("INTAKE MODE, INPUT = %d\n", input);
+                if(input == 1) {
+                    is_pushing = false;
+                    is_stopping = false;
+                    if(!is_pulling) {
+                        printf("push out\n");
+                        i1.drive_intake(0.65);
+                        is_pulling = true;
                     }
-                    break;
-                case 1: // Manual mode
-                    switch(input) {
-                        case 0: // break button pressed
-                            // printf("Received BREAK command\n");
-                            d1.stop();
-                            break;
-                        case 1: // forward button pressed
-                            // printf("Received FORWARD command\n");
-                            d1.drive('Y', user_input);
-                            break;
-                        case 2: // left button pressed
-                            // printf("Received LEFT command\n");
-                            d1.drive('X', user_input);
-                            break;
-                        case 3: // back button pressed
-                            // printf("Received BACKWARDS command\n");
-                            d1.drive('Y', -user_input);
-                            break;
-                        case 4: // right button pressed
-                            // printf("Received RIGHT command\n");
-                            d1.drive('X', -user_input);
-                            break;
-                        case 5: // right trigger button pressed
-                            // printf("Received CLOCKWISE command\n");
-                            d1.drive('Z', 0.3);
-                            break;
-                        case 6: // left trigger button pressed
-                            // printf("Received COUNTER CLOCKWISE command\n");
-                            d1.drive('Z', -0.3);
-                            break;
-                        default: // error has occured
-                            break;
-                    }
-                    // wake up I2C chip so it registers commands
-                    mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
-                    break;
-                case 2:
-                    printf("AUTO MODE, INPUT = %d\n", input);
-                    break;
-                case 3:
-                    printf("INTAKE MODE, INPUT = %d\n", input);
-                    if(input == 1) {
+                } else if (input == 3) {
+                    is_pulling = false;
+                    is_stopping = false;
+                    if(!is_pushing) {
                         printf("push out\n");
                         i1.drive_intake(0.5);
-                    } else if (input == 3) {
-                        printf("pull in\n");
-                        i1.drive_intake(-0.55);
-                    } else if (input == 0) {
-                        i1.stop_intake();
-                        printf("stop everything\n");
+                        is_pushing = true;
                     }
-                    break;
-                case 4:
-                    printf("TESTING MODE, INPUT = %d\n", input);
-                    break;
-                default:
-                    break;
+                } else if (input == 0) {
+                    is_pulling = false;
+                    is_pushing = false;
+                    if(!is_stopping) {
+                        printf("stop everything\n");
+                        i1.stop_intake();
+                        is_stopping = true;
+                    }
+                }
             }
             sending[0] = x1.get_yaw();
             sending[1] = mode;
