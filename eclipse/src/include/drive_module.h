@@ -37,10 +37,10 @@ public:
         // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1753, 2266, 2089); // FL swerve S2
 
         // Paul's new measurements (all wheels turning same direction for X and Y):
-        FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1491, 1001, 2127); // FR swerve S4
-        BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1361, 875, 1810); // BR swerve S3
-        BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2510, 2001, 2190); // BL swerve S1
-        FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 2808, 2331, 2089); // FL swerve S2
+        FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1491, 985, 2127); // WHEEL 0
+        BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1361, 885, 1810); // WHEEL 1
+        BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2510, 2030, 2190); // WHEEL 2
+        FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 2808, 2331, 2089); // WHEEL 3
 
         //initialize proceed flags
         FR_ready = false;

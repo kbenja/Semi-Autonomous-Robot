@@ -139,7 +139,7 @@ public:
                 return -1;
         }
         if(speed > 0) {
-            speed = speed*1.3;
+            speed = speed*2;
         }
         controller_result = 0; // assume function returns OKAY from the start
         if (!wait) {
@@ -190,7 +190,7 @@ public:
             this->correct_pos = false;    //not in the correct position
             this->is_rotating_cw = false;    //not rotating clockwise
             this->has_passed = true;      //overshot position
-            if(current_pos - desired_pos + OFFSET > 200) {
+            if(current_pos - desired_pos + OFFSET > 300) {
                 rotate_ccw();
             } else {
                 last_rotate_ccw();
