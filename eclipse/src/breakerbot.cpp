@@ -26,14 +26,14 @@ enum directions {
     ROTATE_CCW = 6
 };
 
-bool main_program = false;
+bool main_program = true;
 bool pot_testing = false;
 bool stop_motors = false;
 bool motor_testing = false;
 bool navx_testing = false;
 bool swerve_module = false;
 bool drive_module = false;
-bool drive_unit_testing = true;
+bool drive_unit_testing = false;
 
 int16_t instructions[2] = {-1,0};
 int16_t *p_instructions = instructions;
@@ -197,18 +197,23 @@ int main(int argc, char** argv) {
             switch(test) {
                 case 0:
                     test_result = d1.drive('Y', 0.6);
+                    // test_result = d1.drive('Y', 0.1);
                     break;
                 case 1:
                     test_result = d1.drive('X', -0.6);
+                    // test_result = d1.drive('X', 0.1);
                     break;
                 case 2:
-                    test_result = d1.drive('Z', -0.6);
+                    test_result = d1.drive('Y', -0.6);
+                    // test_result = d1.drive('Y', 0.1);
                     break;
                 case 3:
-                    test_result = d1.drive('Y', 0.25);
+                    test_result = d1.drive('X', 0.5);
+                    // test_result = d1.drive('X', 0.1);
                     break;
                 case 4:
-                    test_result = d1.drive('X', 0.8);
+                    test_result = d1.drive('X', -0.8);
+                    // test_result = d1.drive('X', 0.1);
                     break;
                 default:
                     break;
