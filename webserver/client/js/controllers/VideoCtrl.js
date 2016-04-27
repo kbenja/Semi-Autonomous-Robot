@@ -11,7 +11,8 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
 
     var last_instruction = -1;
     var error_count = 0;
-
+    var h = 480;
+    var w = 640;
     var goal_x = 320;
     var goal_y = 288;
     var stop_distance_x = 10;
@@ -19,44 +20,25 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
 
     tracker.on('track', function(event) {
         $scope.rects = event.data;
-        var count = 0;
         var markers = [];
         $scope.rects.forEach(function(rect, num) {
-            count++;
-            if (rect.height > rect.width * 2 && rect.y > 200) {
-                // console.log("RECT: " + num + " CENTER: (" + rect.x , rect.y + rect.height/2 + ") HEIGHT =", rect.height, "WIDTH =", rect.width);
+            // console.log("RECT: " + num + " CENTER: (" + rect.x , rect.y + rect.height/2 + ") HEIGHT =", rect.height, "WIDTH =", rect.width);
+            if (rect.height > rect.width * 2 && rect.y > 150) {
                 markers.push(rect);
-                // console.log("RECT:", rect.x + rect.width/2);
             }
             if (num == $scope.rects.length - 1) {
-                // console.log("NUMBER OF RECTANGLES:", count);
                 if (markers.length > 1) {
-                    if(markers[0].y + 20 > markers[1].y && markers[0].y - 20 < markers[1].y) {
+                    if(markers[0].y + 50 > markers[1].y && markers[0].y - 50 < markers[1].y) {
                         error_count = 0;
                         var breaker_center = (markers[0].x + markers[0].width/2 + markers[1].x + markers[1].width/2)/2;
                         var breaker_height = (markers[0].y + markers[1].y)/2;
-                        var breaker_status_color = (breaker_center < goal_x + stop_distance_x && breaker_center > goal_x - stop_distance_x ? "yellow" : "red");
-                        var breaker_height_status = (breaker_height < goal_y + stop_distance_y && breaker_height > goal_y - stop_distance_y ? "yellow" : "red");
+                        var breaker_status_color = (breaker_center < goal_x + stop_distance_x && breaker_center > goal_x - stop_distance_x ? "rgba(0,255,0,0.8)" : "rgba(255,0,0,0.5)");
+                        var breaker_height_status = (breaker_height < goal_y + stop_distance_y && breaker_height > goal_y - stop_distance_y ? "rgba(0,255,0,0.8)" : "rgba(255,0,0,0.5)");
                         // target X
-                        $scope.rects.push({
-                            "width": 2,
-                            "height": 480,
-                            "x": goal_x - 1,
-                            "y": 0,
-                            "color":"green"
-                        });
-                        // target Y
-                        $scope.rects.push({
-                            "width": 640,
-                            "height": 2,
-                            "x": 0,
-                            "y": goal_y - 1,
-                            "color": "green"
-                        });
                         // current X
                         $scope.rects.push({
                             "width": 2,
-                            "height": 480,
+                            "height": h,
                             "x": breaker_center - 1,
                             "y": 0,
                             "color": breaker_status_color
@@ -69,10 +51,25 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
                             "y": breaker_height,
                             "color":breaker_height_status
                         })
+                        $scope.rects.push({
+                            "width": 4,
+                            "height": 100,
+                            "x": goal_x - 2,
+                            "y": goal_y - 50,
+                            "color": "rgba(0,255,0,0.8)"
+                        });
+                        // target Y
+                        $scope.rects.push({
+                            "width": 100,
+                            "height": 4,
+                            "x": goal_x - 50,
+                            "y": goal_y - 2,
+                            "color": "rgba(0,255,0,0.8)"
+                        });
                         if ($rootScope.mode === "AUTO") {
                             $scope.instruction = get_direction(breaker_center, breaker_height);
                             if($scope.instruction !== last_instruction) {
-                                console.log("SENDING", $scope.instruction);
+                                // console.log("SENDING", $scope.instruction);
                                 communication.send_data({mode: 2, code: $scope.instruction});
                             }
                         }
@@ -81,7 +78,7 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
                     // canot detect breaker
                     if ($rootScope.mode === "AUTO") {
                         error_count++;
-                        console.log(error_count);
+                        // console.log(error_count);
                         if (error_count > 90) {
                             if($scope.instruction !== last_instruction) {
                                 console.log("SENDING STOP SIGNAL");
