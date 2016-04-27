@@ -28,6 +28,50 @@ void test_lidar_module(int testing_port) {
     }
 }
 
+void unit_test_drive() {
+    int test = 0;
+    uint8_t address = 0x40;
+    mraa_i2c_context i2c = mraa_i2c_init(6);
+    mraa_result_t i2c_status = i2c_init_board(i2c, address); // initialize i2c board
+    if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
+    int test_result = 0;
+    Drive_Module d1 = Drive_Module(i2c); // initialize drive module
+    while(1) {
+        usleep(50000); // cycle time
+        switch(test) {
+            case 0:
+                test_result = d1.drive('Y', 0.6);
+                // test_result = d1.drive('Y', 0.1);
+                break;
+            case 1:
+                test_result = d1.drive('X', -0.6);
+                // test_result = d1.drive('X', 0.1);
+                break;
+            case 2:
+                test_result = d1.drive('Z', -0.6);
+                // test_result = d1.drive('Y', 0.1);
+                break;
+            case 3:
+                test_result = d1.drive('X', 0.5);
+                // test_result = d1.drive('X', 0.1);
+                break;
+            case 4:
+                test_result = d1.drive('Y', -0.8);
+                // test_result = d1.drive('X', 0.1);
+                break;
+            default:
+                break;
+        }
+        if(test_result == 2) {
+            printf("TEST %d COMPLETE\n", test);
+            sleep(3);
+            test_result = d1.stop();
+            test++;
+        }
+        mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
+    }
+}
+
 void test_motor_module(float user_input) {
     printf("MOTOR MODULE TESTING\n\n");
 

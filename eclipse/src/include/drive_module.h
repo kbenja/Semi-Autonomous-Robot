@@ -24,29 +24,10 @@ public:
     	i2c_bus = i2c;
         //initialize Swerve_Modules (ID, dir port, drive port, AOIN, Encoder, X, Y, Z)
 
-        // recorded 2 days after calibrated
-        // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2437, 1925, 2075); // FR swerve S4
-        // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1484, 1952, 1828); // BR swerve S3
-        // BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2506, 2006, 2173); // BL swerve S1
-        // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1662, 2175, 1981); // FL swerve S2
-
-        // // recorded 4/13 about 1 week after caibration
-        // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 2508, 2003, 2127); // FR swerve S4
-        // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1480, 1980, 1810); // BR swerve S3
-        // BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2580, 2080, 2190); // BL swerve S1
-        // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 1753, 2266, 2089); // FL swerve S2
-
-        // Paul's new measurements (all wheels turning same direction for X and Y):
-        // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1491, 985, 2127); // WHEEL 0
-        // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1361, 885, 1810); // WHEEL 1
-        // BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2510, 2030, 2190); // WHEEL 2
-        // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 2808, 2331, 2089); // WHEEL 3
-
-        // 1 week after Paul's measurements
-        FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1491, 985, 2127); // WHEEL 0
-        BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1463, 968, 1810); // WHEEL 1
-        BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2510, 2030, 2190); // WHEEL 2
-        FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 2775, 2310, 2089); // WHEEL 3
+        FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1491, 985, 2186); // WHEEL 0
+        BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1463, 968, 1812); // WHEEL 1
+        BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2510, 2030, 2161); // WHEEL 2
+        FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 2775, 2310, 2103); // WHEEL 3
 
         //initialize proceed flags
         FR_ready = false;

@@ -29,6 +29,8 @@ public:
     int align(Drive_Module * p_d1, int rotation, int dest_x, int dest_y, bool valid_dest) {
         printf("rotation %d, move_x %d, move_y, %d\n", rotation, dest_x, dest_y);
         return 0;
+        // dest x : 0 = stop, 1 = go right, 2 = go left
+        // dest y : 0 = stop, 1 = forward, 2 = backward
         if (valid_dest) {
             // set destination_x if camera measured correctly
             destination_x = dest_x;
@@ -38,7 +40,8 @@ public:
             return -1;
         }
         // PHASE 1: rotate to correct position
-        if (rotation != 0) {
+        if (!(rotation > 359 && rotation < 1)) {
+            printf("PHASE 1 ROTATION\n");
             if (rotation > 180) {
                 // rotate clockwise
                 p_d1->drive('Z', ROT_SPEED);
@@ -52,6 +55,7 @@ public:
 
         // PHASE 2: rough alignment in x axis use optical encoders to set stopping boundaries
         if (destination_x != 0) {
+            printf("PHASE 2 ROTATION\n");
             if (destination_x > 0) {
                 // drive to the right
                 p_d1->drive('X', -DRIVE_SPEED);
