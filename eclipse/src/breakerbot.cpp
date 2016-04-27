@@ -237,7 +237,9 @@ int main(int argc, char** argv) {
     }
 
     if (navx_testing) {
-        test_navx_module();
+        // test_navx_module();
+        test_navx_displacement();
+        sleep(1);
     }
 
     if (stop_motors) {

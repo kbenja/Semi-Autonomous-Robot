@@ -84,3 +84,15 @@ void test_navx_module() {
         }
     }
 }
+
+void test_navx_displacement() {
+    printf("Creating NavX module\n");
+    NavX_Module x1;
+
+    int result;
+    while(1) {
+        result = x1.get_x_displacement();
+        printf("RESULT = %d\n", result);
+        usleep(50000);
+    }
+}
