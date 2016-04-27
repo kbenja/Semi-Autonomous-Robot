@@ -62,6 +62,7 @@ public:
     mraa_result_t send_signal(const mraa_i2c_context & i2c_context, float speed) {
         double_reg signal = float_to_PWM(speed);
         mraa_result_t result = MRAA_SUCCESS;
+        result = mraa_i2c_address(i2c_context, BOARD_ADDR);         //set i2c address to board for motors
         result = i2c_send_signal(i2c_context, end_reg, signal);
 
         return result;
