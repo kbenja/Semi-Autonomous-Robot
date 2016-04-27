@@ -1,12 +1,12 @@
 angular.module('CommunicationService', []).factory('communication', [function($http, $rootScope) {
     // create socket for server-client communication
 
-    var comm_socket = new WebSocket("ws://168.122.5.160:8088/");
+    var comm_socket = new WebSocket("ws://155.41.118.188:8088/");
     // var comm_socket = new WebSocket("ws://localhost:8088/");
 
     // create socket for video stream
 
-    var stream_socket = new WebSocket("ws://168.122.5.160:8084/");
+    var stream_socket = new WebSocket("ws://155.41.118.188:8084/");
     // var stream_socket = new WebSocket("ws://localhost:8084/");
 
     // canvas for video stream
