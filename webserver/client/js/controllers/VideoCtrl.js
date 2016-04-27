@@ -26,7 +26,7 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
                 if (markers.length > 1) {
                     if(markers[0].y + 20 > markers[1].y && markers[0].y - 20 < markers[1].y) {
                         var breaker_center = (markers[0].x + markers[0].width/2 + markers[1].x + markers[1].width/2)/2;
-                        var breaker_status_color = (breaker_center < 322 && breaker_center > 318 ? "yellow" : "red");
+                        var breaker_status_color = (breaker_center < 330 && breaker_center > 310 ? "yellow" : "red");
                         $scope.rects.push({
                             "width": 2,
                             "height": 480,
@@ -45,7 +45,7 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
                             $scope.instruction = get_direction(breaker_center);
                             if($scope.instruction !== last_instruction) {
                                 console.log("SENDING", $scope.instruction);
-                                communication.send_data({mode: 1, code: $scope.instruction});
+                                communication.send_data({mode: 2, code: $scope.instruction});
                             }
                         }
                     }
@@ -56,7 +56,7 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
                         console.log(error_count);
                         if ($scope.instruction === -2) {
                             console.log("SENDING STOP SIGNAL");
-                            communication.send_data({mode: 1, code: 0}); // send stop instruction
+                            communication.send_data({mode: 2, code: 0}); // send stop instruction
                         }
                     }
                 }
@@ -68,14 +68,15 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
     function get_direction(current_center) {
         if (current_center === -1) {
             error_count++;
-            return (error_count > 15 ? -2 : -1);
+            return (error_count > 8 ? -2 : -1);
         } else {
             error_count = 0;
             var absolute_center = 320;
             var difference = current_center - absolute_center;
             var slow_down_distance = 150;
+            var stop_distance = 10;
             // breaker is to the left, needs to move right
-            if(difference < 8 && difference > -8) {
+            if(Math.abs(difference) < stop_distance) {
                 console.log("STOP – ALIGNED WITH BREAKER");
                 $scope.instruction = 0;
                 return 0;

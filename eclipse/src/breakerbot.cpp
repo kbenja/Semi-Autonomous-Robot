@@ -50,6 +50,9 @@ bool is_pulling = false;
 bool is_stopping = false;
 
 int main(int argc, char** argv) {
+    if (motor_testing) {
+        test_motor_module(0.6);
+    }
     if (main_program) {
         float user_input = 0.0;                          // receive signal from argv or use default (stop)
         if (argc > 1) {
@@ -137,10 +140,38 @@ int main(int argc, char** argv) {
                         i1.drive_intake(0.65);
                         is_pulling = true;
                     }
+<<<<<<< Updated upstream
                 } else if (input == 3) {
                     is_pulling = false;
                     is_stopping = false;
                     if(!is_pushing) {
+=======
+                    // wake up I2C chip so it registers commands
+                    mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
+                    break;
+                case 2:
+                    printf("AUTO MODE, INPUT = %d\n", input);
+                    if(input == 0) {
+                        d1.stop();
+                    } else if (input == 1) {
+                        // slow right
+                        d1.drive('X', -0.075);
+                    } else if (input == 2) {
+                        // slow right
+                        d1.drive('X', -0.09);
+                    } else if (input == 3) {
+                        // slow left
+                        d1.drive('X', 0.21);
+                    } else if (input == 4) {
+                        // slow left
+                        d1.drive('X', 0.3);
+                    }
+                    mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
+                    break;
+                case 3:
+                    printf("INTAKE MODE, INPUT = %d\n", input);
+                    if(input == 1) {
+>>>>>>> Stashed changes
                         printf("push out\n");
                         i1.drive_intake(0.5);
                         is_pushing = true;
@@ -219,6 +250,13 @@ int main(int argc, char** argv) {
                 case 4:
                     test_result = d1.drive('X', -0.8);
                     // test_result = d1.drive('X', 0.1);
+                    break;
+                case 5:
+                    test_result = d1.drive('Y', 1);
+                    // test_result = d1.drive('X', 0.1);
+                    break;
+                case 6:
+                    test_result = d1.drive('X', 0.25);
                     break;
                 default:
                     break;

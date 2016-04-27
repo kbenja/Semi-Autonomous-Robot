@@ -36,7 +36,7 @@ void test_motor_module(float user_input) {
     i2c_init_board(i2c, address);               // initialize the board
 
     Motor_Module m1(1);                         // create motors to ports 1, 2, and 3
-    Motor_Module m2(2);
+    Motor_Module m2(3);
     Motor_Module m3(5);
     Motor_Module m4(7);
 
