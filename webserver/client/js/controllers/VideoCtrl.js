@@ -82,9 +82,11 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
                     if ($rootScope.mode === "AUTO") {
                         error_count++;
                         console.log(error_count);
-                        if (error_count === 90) {
-                            console.log("SENDING STOP SIGNAL");
-                            communication.send_data({mode: 2, code: -1}); // send stop instruction
+                        if (error_count > 90) {
+                            if($scope.instruction !== last_instruction) {
+                                console.log("SENDING STOP SIGNAL");
+                                communication.send_data({mode: 2, code: -1}); // send stop instruction
+                            }
                         }
                     }
                 }
@@ -139,6 +141,9 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
         */
         return parseInt(temp_y + temp_x, 2);
     }
+    setInterval(function() {
+        last_instruction = -4;
+    }, 1000);
 
     setInterval(function() {
         tracking.track('#canvas-video', tracker);

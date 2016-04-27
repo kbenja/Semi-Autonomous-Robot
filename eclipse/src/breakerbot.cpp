@@ -52,12 +52,13 @@ int main(int argc, char** argv) {
 
         // UNIX SOCKET INITIALIZATION
         IPC_Module ipc("/tmp/breakerbot.socket");
-        int status = ipc.unix_socket_initialize();
-        while(status < 0) {
-            status = ipc.unix_socket_initialize();
-            printf("Cannot connect to UNIX socket, retrying\n");
-            usleep(500000);
-        }
+        ipc.unix_socket_initialize();
+        // int status = ipc.unix_socket_initialize();
+        // while(status < 0) {
+        //     status = ipc.unix_socket_initialize();
+        //     printf("Cannot connect to UNIX socket, retrying\n");
+        //     usleep(500000);
+        // }
 
         // INITIALIZE HARDWARE
         NavX_Module x1; // initialize NavX
@@ -87,6 +88,8 @@ int main(int argc, char** argv) {
                 mode = instructions[0];
                 input = instructions[1];
             }
+            mode = 2;
+            input = 1;
             switch(mode) {
                 case -1: // server sends -1 of the client is disconnected
                     printf("CLIENT DISCONNECT STOPPING ALL MOTORS\n");
@@ -131,11 +134,9 @@ int main(int argc, char** argv) {
                         default: // error has occured
                             break;
                     }
-                    // wake up I2C chip so it registers commands
-                    mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00));
                     break;
                 case 2:
-                    printf("AUTO MODE, INPUT = %d\n", input);
+                    // printf("AUTO MODE, INPUT = %d\n", input);
                     if (input == -1) {
                         a1.align(p_d1, rotation, 0, 0, false);
                     } else {

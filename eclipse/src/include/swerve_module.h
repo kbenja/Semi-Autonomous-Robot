@@ -119,6 +119,10 @@ public:
         return dir_feedback->get_average_val();
     }
 
+    void clear_cached() {
+        this->is_driving = false;
+    }
+
     int swerve_controller(char axis, float speed, bool proceed, bool wait) {
         is_stopping = false;
         uint16_t desired_pos;
@@ -242,6 +246,9 @@ public:
     */
     int drive_wheel(float speed) {
         mraa_result_t result = drive_motor->send_signal(i2c_context, speed);
+        // wake up I2C chip so it registers commands
+        usleep(50);
+        mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0xa0), ((uint8_t) 0x00));
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
 
@@ -250,6 +257,9 @@ public:
     */
     int rotate_cw() {
         mraa_result_t result = steer_motor->send_signal(i2c_context, -0.5);
+        // wake up I2C chip so it registers commands
+        usleep(50);
+        mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0xa0), ((uint8_t) 0x00));
         return (result != MRAA_SUCCESS ? -1 : 0);
 
     }
@@ -260,12 +270,18 @@ public:
     int rotate_ccw() {
         mraa_result_t result = MRAA_SUCCESS;
         result = steer_motor->send_signal(i2c_context, 0.8);
+        // wake up I2C chip so it registers commands
+        usleep(50);
+        mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0xa0), ((uint8_t) 0x00));
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
 
     int last_rotate_ccw() {
         mraa_result_t result = MRAA_SUCCESS;
         result = steer_motor->send_signal(i2c_context, 0.45);
+        // wake up I2C chip so it registers commands
+        usleep(50);
+        mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0xa0), ((uint8_t) 0x00));
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
 
@@ -274,6 +290,9 @@ public:
     */
     int stop_rotation() {
         mraa_result_t result = steer_motor->send_signal(i2c_context, 0);
+        // wake up I2C chip so it registers commands
+        usleep(50);
+        mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0xa0), ((uint8_t) 0x00));
         return (result != MRAA_SUCCESS ? -1 : 0);
     }
     /*
@@ -284,6 +303,9 @@ public:
         // stop if module isn't already stopped
         if (!is_stopping) {
             result = drive_motor->send_signal(i2c_context, 0);
+            // wake up I2C chip so it registers commands
+            usleep(50);
+            mraa_i2c_write_byte_data(i2c_context, ((uint8_t) 0xa0), ((uint8_t) 0x00));
             printf("STOP ALL motors on module %d\n", id);
             if(result == MRAA_SUCCESS) {
                 is_stopping = true;

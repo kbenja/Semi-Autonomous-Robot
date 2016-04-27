@@ -73,6 +73,14 @@ public:
         drive_proceed = false;
         return swerve_controller_result;
     }
+
+    void clear_cached() {
+        FR->clear_cached();
+        FL->clear_cached();
+        BR->clear_cached();
+        BL->clear_cached();
+    }
+
 };
 
 #endif
