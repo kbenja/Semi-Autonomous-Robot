@@ -67,6 +67,18 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
                 }
                 keysDown[key] = true;
             }
+            if (key === "a_button") {
+                if(!keysDown[key]) {
+                    $scope.command.code = 7;
+                }
+                keysDown[key] = true;
+            }
+            if (key === "y_button") {
+                if(!keysDown[key]) {
+                    $scope.command.code = 8;
+                }
+                keysDown[key] = true;
+            }
             send_command($scope.command.code);
         }
     }
@@ -98,6 +110,14 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
                 $scope.command.code = 0;
             }
             if (key === "r2_button") {
+                keysDown[key] = false;
+                $scope.command.code = 0;
+            }
+            if (key === "a_button") {
+                keysDown[key] = false;
+                $scope.command.code = 0;
+            }
+            if (key === "y_button") {
                 keysDown[key] = false;
                 $scope.command.code = 0;
             }
@@ -178,7 +198,7 @@ angular.module('Gamepad', ['CommunicationService']).controller("GamepadCtrl", fu
         }
     }
     function registeredButton(btn) {
-        return (btn === "up" || btn === "left" || btn === "right" || btn === "down" || btn==="b_button" || btn==="l2_button" || btn==="r2_button") ? true : false;
+        return (btn === "a_button" || btn === "y_button" || btn === "up" || btn === "left" || btn === "right" || btn === "down" || btn==="b_button" || btn==="l2_button" || btn==="r2_button") ? true : false;
     }
 
     function registeredIntakeButton(btn) {

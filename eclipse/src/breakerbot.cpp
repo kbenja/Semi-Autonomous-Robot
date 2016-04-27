@@ -103,6 +103,7 @@ int main(int argc, char** argv) {
                         case 0: // break button pressed
                             // printf("Received BREAK command\n");
                             d1.stop();
+                            i1.stop_intake();
                             break;
                         case 1: // forward button pressed
                             // printf("Received FORWARD command\n");
@@ -128,6 +129,15 @@ int main(int argc, char** argv) {
                             // printf("Received COUNTER CLOCKWISE command\n");
                             d1.drive('Z', -0.17);
                             break;
+                        case 7: // left trigger button pressed
+                            // printf("Received COUNTER CLOCKWISE command\n");
+                            printf("pull in\n");
+                            i1.drive_intake(-0.55);
+                            break;
+                        case 8: // left trigger button pressed
+                            printf("push out\n");
+                            i1.drive_intake(0.7);
+                            break;
                         default: // error has occured
                             break;
                     }
@@ -146,7 +156,7 @@ int main(int argc, char** argv) {
                     printf("INTAKE MODE, INPUT = %d\n", input);
                     if(input == 1) {
                         printf("push out\n");
-                        i1.drive_intake(0.5);
+                        i1.drive_intake(0.7);
                     } else if (input == 3) {
                         printf("pull in\n");
                         i1.drive_intake(-0.55);

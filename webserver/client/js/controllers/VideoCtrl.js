@@ -13,8 +13,8 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
     var error_count = 0;
     var h = 480;
     var w = 640;
-    var goal_x = 320;
-    var goal_y = 288;
+    var goal_x = 320 - 13;
+    var goal_y = 288 - 7;
     var stop_distance_x = 10;
     var stop_distance_y = 10;
 
