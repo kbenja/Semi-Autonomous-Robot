@@ -6,8 +6,8 @@
 #ifndef ALIGNMENT_MODULE_H
 #define ALIGNMENT_MODULE_H
 
-#define ROT_SPEED 0.25
-#define DRIVE_SPEED 0.1
+#define POS_SPEED 0.225
+#define NEG_SPEED -0.09
 
 class Alignment_Module {
 public:
@@ -19,6 +19,9 @@ public:
     bool is_rotating_ccw;
     bool is_rotating_cw;
 
+    bool aligning_x;
+    bool aligning_y;
+
     // * drive navx, video directions, optical encoder, lidar
     Alignment_Module(mraa_i2c_context ctx) {
         i2c = ctx;
@@ -26,6 +29,8 @@ public:
         //needs to create lidar module
         is_rotating_ccw = false;
         is_rotating_cw = false;
+        aligning_x = false;
+        aligning_y = false;
     }
 
     /*
@@ -42,8 +47,7 @@ public:
             return -1;
         }
         // PHASE 1: rotate to correct position
-        printf("Rotation %d\n", rotation);
-        if (rotation > 5 && rotation < 355) {
+        if (rotation > 2 && rotation < 358) {
             if (rotation > 180) {
                 // rotate clockwise
                 is_rotating_ccw = false;
@@ -67,41 +71,65 @@ public:
                 }
                 return 1;
             }
-        } else {
-            printf("CORRECT POSITION\n");
-            p_d1->stop();
-            sleep(1);
         }
-        return 0;
+        // else {
+        //     aligning_x = true;
+        // }
+
         // PHASE 2: rough alignment in x axis use optical encoders to set stopping boundaries
-        // printf("rotation %d, move_x %d, move_y, %d\n", rotation, dest_x, dest_y);
         // dest x : 0 = stop, 1 = go right, 2 = go left
-        // dest y : 0 = stop, 1 = forward, 2 = backward
 
-        if (destination_x != 0) {
-            // is_rotating_ccw = false;
-            // is_rotating_cw = false;
-
-            printf("PHASE 2 ROTATION\n");
-            if (destination_x > 0) {
-                // drive to the right
-                p_d1->drive('X', -DRIVE_SPEED);
-                return 1;
+        if(aligning_x) {
+            if (destination_x != 0) {
+                // is_rotating_ccw = false;
+                // is_rotating_cw = false;
+                if (destination_x == 1) {
+                    // drive to the right
+                    printf("MOVING RIGHT\n");
+                    p_d1->drive('X', NEG_SPEED);
+                    return 2;
+                } else {
+                    // drive to the left
+                    printf("MOVING LEFT\n");
+                    p_d1->drive('X', POS_SPEED);
+                    return 2;
+                }
             } else {
-                // drive to the left
-                p_d1->drive('X', DRIVE_SPEED);
-                return 1;
+                p_d1->stop();
+                aligning_x = false;
+                aligning_y = true;
+                return 3;
             }
-        } else {
-            // aligned with breaker
-            p_d1->stop();
-            return 2;
         }
 
-        // PHASE 3: align in y axis
+        // // PHASE 3: align in y axis
+        // // dest y : 0 = stop, 1 = forward, 2 = backward
+        // if(aligning_y) {
+        //     if (destination_y != 0) {
+        //         // is_rotating_ccw = false;
+        //         // is_rotating_cw = false;
+        //         if (destination_y == 1) {
+        //             // drive to the right
+        //             printf("MOVING FORWARD\n");
+        //             p_d1->drive('Y', POS_SPEED);
+        //             return 2;
+        //         } else {
+        //             // drive to the left
+        //             printf("MOVING BACKWARD\n");
+        //             p_d1->drive('Y', NEG_SPEED);
+        //             return 2;
+        //         }
+        //     } else {
+        //         // aligned with breaker
+        //         printf("STOPPING\n");
+        //         p_d1->stop();
+        //         return 3;
+        //     }
+        // }
 
         // logic messed up
         p_d1->stop();
+        printf("ALIGNED!\n");
         return 0;
     }
 };
