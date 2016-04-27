@@ -6,6 +6,7 @@
 #include "include/pot_module.h"
 #include "include/drive_module.h"
 #include "include/intake_module.h"
+#include "include/alignment_module.h"
 
 enum modes {
     DISCONNECTED = -1,
@@ -72,6 +73,14 @@ int main(int argc, char** argv) {
         Intake_Module i1 = Intake_Module(i2c, 8); // setup intake module on port 8
 
         Drive_Module d1 = Drive_Module(i2c); // initialize drive module
+        Drive_Module * p_d1;
+        p_d1 = &d1;
+
+        Alignment_Module a1 = Alignment_Module(i2c);
+        int video_x = 0;
+        int video_y = 0;
+        int rotation = x1.get_yaw();
+
         while(1) {
             usleep(50000); // cycle time
             ipc.unix_socket_write(sending); // send most recent data to socket
@@ -130,6 +139,17 @@ int main(int argc, char** argv) {
                     break;
                 case 2:
                     printf("AUTO MODE, INPUT = %d\n", input);
+                    if (input == -1) {
+                        a1.align(p_d1, rotation, 0, 0, false);
+                    } else {
+                        video_x = input;
+                        video_x = video_x & 3;
+                        printf("X = %d\n", video_x);
+                        video_y = input;
+                        video_y = (video_y & 12) >> 2;
+                        printf("Y = %d\n", video_y);
+                        // a1.align(p_d1, rotation, video_x, video_y, true);
+                    }
                     break;
                 case 3:
                     printf("INTAKE MODE, INPUT = %d\n", input);
@@ -150,7 +170,8 @@ int main(int argc, char** argv) {
                 default:
                     break;
             }
-            sending[0] = x1.get_yaw();
+            rotation = x1.get_yaw();
+            sending[0] = rotation;
             sending[1] = mode;
             sending[2] = input;
         }

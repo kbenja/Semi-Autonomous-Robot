@@ -29,7 +29,7 @@ angular.module('Data', ['CommunicationService']).controller('DataCtrl', function
             $scope.$apply(function() {
                 var object = JSON.parse(evt.data);
                 if(object.data) {
-                    console.log("Hex", object.data);
+                    // console.log("Hex", object.data);
                     $scope.orientation = parseInt(object.data[2] + object.data[3] + object.data[0] + object.data[1], 16);
                     $scope.last_communication = 0;
                     $rootScope.connected = true;

@@ -1,129 +1,78 @@
 #include <stdlib.h>
-#include <utility>     // using pair
 #include "mraa.h"
-#include "lidar_module.h"
-#include "navx_module.h"
 #include "drive_module.h"
+#include "navx_module.h"
 
 #ifndef ALIGNMENT_MODULE_H
 #define ALIGNMENT_MODULE_H
 
-class Alignment_Module{
+#define ROT_SPEED 0.25
+#define DRIVE_SPEED 0.1
+
+class Alignment_Module {
 public:
+    mraa_i2c_context i2c;
+    int destination_x; // location of where target is
+    int destination_y;
 
-    float last_lidar_reading;
-    int last_navx_reading;
-    NavX_Module * navx;
-    Lidar_Module * lidar;
-
-    uint16_t current_distance;
-    uint16_t desired_distance_cabinet;
-    uint16_t desired_distance_edge;
-    uint16_t desired_distance_breaker;
-
-    bool lidar_stage1_success;
-    bool lidar_stage2_success;
-    bool lidar_alignment_complete;
-
-    Alignment_Module() {
-        printf("[ init ] Created Alignment Module\n");
-        navx = new NavX_Module();
-        lidar = new Lidar_Module(3);
-
-    	//INITIALIZATION
-    	current_distance = 0;
-    	desired_distance_cabinet = 120; //SET THIS ~ 0.10
-    	desired_distance_edge = 400; //SET THIS ~ 0.30
-    	desired_distance_breaker = 350; //SET THIS ~ 0.15
-
-    	lidar_stage1_success = false;
-    	lidar_stage2_success = false;
-    	lidar_alignment_complete = false;
-    }
-
-    // function aligns using the lidar data
-    void lidar_alignment() {
-
-    	current_distance = lidar->get_average_distance_reading_int();
-
-    	//STAGE 1 LIDAR ALIGNMENT - DISTANCE AWAY FROM THE CABINET
-    	if (!lidar_stage1_success){
-
-    		//printf("WORKING ON STAGE 1 LIDAR ALIGNMENT\n");
-
-    		if (current_distance > desired_distance_cabinet+25){
-    			printf("MOVE FORWARD\n");
-    			//MOVE FORWARD Y-DIRECTION
-    			//d1.drive('Y', user_input);
-    		}
-    		else if (current_distance < desired_distance_cabinet-25){
-    			printf("MOVE BACKWARD\n");
-    			//MOVE BACKWARD Y-DIRECTION
-    			//d1.drive('Y', -user_input);
-    		}
-    		else if ((current_distance <= desired_distance_cabinet+25)&&(current_distance >= desired_distance_cabinet-25)){ //WITH SOME ERROR MARGIN
-
-    			printf("DESIRED DISTANCE!!!\n");
-    			// d1.stop(); //CALL DRIVE TO STOP DRIVING
-    			//if success, proceed to stage 2
-    			printf("STAGE 1 LIDAR ALIGNMENT COMPLETE\n");
-    			lidar_stage1_success = true;
-    		}
-    	}
-
-    	//LIDAR STAGE 2 ALIGNMENT - LEFT TO RIGHT ALIGNMENT X-DIRECTIONS
-    	if (lidar_stage1_success){
-    		if(current_distance == desired_distance_cabinet){
-    			//MOVE RIGHT
-    			printf("DRIVING RIGHT\n");
-    			//d1.drive('X', user_input);
-    		}
-
-    		else if (current_distance == desired_distance_breaker){
-    			//MOVE LEFT
-    			printf("DRIVING LEFT\n");
-    			//d1.drive('X', -user_input);
-    		}
-
-    		else if (current_distance == desired_distance_edge){
-
-    			//EDGE DETECTED
-    			printf("EDGE DETECTED\n");
-    			//STOP
-    			//d1.stop();
-
-    			//if success, LIDAR alignment if complete
-    			printf("STAGE 2 LIDAR ALIGNMENT COMPLETE\n");
-    			lidar_stage2_success = true;
-    		}
-    	}
-
-    	if (lidar_stage1_success && lidar_stage2_success){
-    		printf("ENTIRE LIDAR ALIGNMENT COMPLETE\n");
-    		// lidar_alignment_complete = true; //eventually should return TRUE upon exit
-    	}
+    // * drive navx, video directions, optical encoder, lidar
+    Alignment_Module(mraa_i2c_context ctx) {
+        i2c = ctx;
+        //needs to create optical encoder module
+        //needs to create lidar module
 
     }
 
-    // function aligns using image processing data
-    void camera_alignment(int16_t instructions[]) {
+    /*
+        @return phase of alignment (1 = rotation, 2 = X, 3 = Y, 4 = X)
+     */
+    int align(Drive_Module * p_d1, int rotation, int dest_x, int dest_y, bool valid_dest) {
+        printf("rotation %d, move_x %d, move_y, %d\n", rotation, dest_x, dest_y);
+        return 0;
+        if (valid_dest) {
+            // set destination_x if camera measured correctly
+            destination_x = dest_x;
+        }
+        if (rotation != -1) {
+            //error cannot align without navx working
+            return -1;
+        }
+        // PHASE 1: rotate to correct position
+        if (rotation != 0) {
+            if (rotation > 180) {
+                // rotate clockwise
+                p_d1->drive('Z', ROT_SPEED);
+                return 1;
+            } else {
+                // rotate counterclockwise
+                p_d1->drive('Z', -ROT_SPEED);
+                return 1;
+            }
+        }
 
+        // PHASE 2: rough alignment in x axis use optical encoders to set stopping boundaries
+        if (destination_x != 0) {
+            if (destination_x > 0) {
+                // drive to the right
+                p_d1->drive('X', -DRIVE_SPEED);
+                return 1;
+            } else {
+                // drive to the left
+                p_d1->drive('X', DRIVE_SPEED);
+                return 1;
+            }
+        } else {
+            // aligned with breaker
+            p_d1->stop();
+            return 2;
+        }
+
+        // PHASE 3: align in y axis
+
+        // logic messed up
+        p_d1->stop();
+        return 0;
     }
-
-    // function to return navx rotation value
-    int get_rotation() {
-        return navx->get_yaw();
-    }
-
-    // reorients navx
-    void set_zero() {
-        navx->set_zero();
-    }
-
-
-
-
-
 };
 
 
