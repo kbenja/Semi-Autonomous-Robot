@@ -101,16 +101,16 @@
                         <button ng-click="auto_status()"> TEST Testing mode</button> -->
                         <br>
                         <div class="alignment-mode-container">
-                            <div class="alignment-status alignment-z" ng-class="status === 'ALIGN-Z' ? 'active' : ''">ROTATION</div>
+                            <div class="alignment-status" ng-class="current_status === 'ALIGN-Z' ? 'active' : ''">ROTATION</div>
                         </div>
-                        <div class="alignment-mode-container" ng-class="status === 'ALIGN-X' ? 'active' : ''">
-                            <div class="alignment-status alignment-x">X AXIS</div>
+                        <div class="alignment-mode-container active">
+                            <div class="alignment-status" ng-class="current_status === 'ALIGN-X' ? 'active' : ''">X AXIS</div>
                         </div>
-                        <div class="alignment-mode-container" ng-class="status === 'ALIGN-Y' ? 'active' : ''">
-                            <div class="alignment-status alignment-y">Y AXIS</div>
+                        <div class="alignment-mode-container">
+                            <div class="alignment-status"  ng-class="current_status === 'ALIGN-Y' ? 'active' : ''">Y AXIS</div>
                         </div>
-                        <div class="alignment-mode-container" ng-class="status === 'ALIGNED' ? 'active' : ''">
-                            <div class="alignment-status alignment-aligned">ALIGNED</div>
+                        <div class="alignment-mode-container">
+                            <div class="alignment-status" ng-class="current_status === 'ALIGNED' ? 'active' : ''">ALIGNED</div>
                         </div>
                     </div>
                 </div>

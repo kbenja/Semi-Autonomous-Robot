@@ -31,8 +31,8 @@ angular.module('Data', ['CommunicationService']).controller('DataCtrl', function
                 if(object.data) {
                     // console.log("Hex", object.data);
                     $scope.orientation = parseInt(object.data[2] + object.data[3] + object.data[0] + object.data[1], 16);
-                    $rootScope.status = get_status(object.data);
-                    console.log($rootScope.status);
+                    $rootScope.current_status = $scope.get_current_status(object.data);
+                    // console.log($rootScope.current_status);
                     $scope.last_communication = 0;
                     $rootScope.connected = true;
                 } else {
@@ -41,7 +41,7 @@ angular.module('Data', ['CommunicationService']).controller('DataCtrl', function
             });
         });
     }
-    function get_status(data) {
+    $scope.get_current_status = function(data){
         if ($rootScope.mode === "AUTO") {
             var indicator = parseInt(data[6] + data[7] + data[4] + data[5], 16);
             if (indicator === 1) {

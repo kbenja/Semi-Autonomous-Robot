@@ -13,17 +13,22 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
     var error_count = 0;
     var h = 480;
     var w = 640;
-    var goal_x = 320 - 13;
-    var goal_y = 288 - 7;
-    var stop_distance_x = 10;
-    var stop_distance_y = 10;
+    var goal_x = 320 - 2;
+    var goal_y = 288 - 6;
+    var stop_distance_x = 8;
+    var stop_distance_y = 8;
+
+    var last_x;
+    var last_y;
+    var moving_x_count;
+    var moving_y_count;
 
     tracker.on('track', function(event) {
         $scope.rects = event.data;
         var markers = [];
         $scope.rects.forEach(function(rect, num) {
             // console.log("RECT: " + num + " CENTER: (" + rect.x , rect.y + rect.height/2 + ") HEIGHT =", rect.height, "WIDTH =", rect.width);
-            if (rect.height > rect.width * 2 && rect.y > 150) {
+            if (rect.height > rect.width * 1.75 && rect.y > 150) {
                 markers.push(rect);
             }
             if (num == $scope.rects.length - 1) {
@@ -51,7 +56,7 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
                             "y": breaker_height,
                             "color":breaker_height_status
                         })
-                        if ($rootScope.mode === "AUTO") {
+                        // if ($rootScope.mode === "AUTO") {
                             $scope.rects.push({
                                 "width": 4,
                                 "height": 100,
@@ -67,7 +72,7 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
                                 "y": goal_y - 2,
                                 "color": "rgba(0,255,0,0.8)"
                             });
-                        }
+                        // }
                         if ($rootScope.mode === "AUTO") {
                             $scope.instruction = get_direction(breaker_center, breaker_height);
                             if($scope.instruction !== last_instruction) {
@@ -99,34 +104,39 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
         var temp_y;
         var difference_x = current_x  - goal_x;
         var difference_y = current_y  - goal_y;
+        // stop_distance_x = (Math.abs(difference_y) < 25 ? 8 : Math.abs(difference_y) / 3);
+        // goal_y = (difference_y < 13 ? 3 : difference_y / 4);
         // check for X
         if(difference_x < stop_distance_x && difference_x > -stop_distance_x) {
-            console.log("X ALIGNED");
+            // console.log("X ALIGNED");
             temp_x = "00";
         } else {
             if (difference_x > 0) {
                 // need to move right
                 temp_x = "01";
-            } else if (difference_x < 0) {
+            }
+            if (difference_x < 0) {
                 // need to move left
                 temp_x = "10";
             }
         }
         // check for Y
         if(difference_y < stop_distance_y && difference_y > -stop_distance_y) {
-            console.log("Y ALIGNED");
+            // console.log("Y ALIGNED");
             temp_y = "00";
         } else {
             if (difference_y < 0) {
                 // need to move forward
-                temp_y = "01";
-            } else if (difference_y > 0) {
+                temp_y = "01"
+            }
+            // stop moving backwards before reaching mark
+            if (difference_y > 0) {
                 // need to move backward
                 temp_y = "10";
             }
         }
-        console.log("final = temp_x", temp_x,"+ temp_y", temp_y);
-        console.log(parseInt(temp_y + temp_x, 2));
+        // console.log("final = temp_x", temp_x,"+ temp_y", temp_y);
+        // console.log(parseInt(temp_y + temp_x, 2));
         /*
         0 = stop X, stop Y
         1 = right X, stop Y
@@ -138,6 +148,11 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
         9 = right X, backward Y
         10 = left X, backward Y
         */
+
+        // moving_x_count = (temp_x === last_x ? moving_x_count++ : 0);
+        // moving_y_count = (temp_y === last_y ? moving_y_count++ : 0);
+        last_x = temp_x;
+        last_y = temp_y;
         return parseInt(temp_y + temp_x, 2);
     }
     setInterval(function() {

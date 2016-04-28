@@ -24,10 +24,10 @@ public:
     	i2c_bus = i2c;
         //initialize Swerve_Modules (ID, dir port, drive port, AOIN, Encoder, X, Y, Z)
 
-        FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1458, 985, 2150); // WHEEL 0
-        BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1400, 885, 1729); // WHEEL 1
-        BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2510, 1969, 2161); // WHEEL 2
-        FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 2423, 2370, 2103); // WHEEL 3
+        FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1458, 977, 2150); // WHEEL 0
+        BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1366, 885, 1729); // WHEEL 1
+        BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2491, 2010, 2164); // WHEEL 2
+        FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 2569, 2070, 1946); // WHEEL 3
 
         //initialize proceed flags
         FR_ready = false;

@@ -49,13 +49,15 @@ public:
             }
             return state;
         } else {            //if previous alignment stage not complete:
+            // CHECK PHASE 1, Z axis
             int result = check_z(navx_result);     //check rotation
-            if (result != 0 && state != 1) {          //if rotation not good, stop and redo rotation alignment
+            if (result != 0 && state != 1 && state != 3) {          //if rotation not good, stop and redo rotation alignment
                 p_d1->stop();
                 waiting = true;
                 state = 1;
-                return 1;
+                return state;
             }
+            //
             if(state == 1) {            //State 1: rotation alignment
                 alignment_z(p_d1, result);        //drive motors based on result of check_z (CW/CCW/STOP)
                 if (result == 0) {          //if motor was stopped (i.e. rotational alignment done)
@@ -64,7 +66,16 @@ public:
                     state = 2;
                 }
                 return state;
-            } else if (state == 2) {    //State 2: X alignment
+            }
+            // CHECK PHASE 2, X axis
+            else if (destination_x != 0 && state != 2) {
+                 p_d1->stop();
+                 waiting = true;
+                 state = 2;
+                 return state;
+            }
+            // IF STATE = 2, DO STATE 2
+            if (state == 2) {    //State 2: X alignment
                 result = destination_x;         //check_x alignment
                 alignment_x(p_d1, result);        //drive motor based on x alignment reading (L/R/STOP)
                 if (result == 0) {          //if motor was stopped (i.e. X alignment done)
@@ -73,7 +84,16 @@ public:
                     state = 3;
                 }
                 return state;
-            } else if (state == 3) {    //State 3: Y alignment
+            }
+            // CHECK PHASE 3, Y axis
+            else if (destination_y != 0 && state != 3) {
+                 p_d1->stop();
+                 waiting = true;
+                 state = 3;
+                 return state;
+            }
+            // IF STATE = 3, DO STATE 3
+            if (state == 3) {    //State 3: Y alignment
                 result = destination_y;         //check_y alignment
                 alignment_y(p_d1, result);        //drive motor based on alignment reading (F/B/STOP)
                 if (result == 0) {          //if motor was stopped (Y-alignment done)
@@ -82,11 +102,14 @@ public:
                     state = 4;
                 }
                 return state;
-            } else {
+            }
+            // FINAL STATE = 4
+            if(state == 4) {
                 printf("ALIGNED!!\n");
                 return state;
             }
         }
+        return state;
     }
 
 

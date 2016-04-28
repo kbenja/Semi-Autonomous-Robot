@@ -21,7 +21,7 @@ angular.module('CommunicationService', []).factory('communication', [function($h
     return {
         comm_socket: comm_socket,
         send_data: function(data) {
-            console.log(data);
+            // console.log(data);
             comm_socket.send(JSON.stringify(data));
         },
         read_data: function(callback) {
