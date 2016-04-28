@@ -65,19 +65,19 @@ int main(int argc, char** argv) {
         printf("GOING TO CUSTOM VALUE OF %d\n", PWM);
     } else {
         if(motor == 0) {
-            // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1453, 971, 2150); // WHEEL 0
-            // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1463, 968, 1812); // WHEEL 1
+            // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1469, 971, 2150); // WHEEL 0
+            // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1522, 1043, 1925); // WHEEL 1
             // BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2510, 2030, 2161); // WHEEL 2
-            // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 2775, 2294, 2103); // WHEEL 3
+            // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 2756, 2287, 2103); // WHEEL 3
             // FRONT RIGHT
-            s1.x_pos = 1453;
+            s1.x_pos = 1469;
             s1.y_pos = 971;
             s1.z_pos = 2150;
         } else if (motor == 1) {
             // BACK RIGHT
-            s1.x_pos = 1463;
-            s1.y_pos = 968;
-            s1.z_pos = 1812;
+            s1.x_pos = 1522;
+            s1.y_pos = 1043;
+            s1.z_pos = 1925;
         } else if (motor == 2) {
             // BACK LEFT
             s1.x_pos = 2510;
@@ -85,8 +85,8 @@ int main(int argc, char** argv) {
             s1.z_pos = 2161;
         } else if (motor == 3) {
             // FRONT LEFT
-            s1.x_pos = 2775;
-            s1.y_pos = 2294;
+            s1.x_pos = 2756;
+            s1.y_pos = 2287;
             s1.z_pos = 2103;
         }
     }

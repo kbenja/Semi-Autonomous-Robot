@@ -41,6 +41,7 @@ public:
             return -1; //error cannot align without navx working
         }
         if(waiting) {       //if previous alignment stage complete use counter to wait
+            printf("Waiting\n");
             waitcount++;
             if(waitcount > 10) {
                 waiting = false;
@@ -49,10 +50,11 @@ public:
             return state;
         } else {            //if previous alignment stage not complete:
             int result = check_z(navx_result);     //check rotation
-            if (result != 0) {          //if rotation not good, stop and redo rotation alignment
+            if (result != 0 && state != 1) {          //if rotation not good, stop and redo rotation alignment
                 p_d1->stop();
                 waiting = true;
                 state = 1;
+                return 1;
             }
             if(state == 1) {            //State 1: rotation alignment
                 alignment_z(p_d1, result);        //drive motors based on result of check_z (CW/CCW/STOP)
@@ -90,6 +92,7 @@ public:
 
     // check status of past states
     int check_z(int navx_result) {
+        printf("CHECK Z\n");
         if (navx_result > 1 && navx_result < 359) {     //if out of rotation alignment
             if (navx_result > 180) {
                 return 2;       //rotate clockwise
