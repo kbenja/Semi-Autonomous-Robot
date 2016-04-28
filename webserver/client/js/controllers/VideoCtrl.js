@@ -115,10 +115,10 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
             console.log("Y ALIGNED");
             temp_y = "00";
         } else {
-            if (difference_y > 0) {
+            if (difference_y < 0) {
                 // need to move forward
                 temp_y = "01";
-            } else if (difference_y < 0) {
+            } else if (difference_y > 0) {
                 // need to move backward
                 temp_y = "10";
             }

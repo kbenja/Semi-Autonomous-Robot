@@ -76,13 +76,15 @@ int main(int argc, char** argv) {
         Alignment_Module a1 = Alignment_Module(i2c);
         int video_x = 0;
         int video_y = 0;
-        int rotation = x1.get_yaw();
+        int rotation;
 
         while(1) {
             usleep(50000); // cycle time
             ipc.unix_socket_write(sending); // send most recent data to socket
             result = ipc.unix_socket_read(p_instructions); //result = 0 if empty socket, -1 if error, length if read
-            // if(result > 0) {
+            rotation = x1.get_yaw();
+            sending[0] = rotation;
+
             if(instructions[-2] != 0 && instructions[1] != -2) {
                 mode = instructions[0];
                 input = instructions[1];
@@ -147,6 +149,7 @@ int main(int argc, char** argv) {
                     if (input == -1) {
                         a1.align(p_d1, rotation, 0, 0, false);
                     } else {
+                        // beautiful bitwise
                         video_x = input & 3;
                         video_y = (input & 12) >> 2;
                         a1.align(p_d1, rotation, video_x, video_y, true);
@@ -171,8 +174,6 @@ int main(int argc, char** argv) {
                 default:
                     break;
             }
-            rotation = x1.get_yaw();
-            sending[0] = rotation;
             sending[1] = mode;
             sending[2] = input;
         }

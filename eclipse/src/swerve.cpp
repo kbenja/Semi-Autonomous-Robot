@@ -65,14 +65,14 @@ int main(int argc, char** argv) {
         printf("GOING TO CUSTOM VALUE OF %d\n", PWM);
     } else {
         if(motor == 0) {
-            // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1491, 985, 2186); // WHEEL 0
+            // FR = new Swerve_Module(i2c, 4, 6, 7, 0, 0, 1453, 971, 2150); // WHEEL 0
             // BR = new Swerve_Module(i2c, 3, 4, 5, 1, 0, 1463, 968, 1812); // WHEEL 1
             // BL = new Swerve_Module(i2c, 1, 0, 1, 2, 0, 2510, 2030, 2161); // WHEEL 2
             // FL = new Swerve_Module(i2c, 2, 2, 3, 3, 0, 2775, 2294, 2103); // WHEEL 3
             // FRONT RIGHT
-            s1.x_pos = 1491;
-            s1.y_pos = 985;
-            s1.z_pos = 2186;
+            s1.x_pos = 1453;
+            s1.y_pos = 971;
+            s1.z_pos = 2150;
         } else if (motor == 1) {
             // BACK RIGHT
             s1.x_pos = 1463;
