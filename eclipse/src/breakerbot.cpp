@@ -84,7 +84,8 @@ int main(int argc, char** argv) {
             result = ipc.unix_socket_read(p_instructions); //result = 0 if empty socket, -1 if error, length if read
             rotation = x1.get_yaw();
             sending[0] = rotation;
-
+            sending[1] = 14;
+            sending[2] = 17;
             if(instructions[-2] != 0 && instructions[1] != -2) {
                 mode = instructions[0];
                 input = instructions[1];
@@ -92,7 +93,7 @@ int main(int argc, char** argv) {
             switch(mode) {
                 case -1: // server sends -1 of the client is disconnected
                     printf("CLIENT DISCONNECT STOPPING ALL MOTORS\n");
-                    d1.stop(); // stop all motors
+                    sending[1] = d1.stop(); // stop all motors
                     break;
                 case 0: // Idle mode
                     if(instructions[1] != 0) {
@@ -104,41 +105,41 @@ int main(int argc, char** argv) {
                     switch(input) {
                         case 0: // break button pressed
                             // printf("Received BREAK command\n");
-                            d1.stop();
+                            sending[1] = d1.stop();
                             i1.stop_intake();
                             break;
                         case 1: // forward button pressed
                             // printf("Received FORWARD command\n");
-                            d1.drive('Y', user_input);
+                            sending[1] = d1.drive('Y', user_input);
                             break;
                         case 2: // left button pressed
                             // printf("Received LEFT command\n");
-                            d1.drive('X', user_input);
+                            sending[1] = d1.drive('X', user_input);
                             break;
                         case 3: // back button pressed
                             // printf("Received BACKWARDS command\n");
-                            d1.drive('Y', -user_input);
+                            sending[1] = d1.drive('Y', -user_input);
                             break;
                         case 4: // right button pressed
                             // printf("Received RIGHT command\n");
-                            d1.drive('X', -user_input);
+                            sending[1] = d1.drive('X', -user_input);
                             break;
                         case 5: // right trigger button pressed
                             // printf("Received CLOCKWISE command\n");
-                            d1.drive('Z', 0.215);
+                            sending[1] = d1.drive('Z', 0.215);
                             break;
                         case 6: // left trigger button pressed
                             // printf("Received COUNTER CLOCKWISE command\n");
-                            d1.drive('Z', -0.17);
+                            sending[1] = d1.drive('Z', -0.17);
                             break;
                         case 7: // left trigger button pressed
                             // printf("Received COUNTER CLOCKWISE command\n");
                             printf("pull in\n");
-                            i1.drive_intake(-0.55);
+                            sending[1] = i1.drive_intake(-0.55);
                             break;
                         case 8: // left trigger button pressed
                             printf("push out\n");
-                            i1.drive_intake(0.7);
+                            sending[1] = i1.drive_intake(0.7);
                             break;
                         default: // error has occured
                             break;
@@ -147,12 +148,12 @@ int main(int argc, char** argv) {
                 case 2:
                     // printf("AUTO MODE, INPUT = %d\n", input);
                     if (input == -1) {
-                        a1.align(p_d1, rotation, 0, 0, false);
+                        sending[1] = a1.align(p_d1, rotation, 0, 0, false);
                     } else {
                         // beautiful bitwise
                         video_x = input & 3;
                         video_y = (input & 12) >> 2;
-                        a1.align(p_d1, rotation, video_x, video_y, true);
+                        sending[1] = a1.align(p_d1, rotation, video_x, video_y, true);
                     }
                     break;
                 case 3:
@@ -174,8 +175,8 @@ int main(int argc, char** argv) {
                 default:
                     break;
             }
-            sending[1] = mode;
-            sending[2] = input;
+            // printf("%d\n", sending[0]);
+            // printf("%d\n", sending[1]);
         }
     }
 
@@ -204,7 +205,7 @@ int main(int argc, char** argv) {
         mraa_result_t i2c_status = i2c_init_board(i2c, address);
         if (i2c_status != MRAA_SUCCESS) printf("[ !!! ] Can not initialize I2C Board.\n");
         Drive_Module d1 = Drive_Module(i2c);
-        d1.stop();
+        sending[1] = d1.stop();
         mraa_i2c_write_byte_data(i2c, ((uint8_t) 0xa0), ((uint8_t) 0x00)); // wake up the board
     }
 

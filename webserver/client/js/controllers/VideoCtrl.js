@@ -51,21 +51,23 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
                             "y": breaker_height,
                             "color":breaker_height_status
                         })
-                        $scope.rects.push({
-                            "width": 4,
-                            "height": 100,
-                            "x": goal_x - 2,
-                            "y": goal_y - 50,
-                            "color": "rgba(0,255,0,0.8)"
-                        });
-                        // target Y
-                        $scope.rects.push({
-                            "width": 100,
-                            "height": 4,
-                            "x": goal_x - 50,
-                            "y": goal_y - 2,
-                            "color": "rgba(0,255,0,0.8)"
-                        });
+                        if ($rootScope.mode === "AUTO") {
+                            $scope.rects.push({
+                                "width": 4,
+                                "height": 100,
+                                "x": goal_x - 2,
+                                "y": goal_y - 50,
+                                "color": "rgba(0,255,0,0.8)"
+                            });
+                            // target Y
+                            $scope.rects.push({
+                                "width": 100,
+                                "height": 4,
+                                "x": goal_x - 50,
+                                "y": goal_y - 2,
+                                "color": "rgba(0,255,0,0.8)"
+                            });
+                        }
                         if ($rootScope.mode === "AUTO") {
                             $scope.instruction = get_direction(breaker_center, breaker_height);
                             if($scope.instruction !== last_instruction) {

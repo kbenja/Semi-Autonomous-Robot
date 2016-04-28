@@ -31,6 +31,8 @@ angular.module('Data', ['CommunicationService']).controller('DataCtrl', function
                 if(object.data) {
                     // console.log("Hex", object.data);
                     $scope.orientation = parseInt(object.data[2] + object.data[3] + object.data[0] + object.data[1], 16);
+                    $rootScope.status = parseInt(object.data[6] + object.data[7] + object.data[4] + object.data[5], 16);
+                    console.log($rootScope.status);
                     $scope.last_communication = 0;
                     $rootScope.connected = true;
                 } else {
