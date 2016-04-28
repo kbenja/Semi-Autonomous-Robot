@@ -26,6 +26,9 @@ app.controller('ModeCtrl', function($scope, $rootScope, close, communication) {
     };
     $scope.change_mode = function(mode) {
         $rootScope.mode = mode;
+        if($rootScope.mode === "MANUAL") {
+            communication.send_data({mode: 1, code: 0});
+        }
         console.log("Toggling mode", $rootScope.mode);
     }
 });

@@ -51,7 +51,7 @@ public:
         } else {            //if previous alignment stage not complete:
             // CHECK PHASE 1, Z axis
             int result = check_z(navx_result);     //check rotation
-            if (result != 0 && state != 1 && state != 3) {          //if rotation not good, stop and redo rotation alignment
+            if (result != 0 && state != 1 && state != 2) {          //if rotation not good, stop and redo rotation alignment
                 p_d1->stop();
                 waiting = true;
                 state = 1;
@@ -68,7 +68,7 @@ public:
                 return state;
             }
             // CHECK PHASE 2, X axis
-            else if (destination_x != 0 && state != 2) {
+            else if (destination_x != 0 && state != 2 && state != 3) {
                  p_d1->stop();
                  waiting = true;
                  state = 2;

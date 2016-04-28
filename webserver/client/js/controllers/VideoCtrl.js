@@ -13,9 +13,9 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
     var error_count = 0;
     var h = 480;
     var w = 640;
-    var goal_x = 320 - 2;
+    var goal_x = 320 + 3;
     var goal_y = 288 - 6;
-    var stop_distance_x = 8;
+    var stop_distance_x = 25;
     var stop_distance_y = 8;
 
     var last_x;
@@ -107,7 +107,7 @@ angular.module('Video', ['CommunicationService']).controller('VideoCtrl', functi
         // stop_distance_x = (Math.abs(difference_y) < 25 ? 8 : Math.abs(difference_y) / 3);
         // goal_y = (difference_y < 13 ? 3 : difference_y / 4);
         // check for X
-        if(difference_x < stop_distance_x && difference_x > -stop_distance_x) {
+        if(difference_x < stop_distance_x && difference_x > - stop_distance_x) {
             // console.log("X ALIGNED");
             temp_x = "00";
         } else {
